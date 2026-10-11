@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+/* 
+  Since we are using next-themes with attribute="class", 
+  we define both light and dark mode CSS variables.
+*/
+
+@theme {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+  --color-line: var(--line);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-good: var(--good);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
+  --radius-xl: 10px;
+}
+
+@layer base {
+  :root {
+    /* Light Mode Variables */
+    --bg: #f8fafc;
+    --panel: #ffffff;
+    --panel-2: #f1f5f9;
+    --line: #e2e8f0;
+    --text: #0f172a;
+    --muted: #64748b;
+    --accent: #2563eb;
+    --good: #10b981;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+  }
+
+  .dark {
+    /* Dark Mode Variables (Original SaaS look) */
+    --bg: #0b0f14;
+    --panel: #121820;
+    --panel-2: #172029;
+    --line: #24303d;
+    --text: #e6edf3;
+    --muted: #8b9bab;
+    --accent: #4ea1ff;
+    --good: #3ddc97;
+    --warn: #f5b74e;
+    --bad: #ff6b6b;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
