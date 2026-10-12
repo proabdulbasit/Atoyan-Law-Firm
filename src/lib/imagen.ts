@@ -83,18 +83,14 @@ export const SITE_BODY_WIDTH = 850;
 export const SITE_BODY_HEIGHT = 567;
 
 /**
- * Header photo for this site: a bright photograph at the reference page size.
- * A light wash keeps the theme's dark title readable. The previous project's logo is not applied.
+ * Header photo for this site: the original photograph at the reference page size.
+ * Readability is handled on the page with CSS opacity, not by fading the file.
  */
 export async function compositeAtoyanBanner(
   imageBuffer: Buffer
 ): Promise<{ buffer: Buffer; width: number; height: number }> {
-  const wash = Buffer.from(
-    `<svg width="${SITE_BANNER_WIDTH}" height="${SITE_BANNER_HEIGHT}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#ffffff" fill-opacity="0.42"/></svg>`,
-  );
   const brandedBuffer = await sharp(imageBuffer)
     .resize(SITE_BANNER_WIDTH, SITE_BANNER_HEIGHT, { fit: "cover", position: "attention" })
-    .composite([{ input: wash, top: 0, left: 0 }])
     .jpeg({ quality: 90 })
     .toBuffer();
 

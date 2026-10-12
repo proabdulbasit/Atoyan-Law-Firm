@@ -320,6 +320,7 @@ export async function setWoodmartTitleImage(params: {
   fields = replaceField(fields, "_woodmart_title_image[url]", params.imageUrl);
   fields = replaceField(fields, "_woodmart_title_image_size", "full");
   fields = replaceField(fields, "_woodmart_title_color", "dark");
+  fields = replaceField(fields, "_woodmart_title_bg_color", "rgb(255,255,255)");
   fields = replaceField(fields, "_thumbnail_id", String(params.imageId));
   if (params.content) fields = replaceField(fields, "content", params.content);
   if (params.seo?.description) fields = applyYoastFields(fields, params.seo);

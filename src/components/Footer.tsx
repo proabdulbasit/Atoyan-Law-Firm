@@ -16,7 +16,7 @@ const PIPELINE_PILLARS = [
   {
     icon: ImageIcon,
     title: "Header and Article Photos",
-    body: "Builds a 1000×583 header photo with a light wash for the dark page title, and an 850×567 article photo with no caption bar.",
+    body: "Builds a full-brightness 1000×583 header photo and an 850×567 article photo. The hero fades that photo with CSS opacity so the dark title stays readable.",
   },
   {
     icon: ShieldCheck,

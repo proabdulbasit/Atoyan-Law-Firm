@@ -19,6 +19,10 @@ export const ATOYAN_TOLL_FREE = "(323) 203-4805";
 export const ATOYAN_PHONE_LINK = "tel:3239680000";
 export const ATOYAN_CONTACT_URL = "https://demo.wp-post.com/contact-us/";
 
+/** Fades the hero photo in the browser. The uploaded file stays at full brightness. */
+export const HERO_TITLE_PHOTO_STYLE =
+  `<style id="wp-post-hero-photo">.wd-page-title{background-color:#ffffff!important}.wd-page-title .wd-page-title-bg img{opacity:.68}</style>`;
+
 /**
  * Cloned sidebar practice area page IDs from Page 3933.
  * Preserves the exact 27 employment law cross-links on WP Post Project.
@@ -451,6 +455,7 @@ export function buildDemoPageContent(
       : "";
 
   return stripCopiedClasses([
+    HERO_TITLE_PHOTO_STYLE,
     `<p><h2>${heading}</h2>\n${image}${subheading}\n${intro}`.trim(),
     `<!-- add -->\n[html_block id="${DEMO_DIRECTIONS_BLOCK_ID}"]\n<!-- // -->`,
     rest,

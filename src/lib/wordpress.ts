@@ -15,6 +15,7 @@ import {
   buildDemoPageContent,
   generateFaqSchemaJsonLd,
   resolveDefaultAccordionShortcode,
+  HERO_TITLE_PHOTO_STYLE,
 } from "./atoyan";
 import { createEasyAccordion } from "./accordion-creator";
 import { decomposeKeyword } from "./keyword-utils";
@@ -461,8 +462,9 @@ export async function publishAtoyanPage(params: {
   );
 
   const faqSchemaJsonLd = generateFaqSchemaJsonLd(content.faqs);
+  const headMarkup = `${faqSchemaJsonLd}\n${HERO_TITLE_PHOTO_STYLE}`;
   const headScriptMeta = {
-    synth_header_script: faqSchemaJsonLd,
+    synth_header_script: headMarkup,
   };
 
   // Client Requirement: standard post_content must strictly remain empty ("")
@@ -499,7 +501,7 @@ export async function publishAtoyanPage(params: {
     },
     meta: {
       _inpost_head_script: headScriptMeta,
-      _inpost_head_script_synth_header_script: faqSchemaJsonLd,
+      _inpost_head_script_synth_header_script: headMarkup,
     },
   };
   if (pageTemplate) pagePayload.template = pageTemplate;
@@ -620,7 +622,7 @@ export async function publishAtoyanPage(params: {
       },
       body: JSON.stringify({
         post_id: createdPageId,
-        script: faqSchemaJsonLd,
+        script: headMarkup,
       }),
       signal: AbortSignal.timeout(10_000),
     });

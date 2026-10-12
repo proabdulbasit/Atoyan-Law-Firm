@@ -1171,7 +1171,7 @@ export default function Home() {
                           1000 x 583
                         </span>
                         <span className="text-xs px-2 py-0.5 rounded bg-good/10 text-good border border-good/20 font-medium">
-                          Light wash &bull; dark title
+                          Original photo &bull; hero opacity
                         </span>
                       </div>
                     </div>
@@ -1240,7 +1240,7 @@ export default function Home() {
                             <span className="font-mono text-accent">1000 × 583 px</span>
                           </div>
                           <p className="text-muted text-[11px] leading-relaxed">
-                            Uploaded to the media library and set as the WoodMart page-title photo, with a light wash so the dark title stays readable.
+                            Uploaded at full brightness and set as the WoodMart page-title photo. The hero background uses CSS opacity so the dark title stays readable.
                           </p>
                         </div>
 
