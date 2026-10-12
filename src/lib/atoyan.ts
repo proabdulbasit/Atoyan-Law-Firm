@@ -1,4 +1,5 @@
 import { decomposeKeyword } from "./keyword-utils";
+import { stripCopiedClasses } from "./seo-linking";
 import type {
   AtoyanLegalContent,
   AtoyanFaq,
@@ -13,14 +14,14 @@ export const ATOYAN_BANNER_ATTACHMENT_ID = 3899;
 export const ATOYAN_TESTIMONIALS_BG_ATTACHMENT_ID = 72;
 export const ATOYAN_CTA_BG_ATTACHMENT_ID = 383;
 
-export const ATOYAN_PHONE = "(747) 888-0077";
-export const ATOYAN_TOLL_FREE = "(888) 807-0077";
-export const ATOYAN_PHONE_LINK = "tel:747888-0077";
-export const ATOYAN_CONTACT_URL = "https://www.atoyanlaw.com/contact/";
+export const ATOYAN_PHONE = "(323) 968-0000";
+export const ATOYAN_TOLL_FREE = "(323) 203-4805";
+export const ATOYAN_PHONE_LINK = "tel:3239680000";
+export const ATOYAN_CONTACT_URL = "https://demo.wp-post.com/contact-us/";
 
 /**
  * Cloned sidebar practice area page IDs from Page 3933.
- * Preserves the exact 27 employment law cross-links on Atoyan Law Firm.
+ * Preserves the exact 27 employment law cross-links on WP Post Project.
  */
 export const ATOYAN_DEFAULT_SIDEBAR_IDS: number[] = [
   1590, 770, 791, 808, 821, 838, 852, 872, 888, 908, 925, 951, 970, 1070, 1090, 1044,
@@ -34,15 +35,15 @@ export const ATOYAN_TESTIMONIALS_SUB_HEADING = "Hear from Our Former Clients";
 
 export const ATOYAN_TESTIMONIALS_REVIEWS: TestimonialReviewItem[] = [
   {
-    title: "\"I recommend Atoyan Law with your legal concerns.\"",
+    title: "\"I recommend WP Post Project with your legal concerns.\"",
     description:
       "I just had a consultation with attorny Angela Atoyan. I am very satisfied with her professionalism. I am really and highly recommending to hire her as your attorney. Thank you",
     name: "-  Hak H.",
   },
   {
-    title: "\"Thanks Atoyan Employment Law\"",
+    title: "\"Thanks WP Post Project\"",
     description:
-      "The legal team at Atoyan Employment law took my case almost from the first call. I had asked other firms but never got an answer, not even to reject my case. Great communication was a constant experience with Atoyan Employment Law.",
+      "The legal team at Atoyan Employment law took my case almost from the first call. I had asked other firms but never got an answer, not even to reject my case. Great communication was a constant experience with WP Post Project.",
     name: "- Edgar P.",
   },
   {
@@ -65,7 +66,7 @@ export const ATOYAN_TESTIMONIALS_REVIEWS: TestimonialReviewItem[] = [
     name: "- Yuri M.",
   },
   {
-    title: "\"I highly recommend Atoyan Law for your legal concerns and services!\"",
+    title: "\"I highly recommend WP Post Project for your legal concerns and services!\"",
     description:
       "I am empressed by their work responsibility. Every time i called they answered all my questions, help me with every problem that the accident caused.\r\n100% reccommended",
     name: "- George A.",
@@ -79,7 +80,7 @@ export const ATOYAN_TESTIMONIALS_REVIEWS: TestimonialReviewItem[] = [
   {
     title: "\"I would recommend this office to everyone.\"",
     description:
-      "I had a great experience working with Atoyan Employment Law. The team was very knowledgeable, caring, and professional throughout the entire process. I highly recommend Atoyan Employment Law to anyone in need of legal assistance.",
+      "I had a great experience working with WP Post Project. The team was very knowledgeable, caring, and professional throughout the entire process. I highly recommend WP Post Project to anyone in need of legal assistance.",
     name: "- Maria K.",
   },
 ];
@@ -105,13 +106,13 @@ export const ATOYAN_CTA_BUTTON = {
 };
 
 /**
- * Builds the signature Atoyan Law callout box with exact theme CSS classes.
+ * Builds the signature WP Post Project callout box with exact theme CSS classes.
  */
 export function formatCalloutBox(
   mainText: string,
-  linkCtaText = "Call (888) 807-0077 or contact us online",
+  linkCtaText = "Call (323) 968-0000 or contact us online",
 ): string {
-  return `<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>${mainText} <a href="${ATOYAN_PHONE_LINK}">${ATOYAN_PHONE}</a> or <a href="${ATOYAN_CONTACT_URL}">${linkCtaText}</a> to schedule a confidential legal consultation with Atoyan Law Firm.</strong></em></p>`;
+  return `<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>${mainText} <a href="${ATOYAN_PHONE_LINK}">${ATOYAN_PHONE}</a> or <a href="${ATOYAN_CONTACT_URL}">${linkCtaText}</a> to schedule a free consultation with WP Post Project.</strong></em></p>`;
 }
 
 /**
@@ -133,7 +134,7 @@ export function cleanFaqTextForSchema(raw: string): string {
   // 1. Strip the attorney CTA block (e.g., Talk to a ... Lawyer) and any trailing contact CTA
   text = text.replace(/<h[1-6][\s\S]*?(?:talk-to-|Talk to a)[\s\S]*$/i, "");
   text = text.replace(/If you believe your workplace rights were violated[\s\S]*?(?:807-0077|atoyanlaw\.com\/contact)[\s\S]*$/gi, "");
-  text = text.replace(/Contact Atoyan Law at \(888\) 807-0077[\s\S]*$/i, "");
+  text = text.replace(/Contact WP Post Project at \(888\) 807-0077[\s\S]*$/i, "");
 
   // Tag stripping regex that safely ignores '>' inside quoted attributes (e.g., Tailwind [&>p]:mt-2)
   const HTML_TAG_REGEX = /<(?:"[^"]*"|'[^']*'|[^"'>])+>/g;
@@ -239,7 +240,7 @@ export function generateFaqSchemaJsonLd(faqs: AtoyanFaq[]): string {
  * 2. Uses the exact HTML classes and markup recognized by ea-style.css and the site-wide
  *    footer toggle script (wp-content-autopilot-accordion-js / handleAccordionToggle).
  * 3. Formats all 8-10 California employment legal FAQs with statutory depth.
- * 4. Ensures the 10th/final FAQ includes David's exact localized CTA block with phone (888) 807-0077
+ * 4. Ensures the 10th/final FAQ includes David's exact localized CTA block with phone (323) 968-0000
  *    and contact link.
  */
 export function generateNativeEasyAccordionHtml(
@@ -279,7 +280,7 @@ export function generateNativeEasyAccordionHtml(
 
     // Ensure 10th/last FAQ item concludes with localized Atoyan attorney CTA
     if (isLast && !answerHtml.includes("Talk to a") && !answerHtml.includes("807-0077")) {
-      const ctaBlock = `\r\n<h2 id="talk-to-a-${citySlug}-${topicSlug}-lawyer" class="font-semibold leading-tight text-pretty mb-2 mt-4 text-base">Talk to a ${resolvedCity} ${cleanTopic} Lawyer</h2>\r\n<p class="my-2">If you believe your workplace rights were violated, time limits apply under California law. <strong>Contact Atoyan Law at (888) 807-0077</strong> or through the online form at <a class="reset interactable cursor-pointer decoration-1 underline-offset-1 text-super-primary hover:underline" href="https://www.atoyanlaw.com/contact/" target="_blank" rel="noopener"><span class="text-box-trim-both">atoyanlaw.com</span></a> for a free, confidential case evaluation.</p>`;
+      const ctaBlock = `\r\n<h2 id="talk-to-a-${citySlug}-${topicSlug}-lawyer">Talk to a ${resolvedCity} ${cleanTopic} Lawyer</h2>\r\n<p>If you believe your workplace rights were violated, time limits apply under California law. <strong>Contact WP Post Project at (323) 968-0000</strong> or through the online form at <a href="https://demo.wp-post.com/contact-us/" target="_blank" rel="noopener">demo.wp-post.com</a> for a free, confidential case evaluation.</p>`;
       answerHtml += ctaBlock;
     }
 
@@ -449,7 +450,7 @@ export function buildDemoPageContent(
       ? `<h2>${faqHeading}</h2>\n${visibleFaqs}`
       : "";
 
-  return [
+  return stripCopiedClasses([
     `<p><h2>${heading}</h2>\n${image}${subheading}\n${intro}`.trim(),
     `<!-- add -->\n[html_block id="${DEMO_DIRECTIONS_BLOCK_ID}"]\n<!-- // -->`,
     rest,
@@ -461,7 +462,7 @@ export function buildDemoPageContent(
     `<!-- testimonials -->\n[html_block id="${DEMO_TESTIMONIALS_BLOCK_ID}"]\n<!--//testimonials -->`,
   ]
     .filter((part) => part && part.trim())
-    .join("\n\n");
+    .join("\n\n"));
 }
 
 /**
@@ -785,9 +786,9 @@ export function buildCompensationSection(
       claimType = "disability discrimination claim";
     }
 
-    cleanIntro = `<p>If you ${harmText}.</p>\r\n\r\n<p>${adviceText}</p>\r\n\r\n<p>${lawText}.</p>\r\n\r\n<p>If you believe ${claimText} in ${city}, Atoyan Employment Law can help you understand your rights and evaluate your potential ${claimType}. <a href="/contact/">Contact</a> the firm to discuss what happened and learn what options may be available to you.</p>`;
-  } else if (!cleanIntro.includes('href="/contact/"') && !cleanIntro.includes('href="https://www.atoyanlaw.com/contact/"')) {
-    cleanIntro = `${cleanIntro}\r\n\r\n<p>If you believe your rights were violated in ${city}, Atoyan Employment Law can help you understand your rights and evaluate your potential claim. <a href="/contact/">Contact</a> the firm to discuss what happened and learn what options may be available to you.</p>`;
+    cleanIntro = `<p>If you ${harmText}.</p>\r\n\r\n<p>${adviceText}</p>\r\n\r\n<p>${lawText}.</p>\r\n\r\n<p>If you believe ${claimText} in ${city}, WP Post Project can help you understand your rights and evaluate your potential ${claimType}. <a href="/contact/">Contact</a> the firm to discuss what happened and learn what options may be available to you.</p>`;
+  } else if (!cleanIntro.includes('href="/contact/"') && !cleanIntro.includes('href="https://demo.wp-post.com/contact-us/"')) {
+    cleanIntro = `${cleanIntro}\r\n\r\n<p>If you believe your rights were violated in ${city}, WP Post Project can help you understand your rights and evaluate your potential claim. <a href="/contact/">Contact</a> the firm to discuss what happened and learn what options may be available to you.</p>`;
   }
 
   // Return compensation intro followed by the standard Easy Accordion shortcode

@@ -18,7 +18,7 @@ import {
 } from "./atoyan";
 import { createEasyAccordion } from "./accordion-creator";
 import { decomposeKeyword } from "./keyword-utils";
-import { saveYoastSeoFields, setWoodmartTitleImage } from "./wp-admin";
+import { saveEasyAccordionItems, saveYoastSeoFields, setWoodmartTitleImage } from "./wp-admin";
 
 function siteHost(siteUrl: string): string {
   try {
@@ -170,7 +170,28 @@ export async function updateYoastSeo(params: {
       Array.isArray(data?.results) &&
       data.results.length > 0 &&
       data.results.every((item) => item?.success);
-    if (saved) return true;
+    if (saved) {
+      await fetch(`${cleanBase}/wp-json/yoast/v1/bulk_editor/update_social`, {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${authHeader}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              id: postId,
+              social_title: title,
+              social_description: descriptionText,
+            },
+          ],
+        }),
+        signal: AbortSignal.timeout(20_000),
+      }).catch((err) => {
+        console.warn("Yoast social update failed:", err);
+      });
+      return true;
+    }
     console.warn("Yoast REST update did not persist the meta description.");
   } catch (err) {
     console.warn("Yoast REST update failed:", err);
@@ -396,10 +417,24 @@ export async function publishAtoyanPage(params: {
         wpPassword,
       });
       if (demoSite && accordionResult.source !== "wp-admin") {
-        accordionShortcode = "";
-        accordionId = undefined;
-        content.accordionShortcode = "";
-        console.warn("[Atoyan WordPress] Demo accordion was created without its questions. The page will show the questions in the body instead.");
+        const saved = accordionResult.id
+          ? await saveEasyAccordionItems({
+              wpSiteUrl: cleanBase,
+              postId: accordionResult.id,
+              title: `10 Most Asked Questions About ${content.keyword || "Employment Law"}`,
+              faqs: content.faqs,
+            })
+          : false;
+        if (saved) {
+          accordionShortcode = `[sp_easyaccordion id="${accordionResult.id}"]`;
+          accordionId = accordionResult.id;
+          content.accordionShortcode = accordionShortcode;
+        } else {
+          accordionShortcode = "";
+          accordionId = undefined;
+          content.accordionShortcode = "";
+          console.warn("[Atoyan WordPress] Demo accordion was created without its questions. The page will show the questions in the body instead.");
+        }
       } else {
         accordionShortcode = accordionResult.shortcode;
         accordionId = accordionResult.id;
@@ -730,8 +765,8 @@ export async function publishToWordPress(params: {
     compensationHeading: "Legal Recovery & Damages",
     compensationIntro: cta,
     faqs: [],
-    yoastTitle: `${title} | Atoyan Law Firm`,
-    yoastMetaDesc: `Experienced attorney for ${title}. Free confidential consultation.`,
+    yoastTitle: `${title} | WP Post Project`,
+    yoastMetaDesc: `WP Post Project can help with ${title}. Free consultation: (323) 968-0000.`,
     yoastFocusKw: title,
   };
 

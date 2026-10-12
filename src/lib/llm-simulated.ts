@@ -166,18 +166,18 @@ export function generateAtoyanSimulated(keyword: string, city: string): AtoyanLe
 // DAVID ATOYAN APPROVED 10-QUESTION HIGH-INTENT GOOGLE SEARCH FAQ ENGINE
 // -----------------------------------------------------------------------------
 function faqP(text: string): string {
-  return `<p class="my-2 [&+p]:mt-4 [&_strong:has(+br)]:inline-block [&_strong:has(+br)]:align-top">${text}</p>`;
+  return `<p>${text}</p>`;
 }
 
 function faqUl(items: string[]): string {
-  return `<ul class="marker:text-secondary list-disc pl-8">\n` +
-    items.map(it => ` \t<li class="py-0 my-0 prose-p:pt-0 prose-p:mb-2 prose-p:my-0 [&>p]:pt-0 [&>p]:mb-2 [&>p]:my-0">\n<p class="my-2 [&+p]:mt-4 [&_strong:has(+br)]:inline-block [&_strong:has(+br)]:align-top">${it}</p>\n</li>`).join("\n") +
+  return `<ul>\n` +
+    items.map(it => ` \t<li>\n<p>${it}</p>\n</li>`).join("\n") +
     `\n</ul>`;
 }
 
 function faqOl(items: string[]): string {
-  return `<ol class="marker:text-secondary list-decimal pl-8">\n` +
-    items.map(it => ` \t<li class="py-0 my-0 prose-p:pt-0 prose-p:mb-2 prose-p:my-0 [&>p]:pt-0 [&>p]:mb-2 [&>p]:my-0">\n<p class="my-2 [&+p]:mt-4 [&_strong:has(+br)]:inline-block [&_strong:has(+br)]:align-top">${it}</p>\n</li>`).join("\n") +
+  return `<ol>\n` +
+    items.map(it => ` \t<li>\n<p>${it}</p>\n</li>`).join("\n") +
     `\n</ol>`;
 }
 
@@ -241,7 +241,7 @@ export function buildStatutoryDeadlineTableHtml(city: string): string {
 </table>
 </div>
 </div>\n\n` +
-  faqP(`The clock generally starts on the date you are notified of the adverse action or termination, not the date you later realize the conduct was unlawful (<a class="reset interactable cursor-pointer decoration-1 underline-offset-1 text-super-primary hover:underline" href="https://leginfo.legislature.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">California Code of Civil Procedure § 335.1</span></a>). Because these deadlines are firm and easy to miss, it is best to contact an attorney in ${city} as soon as possible.`);
+  faqP(`The clock generally starts on the date you are notified of the adverse action or termination, not the date you later realize the conduct was unlawful (<a href="https://leginfo.legislature.ca.gov" target="_blank" rel="nofollow noopener"><span>California Code of Civil Procedure § 335.1</span></a>). Because these deadlines are firm and easy to miss, it is best to contact an attorney in ${city} as soon as possible.`);
 }
 
 function buildImmediateActionStepsHtml(): string {
@@ -252,7 +252,7 @@ function buildImmediateActionStepsHtml(): string {
     `<strong>Request your personnel file</strong> — California employees have the statutory right to inspect and copy employment records under Labor Code § 1198.5.`,
     `<strong>Preserve documents you lawfully possess</strong>, such as pay stubs, termination or disciplinary letters, performance reviews, text messages, and personal notes. Do not access, download, or remove confidential company documents without first speaking to an attorney.`,
     `<strong>Write down a timeline</strong> of key events while your memory is fresh, including dates of any complaints, protected activity, and the employer's stated reasons.`,
-    `<strong>Apply for unemployment benefits</strong> promptly through the <a class="reset interactable cursor-pointer decoration-1 underline-offset-1 text-super-primary hover:underline" href="https://edd.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">California EDD</span></a> (unlawful firings or constructive discharges are generally not disqualifying "misconduct").`,
+    `<strong>Apply for unemployment benefits</strong> promptly through the <a href="https://edd.ca.gov" target="_blank" rel="nofollow noopener"><span>California EDD</span></a> (unlawful firings or constructive discharges are generally not disqualifying "misconduct").`,
     `<strong>Document job-search efforts</strong> — most damages require you to "mitigate" by actively seeking replacement work.`,
     `<strong>Contact an employment lawyer</strong> before filing deadlines run — some claims require an administrative filing (with the CRD or EEOC) before any lawsuit can be filed.`,
   ]);
@@ -261,7 +261,7 @@ function buildImmediateActionStepsHtml(): string {
 function buildAtoyanAttorneyCtaBlock(city: string, cleanTopic: string): string {
   const citySlug = city.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const topicSlug = cleanTopic.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  return `\r\n<h2 id="talk-to-a-${citySlug}-${topicSlug}-lawyer" class="font-semibold leading-tight text-pretty mb-2 mt-4 [.has-inline-images_&]:clear-end text-base first:mt-0">Talk to a ${city} ${cleanTopic} Lawyer</h2>\r\n<p class="my-2 [&+p]:mt-4 [&_strong:has(+br)]:inline-block [&_strong:has(+br)]:align-top">If you believe your workplace rights were violated in ${city}, time limits apply under California law. <strong>Contact Atoyan Law at (888) 807-0077</strong> or through the online form at <a class="reset interactable cursor-pointer decoration-1 underline-offset-1 text-super-primary hover:underline" href="https://www.atoyanlaw.com/contact/" target="_blank" rel="noopener"><span class="text-box-trim-both">atoyanlaw.com</span></a> for a free, confidential case evaluation.</p>`;
+  return `\r\n<h2 id="talk-to-a-${citySlug}-${topicSlug}-lawyer">Talk to a ${city} ${cleanTopic} Lawyer</h2>\r\n<p>If you believe your workplace rights were violated in ${city}, time limits apply under California law. <strong>Contact WP Post Project at (323) 968-0000</strong> or through the online form at <a href="https://demo.wp-post.com/contact-us/" target="_blank" rel="noopener">demo.wp-post.com</a> for a free, confidential case evaluation.</p>`;
 }
 
 export function buildDavidAtoyanFaqs(
@@ -281,7 +281,7 @@ export function buildDavidAtoyanFaqs(
           question: `What Qualifies as Race Discrimination in ${city}, California?`,
           answer: faqP(`Race discrimination occurs when an employer treats an employee or job applicant unfavorably because of their race, skin color, ancestry, or national origin. California law prohibits racial bias across all aspects of employment, including hiring, pay, job assignments, promotions, discipline, and termination.`) +
             `\n\n` +
-            faqP(`Under California's Fair Employment and Housing Act (FEHA, <a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">Gov Code § 12940(a)</span></a>), employers with five or more employees cannot discriminate based on protected characteristics. Furthermore, California's CROWN Act (Gov Code § 12926(w)) explicitly extends racial protection to hair texture and historical hairstyles such as braids, locs, twists, and afros.`)
+            faqP(`Under California's Fair Employment and Housing Act (FEHA, <a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span>Gov Code § 12940(a)</span></a>), employers with five or more employees cannot discriminate based on protected characteristics. Furthermore, California's CROWN Act (Gov Code § 12926(w)) explicitly extends racial protection to hair texture and historical hairstyles such as braids, locs, twists, and afros.`)
         },
         {
           question: `What Are Common Examples of Race Discrimination at Work?`,
@@ -299,7 +299,7 @@ export function buildDavidAtoyanFaqs(
           question: `Can I Sue My Employer for Race Discrimination in ${city}?`,
           answer: faqP(`Yes. If your employer subjected you to race discrimination or tolerated a racially hostile work environment in ${city}, you have the legal right to pursue civil justice under FEHA and federal Title VII of the Civil Rights Act.`) +
             `\n\n` +
-            faqP(`Before filing a lawsuit in California Superior Court, an employee must first exhaust administrative remedies by securing a Right-to-Sue notice from the <a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">California Civil Rights Department</span></a> (CRD). An experienced ${city} employment attorney can file this on your behalf and seek full financial compensation.`)
+            faqP(`Before filing a lawsuit in California Superior Court, an employee must first exhaust administrative remedies by securing a Right-to-Sue notice from the <a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span>California Civil Rights Department</span></a> (CRD). An experienced ${city} employment attorney can file this on your behalf and seek full financial compensation.`)
         },
         {
           question: `Can My Employer Fire Me Because of My Race?`,
@@ -311,7 +311,7 @@ export function buildDavidAtoyanFaqs(
           question: `Can My Employer Retaliate Against Me for Reporting Race Discrimination?`,
           answer: faqP(`No. California strictly forbids employers from taking adverse action against any employee for opposing racial discrimination, filing an HR complaint, or participating in an investigation.`) +
             `\n\n` +
-            faqP(`Under <strong>California Senate Bill 497 (effective January 1, 2024)</strong>, when an employer takes an adverse action—such as termination, demotion, suspension, or hour reductions—within <strong>90 days</strong> of an employee's complaint, retaliation is legally presumed under <a class="reset interactable cursor-pointer decoration-1 underline-offset-1 text-super-primary hover:underline" href="https://leginfo.legislature.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">California Labor Code § 98.6</span></a> and § 1102.5. The employer bears the burden to prove a legitimate, non-retaliatory reason.`)
+            faqP(`Under <strong>California Senate Bill 497 (effective January 1, 2024)</strong>, when an employer takes an adverse action—such as termination, demotion, suspension, or hour reductions—within <strong>90 days</strong> of an employee's complaint, retaliation is legally presumed under <a href="https://leginfo.legislature.ca.gov" target="_blank" rel="nofollow noopener"><span>California Labor Code § 98.6</span></a> and § 1102.5. The employer bears the burden to prove a legitimate, non-retaliatory reason.`)
         },
         {
           question: `What Evidence Do I Need for a Workplace Race Discrimination Case?`,
@@ -512,7 +512,7 @@ export function buildDavidAtoyanFaqs(
       return [
         {
           question: `What Qualifies as Unlawful Workplace Harassment Under California FEHA?`,
-          answer: faqP(`Under the California Fair Employment and Housing Act (FEHA, <a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">Gov Code § 12940(j)</span></a>), workplace harassment consists of unwelcome, discriminatory verbal, visual, or physical conduct directed at an employee because of a legally protected characteristic.`) +
+          answer: faqP(`Under the California Fair Employment and Housing Act (FEHA, <a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span>Gov Code § 12940(j)</span></a>), workplace harassment consists of unwelcome, discriminatory verbal, visual, or physical conduct directed at an employee because of a legally protected characteristic.`) +
             `\n\n` +
             faqP(`Unlike routine workplace friction or personality clashes, unlawful harassment targets an individual's protected identity and creates an intimidating, hostile, offensive, or abusive working environment that unreasonably interferes with their job performance.`)
         },
@@ -590,7 +590,7 @@ export function buildDavidAtoyanFaqs(
       return [
         {
           question: `What Qualifies as Sexual Harassment in the Workplace Under California Law?`,
-          answer: faqP(`Under California's Fair Employment and Housing Act (FEHA, <a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">Gov Code § 12940(j)</span></a>), sexual harassment includes unwelcome sexual advances, requests for sexual favors, and other verbal, visual, or physical conduct of a sexual nature.`) +
+          answer: faqP(`Under California's Fair Employment and Housing Act (FEHA, <a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span>Gov Code § 12940(j)</span></a>), sexual harassment includes unwelcome sexual advances, requests for sexual favors, and other verbal, visual, or physical conduct of a sexual nature.`) +
             `\n\n` +
             faqP(`California recognizes two primary forms of sexual harassment: <strong>Quid Pro Quo</strong> (where job benefits or continued employment are conditioned on submitting to sexual demands) and <strong>Hostile Work Environment</strong> (where severe or pervasive conduct alters working conditions and creates an intimidating, abusive workplace).`)
         },
@@ -668,7 +668,7 @@ export function buildDavidAtoyanFaqs(
           question: `What Qualifies as Disability Discrimination in the Workplace Under California FEHA?`,
           answer: faqP(`California's Fair Employment and Housing Act (FEHA) provides much broader disability protections than the federal Americans with Disabilities Act (ADA).`) +
             `\n\n` +
-            faqP(`Under FEHA (<a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">Gov Code § 12926</span></a>), an employee has a protected disability if they have a physical or mental impairment that simply limits a major life activity (such as working, walking, sleeping, or concentrating). Under federal law, the impairment must "substantially" limit, making California significantly more protective of workers.`)
+            faqP(`Under FEHA (<a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span>Gov Code § 12926</span></a>), an employee has a protected disability if they have a physical or mental impairment that simply limits a major life activity (such as working, walking, sleeping, or concentrating). Under federal law, the impairment must "substantially" limit, making California significantly more protective of workers.`)
         },
         {
           question: `What Are Common Examples of Disability Discrimination and Failure to Accommodate?`,
@@ -731,7 +731,7 @@ export function buildDavidAtoyanFaqs(
       return [
         {
           question: `What Are My Family and Medical Leave Rights Under CFRA and FMLA in California?`,
-          answer: faqP(`Under the California Family Rights Act (CFRA, <a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">Gov Code § 12945.2</span></a>) and federal FMLA, eligible employees have the right to take up to <strong>12 weeks of job-protected leave</strong> per year for their own serious health condition, to care for a family member, or to bond with a new child.`) +
+          answer: faqP(`Under the California Family Rights Act (CFRA, <a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span>Gov Code § 12945.2</span></a>) and federal FMLA, eligible employees have the right to take up to <strong>12 weeks of job-protected leave</strong> per year for their own serious health condition, to care for a family member, or to bond with a new child.`) +
             `\n\n` +
             faqP(`In California, CFRA applies to all employers with <strong>5 or more employees</strong> (compared to 50 under federal FMLA), dramatically expanding leave rights for California workers.`)
         },
@@ -814,7 +814,7 @@ export function buildDavidAtoyanFaqs(
         },
         {
           question: `What Is California's 90-Day Retaliation Presumption Under Senate Bill 497?`,
-          answer: faqP(`Effective January 1, 2024, California Senate Bill 497 amended <a class="reset interactable cursor-pointer decoration-1 underline-offset-1 text-super-primary hover:underline" href="https://leginfo.legislature.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">Labor Code § 98.6</span></a> and § 1102.5 to establish that if an employer takes adverse action within <strong>90 days</strong> of protected conduct, retaliation is legally presumed.`) +
+          answer: faqP(`Effective January 1, 2024, California Senate Bill 497 amended <a href="https://leginfo.legislature.ca.gov" target="_blank" rel="nofollow noopener"><span>Labor Code § 98.6</span></a> and § 1102.5 to establish that if an employer takes adverse action within <strong>90 days</strong> of protected conduct, retaliation is legally presumed.`) +
             `\n\n` +
             faqP(`Under the California Supreme Court's ruling in <em>Lawson v. PPG Architectural Finishes, Inc.</em> (2022), the employee only needs to show that protected activity was a contributing factor. The employer must then prove by clear and convincing evidence that it would have made the same decision anyway.`)
         },
@@ -848,7 +848,7 @@ export function buildDavidAtoyanFaqs(
       return [
         {
           question: `What Counts as Wrongful Termination Under California Law?`,
-          answer: faqP(`California is an "at-will" employment state, meaning an employer can generally end employment for any reason—as long as the reason is not illegal (<a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">California Civil Rights Department</span></a>). A termination becomes wrongful when it violates statutory law, public policy, or an employment agreement.`) +
+          answer: faqP(`California is an "at-will" employment state, meaning an employer can generally end employment for any reason—as long as the reason is not illegal (<a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span>California Civil Rights Department</span></a>). A termination becomes wrongful when it violates statutory law, public policy, or an employment agreement.`) +
             `\n\n` +
             faqP(`The most common illegal grounds for termination include discrimination based on protected classes, retaliation for exercising legal rights, whistleblowing under Labor Code § 1102.5, taking protected medical leave under CFRA/FMLA, and violations of California's <em>Tameny</em> public policy doctrine.`)
         },
@@ -891,7 +891,7 @@ export function buildDavidAtoyanFaqs(
         },
         {
           question: `Can I Still Collect Unemployment Benefits (EDD) If I Was Fired?`,
-          answer: faqP(`Yes, in most cases. Being terminated does not disqualify you from unemployment insurance unless you were fired for gross misconduct connected to your work (<a class="reset interactable cursor-pointer decoration-1 underline-offset-1 text-super-primary hover:underline" href="https://edd.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">California EDD</span></a>). A wrongful termination is not legal misconduct, so you should apply promptly.`)
+          answer: faqP(`Yes, in most cases. Being terminated does not disqualify you from unemployment insurance unless you were fired for gross misconduct connected to your work (<a href="https://edd.ca.gov" target="_blank" rel="nofollow noopener"><span>California EDD</span></a>). A wrongful termination is not legal misconduct, so you should apply promptly.`)
         },
         {
           question: `What Steps Should I Take Immediately After Being Wrongfully Terminated?`,
@@ -939,11 +939,11 @@ Under FEHA, racial discrimination generally falls into two foundational legal do
   <li><strong>Disparate Impact</strong>: When an employer implements facially neutral policies or operational practices that fall with disproportionate harshness on a particular racial or ethnic group and cannot be justified by strict business necessity.</li>
 </ul>
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Experiencing racial harassment, slurs, or systemic bias at work in ${resolvedCity}? That is not just unfair - it is illegal under California law. Call Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a> or <a href="/contact/">contact us online</a> to schedule a confidential case evaluation.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Experiencing racial harassment, slurs, or systemic bias at work in ${resolvedCity}? That is not just unfair - it is illegal under California law. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a> or <a href="/contact/">contact us online</a> to schedule a confidential case evaluation.</strong></em></p>
 
 <h2 class="h2dav">How does racial discrimination manifest in California workplaces?</h2>
 
-Racial bias distorts every stage of the employment relationship. In our litigation practice at Atoyan Law Firm, we see employers deploy countless deceptive tactics to marginalize employees of color while maintaining a veneer of professional compliance.
+Racial bias distorts every stage of the employment relationship. In our litigation practice at WP Post Project, we see employers deploy countless deceptive tactics to marginalize employees of color while maintaining a veneer of professional compliance.
 
 <h3 class="h3dav">1. Discriminatory Hiring, Assignment, and Channeling</h3>
 Racial discrimination often begins before a worker even clocks in for their first shift. Qualified minority candidates are routinely steered away from high-visibility, customer-facing, or executive leadership roles and pushed into low-wage backroom positions. In ${resolvedCity}, this takes the form of subjective interview scoring where white applicants are praised for "cultural fit" while minority candidates with superior credentials are rejected without explanation.
@@ -965,7 +965,7 @@ Examples of actionable racial harassment include:
   <li>Targeted hyper-scrutiny where supervisors closely police the arrival times, breaks, phone usage, or email drafts of minority employees while ignoring the identical conduct of white workers.</li>
 </ul>
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your employer ignore your complaints about racial slurs or workplace harassment? California law holds companies strictly liable when leadership fails to protect you. Atoyan Law Firm fights for California workers. Call <a href="tel:8888070077">(888) 807-0077</a> today.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your employer ignore your complaints about racial slurs or workplace harassment? California law holds companies strictly liable when leadership fails to protect you. WP Post Project fights for California workers. Call <a href="tel:3239680000">(323) 968-0000</a> today.</strong></em></p>
 
 <h2 class="h2dav">Can an employer enforce grooming codes against natural hair or braids?</h2>
 
@@ -1029,9 +1029,9 @@ ${buildAdministrativeRoadmap("Race Discrimination", resolvedCity)}
 ${buildIndustryScenarios("Race Discrimination", resolvedCity)}
 `.trim();
 
-  const howDoHeading = `How Can a ${resolvedCity} Race Discrimination Lawyer at Atoyan Law Help?`;
+  const howDoHeading = `How Can a ${resolvedCity} Race Discrimination Lawyer at WP Post Project Help?`;
   const howDoContent = `
-<strong>Investigate and uncover hidden comparator evidence</strong>. Proving racial bias requires showing that white employees were treated more favorably. Atoyan Law subpoenas corporate personnel files, salary histories, and promotional data to demonstrate systemic bias.
+<strong>Investigate and uncover hidden comparator evidence</strong>. Proving racial bias requires showing that white employees were treated more favorably. WP Post Project subpoenas corporate personnel files, salary histories, and promotional data to demonstrate systemic bias.
 
 <strong>Neutralize employer pretext</strong>. When companies claim a termination was based on "restructuring" or "poor performance," we dismantle their excuses by highlighting years of positive reviews and exposing shifting corporate explanations.
 
@@ -1042,9 +1042,9 @@ ${buildIndustryScenarios("Race Discrimination", resolvedCity)}
 
   const compensationHeading = `What Results and Compensation Can I Expect from a ${resolvedCity} Race Discrimination Claim?`;
   const compensationIntro = `
-You have the right to work in an environment where your skills and labor are respected, free from the indignity of racial prejudice. You have the right to equal pay, fair promotions, and a workplace free from racial hostility. You have the right to <a href="https://www.atoyanlaw.com/practice-areas/employment-law/what-is-employment-discrimination/">report discrimination</a> without fearing retaliatory termination from your employer.
+You have the right to work in an environment where your skills and labor are respected, free from the indignity of racial prejudice. You have the right to equal pay, fair promotions, and a workplace free from racial hostility. You have the right to <a href="https://demo.wp-post.com/contact-us/">report discrimination</a> without fearing retaliatory termination from your employer.
 
-Racial discrimination inflicts deep financial, professional, and psychological harm on workers and their families. California law provides powerful civil remedies to right these wrongs. If you experienced racial discrimination or harassment in ${resolvedCity}, contact Atoyan Law. We provide confidential, compassionate, and aggressive legal representation. Real answers. Call <a href="tel:8888070077">(888) 807-0077</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} race discrimination lawyers</b>.
+Racial discrimination inflicts deep financial, professional, and psychological harm on workers and their families. California law provides powerful civil remedies to right these wrongs. If you experienced racial discrimination or harassment in ${resolvedCity}, contact WP Post Project. We provide confidential, compassionate, and aggressive legal representation. Real answers. Call <a href="tel:3239680000">(323) 968-0000</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} race discrimination lawyers</b>.
 `.trim();
 
   const faqs: AtoyanFaq[] = buildDavidAtoyanFaqs("race_discrimination", resolvedCity, cleanTopic);
@@ -1062,8 +1062,8 @@ Racial discrimination inflicts deep financial, professional, and psychological h
     compensationIntro,
     accordionShortcode: shortcode,
     faqs,
-    yoastTitle: `${resolvedCity} Race Discrimination Lawyer | Atoyan Law`,
-    yoastMetaDesc: `Top-rated ${resolvedCity} race discrimination attorney fighting for employees facing workplace bias, harassment, and wrongful termination. Call (888) 807-0077.`,
+    yoastTitle: `${resolvedCity} Race Discrimination Lawyer | WP Post Project`,
+    yoastMetaDesc: `Top-rated ${resolvedCity} race discrimination attorney fighting for employees facing workplace bias, harassment, and wrongful termination. Call (323) 968-0000.`,
     yoastFocusKw: `${resolvedCity} race discrimination`,
   };
 }
@@ -1099,7 +1099,7 @@ Common manifestations of wage theft under California law include:
   <li><strong>Illegal Wage Deductions and Stolen Tips</strong>: Deducting uniform costs, cash register shortages, equipment expenses, or stealing portions of customer gratuities.</li>
 </ul>
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your employer cheat you out of overtime, make you work off the clock, or misclassify your position in ${resolvedCity}? That is wage theft, and California law penalizes it heavily. Call Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a> or <a href="/contact/">contact us online</a>.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your employer cheat you out of overtime, make you work off the clock, or misclassify your position in ${resolvedCity}? That is wage theft, and California law penalizes it heavily. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a> or <a href="/contact/">contact us online</a>.</strong></em></p>
 
 <h2 class="h2dav">What is overtime under California law?</h2>
 
@@ -1134,7 +1134,7 @@ Common off-the-clock violations in ${resolvedCity} include:
   <li>Contacting employees via phone, email, text message, or WhatsApp during off-duty hours to answer work inquiries or solve operational emergencies without compensation.</li>
 </ul>
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Were you forced to work before clocking in or after clocking out in ${resolvedCity}? In California, you are entitled to full pay plus statutory interest and penalties. Call Atoyan Law Firm at <a href="tel:8888070077">(888) 807-0077</a> for a free consultation.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Were you forced to work before clocking in or after clocking out in ${resolvedCity}? In California, you are entitled to full pay plus statutory interest and penalties. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a> for a free consultation.</strong></em></p>
 
 <h2 class="h2dav">What if my employer says I am salaried or exempt?</h2>
 
@@ -1167,7 +1167,7 @@ Under California Labor Code § 226, employers must provide accurate, itemized wa
 
 When an employer fails to provide accurate pay stubs—or fails to record all hours worked—employees can recover up to $4,000 in statutory penalties under Labor Code § 226(e), plus reasonable attorney fees.
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your employer fail to pay your final wages on time or give you inaccurate pay stubs? You could be owed thousands in California statutory penalties. Call Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a> today.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your employer fail to pay your final wages on time or give you inaccurate pay stubs? You could be owed thousands in California statutory penalties. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a> today.</strong></em></p>
 
 <h2 class="h2dav">How does an employee recover unpaid wages through the DLSE or California court?</h2>
 
@@ -1177,7 +1177,7 @@ When you have been victimized by wage theft, you have two primary legal avenues 
   <li><strong>Filing a Civil Lawsuit in Court</strong>: Litigating directly in California Superior Court, which allows you to pursue broad discovery, subpoena company payroll software records, add individual managers who violated the law under Labor Code § 558.1, and pursue Private Attorneys General Act (PAGA) representative claims.</li>
 </ol>
 
-At Atoyan Law Firm, we evaluate the full scope of your unpaid wage history. We analyze timesheets, POS records, GPS telematics, keycard swipes, and paystubs to build an ironclad accounting of every unpaid minute, overtime premium, and statutory penalty owed to you.
+At WP Post Project, we evaluate the full scope of your unpaid wage history. We analyze timesheets, POS records, GPS telematics, keycard swipes, and paystubs to build an ironclad accounting of every unpaid minute, overtime premium, and statutory penalty owed to you.
 
 
 ${buildEvidentiaryDeepDive("Wage Theft and Overtime Violations", resolvedCity)}
@@ -1191,7 +1191,7 @@ ${buildAdministrativeRoadmap("Wage Theft and Overtime Violations", resolvedCity)
 ${buildIndustryScenarios("Wage Theft and Overtime Violations", resolvedCity)}
 `.trim();
 
-  const howDoHeading = `How Can a ${resolvedCity} Wage Theft and Overtime Lawyer at Atoyan Law Help?`;
+  const howDoHeading = `How Can a ${resolvedCity} Wage Theft and Overtime Lawyer at WP Post Project Help?`;
   const howDoContent = `
 <strong>Gather and preserve your personal time records</strong>. Do not rely exclusively on your employer's electronic timekeeping portal, which management can edit or lock you out of upon termination. Keep photographs of your paper timesheets, punch logs, Google location history, and work schedules.
 
@@ -1199,14 +1199,14 @@ ${buildIndustryScenarios("Wage Theft and Overtime Violations", resolvedCity)}
 
 <strong>Do not sign any severance or release of wage claims</strong>. Under California Labor Code § 206.5, it is a misdemeanor for an employer to require an employee to execute a release of claims for wages that are concededly due unless full payment has been made.
 
-<strong>Let Atoyan Law Firm calculate your full damages</strong>. Many employees assume they are only owed a few hundred dollars, only to discover that statutory interest, waiting time penalties, meal break premiums, and liquidated damages push their total recovery into tens or hundreds of thousands of dollars.
+<strong>Let WP Post Project calculate your full damages</strong>. Many employees assume they are only owed a few hundred dollars, only to discover that statutory interest, waiting time penalties, meal break premiums, and liquidated damages push their total recovery into tens or hundreds of thousands of dollars.
 `.trim();
 
   const compensationHeading = `What Results and Compensation Can I Expect from a ${resolvedCity} Wage Theft Claim?`;
   const compensationIntro = `
-You have the right to be paid every cent you have earned through your hard work and labor. You have the right to accurate overtime rates, complete wage statements, and prompt final paychecks. You have the right to <a href="https://www.atoyanlaw.com/practice-areas/employment-law/what-is-employment-discrimination/">report discrimination</a> and wage violations without facing retaliatory termination or harassment from management.
+You have the right to be paid every cent you have earned through your hard work and labor. You have the right to accurate overtime rates, complete wage statements, and prompt final paychecks. You have the right to <a href="https://demo.wp-post.com/contact-us/">report discrimination</a> and wage violations without facing retaliatory termination or harassment from management.
 
-Wage theft takes a devastating toll on your household. It strains your ability to pay rent, afford healthcare, provide for your children, and plan for your future. But California labor law provides severe financial penalties against employers who cheat their workers. If your employer withheld your wages, cheated your overtime, or misclassified your job in ${resolvedCity}, call us. Atoyan Law offers confidential, no-pressure legal consultations. Real answers. Call <a href="tel:8888070077">(888) 807-0077</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} wage theft lawyers</b>.
+Wage theft takes a devastating toll on your household. It strains your ability to pay rent, afford healthcare, provide for your children, and plan for your future. But California labor law provides severe financial penalties against employers who cheat their workers. If your employer withheld your wages, cheated your overtime, or misclassified your job in ${resolvedCity}, call us. WP Post Project offers confidential, no-pressure legal consultations. Real answers. Call <a href="tel:3239680000">(323) 968-0000</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} wage theft lawyers</b>.
 `.trim();
 
   const faqs: AtoyanFaq[] = buildDavidAtoyanFaqs("wage_theft", resolvedCity, cleanTopic);
@@ -1224,8 +1224,8 @@ Wage theft takes a devastating toll on your household. It strains your ability t
     compensationIntro,
     accordionShortcode: shortcode,
     faqs,
-    yoastTitle: `${resolvedCity} Wage Theft & Overtime Lawyer | Atoyan Law`,
-    yoastMetaDesc: `Experienced ${resolvedCity} wage theft attorney fighting for unpaid overtime, off-the-clock pay, misclassification & waiting time penalties. Call (888) 807-0077.`,
+    yoastTitle: `${resolvedCity} Wage Theft & Overtime Lawyer | WP Post Project`,
+    yoastMetaDesc: `Experienced ${resolvedCity} wage theft attorney fighting for unpaid overtime, off-the-clock pay, misclassification & waiting time penalties. Call (323) 968-0000.`,
     yoastFocusKw: `${resolvedCity} wage theft`,
   };
 }
@@ -1265,7 +1265,7 @@ In the landmark case Brinker Restaurant Corp. v. Superior Court (2012), the Cali
 </ol>
 If you are required to monitor a radio, answer client calls, remain on company premises, or sit at your workstation during your 30 minutes, your meal break is <strong>on-duty</strong> and illegal.
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Were your meal or rest breaks interrupted, delayed, or denied by your employer in ${resolvedCity}? Under California law, you are owed a full hour of premium pay for every day this occurred. Call Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a>.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Were your meal or rest breaks interrupted, delayed, or denied by your employer in ${resolvedCity}? Under California law, you are owed a full hour of premium pay for every day this occurred. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a>.</strong></em></p>
 
 <h2 class="h2dav">When should a ${resolvedCity} employee receive paid 10-minute rest breaks?</h2>
 
@@ -1292,7 +1292,7 @@ Under California Labor Code § 226.7:
 
 Over months or years of continuous employment, these statutory premium payments accumulate into substantial sums. For an employee earning $22 per hour who misses both a meal break and a rest break each day, the employer owes $44 per day in statutory premiums. That equals $220 weekly and over <strong>$11,000 across a single year</strong>, before adding statutory interest, waiting time penalties under Labor Code § 203, and attorney fees.
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your supervisor pressure you to skip lunch or cut your rest breaks short? Atoyan Law Firm recovers unpaid break premiums for California workers. Call <a href="tel:8888070077">(888) 807-0077</a> for a confidential case evaluation.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your supervisor pressure you to skip lunch or cut your rest breaks short? WP Post Project recovers unpaid break premiums for California workers. Call <a href="tel:3239680000">(323) 968-0000</a> for a confidential case evaluation.</strong></em></p>
 
 <h2 class="h2dav">What deceptive tactics do employers use to evade break violations?</h2>
 
@@ -1325,9 +1325,9 @@ ${buildAdministrativeRoadmap("Meal and Rest Break Violations", resolvedCity)}
 ${buildIndustryScenarios("Meal and Rest Break Violations", resolvedCity)}
 `.trim();
 
-  const howDoHeading = `How Can a ${resolvedCity} Meal and Rest Break Lawyer at Atoyan Law Help?`;
+  const howDoHeading = `How Can a ${resolvedCity} Meal and Rest Break Lawyer at WP Post Project Help?`;
   const howDoContent = `
-<strong>Audit your electronic timecard history</strong>. Employers often alter punch times or delete recorded hours to make shifts appear compliant. Atoyan Law reviews timecard audit trails, keycard access logs, and POS logins to prove break deprivation.
+<strong>Audit your electronic timecard history</strong>. Employers often alter punch times or delete recorded hours to make shifts appear compliant. WP Post Project reviews timecard audit trails, keycard access logs, and POS logins to prove break deprivation.
 
 <strong>Expose automatic meal deduction schemes</strong>. If your paycheck shows 30 minutes deducted every day while electronic logs prove you were answering emails, stocking, or serving clients, we prove systematic wage theft.
 
@@ -1338,9 +1338,9 @@ ${buildIndustryScenarios("Meal and Rest Break Violations", resolvedCity)}
 
   const compensationHeading = `What Results and Compensation Can I Expect from a ${resolvedCity} Break Violation Claim?`;
   const compensationIntro = `
-You have the right to take your mandatory rest and meal breaks without fear of managerial retaliation. You have the right to be paid full premium wages when breaks are denied. You have the right to <a href="https://www.atoyanlaw.com/practice-areas/employment-law/what-is-employment-discrimination/">report labor violations</a> without facing sudden discipline, cut hours, or termination.
+You have the right to take your mandatory rest and meal breaks without fear of managerial retaliation. You have the right to be paid full premium wages when breaks are denied. You have the right to <a href="https://demo.wp-post.com/contact-us/">report labor violations</a> without facing sudden discipline, cut hours, or termination.
 
-Denied breaks lead to physical exhaustion, mental burnout, and workplace injuries. California law gives you powerful legal mechanisms to collect every dollar of premium pay your employer withheld. If your employer denied your meal or rest breaks in ${resolvedCity}, contact Atoyan Law. We provide aggressive, experienced representation. Real answers. Call <a href="tel:8888070077">(888) 807-0077</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} meal and rest break lawyers</b>.
+Denied breaks lead to physical exhaustion, mental burnout, and workplace injuries. California law gives you powerful legal mechanisms to collect every dollar of premium pay your employer withheld. If your employer denied your meal or rest breaks in ${resolvedCity}, contact WP Post Project. We provide aggressive, experienced representation. Real answers. Call <a href="tel:3239680000">(323) 968-0000</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} meal and rest break lawyers</b>.
 `.trim();
 
   const faqs: AtoyanFaq[] = buildDavidAtoyanFaqs("meal_breaks", resolvedCity, cleanTopic);
@@ -1358,8 +1358,8 @@ Denied breaks lead to physical exhaustion, mental burnout, and workplace injurie
     compensationIntro,
     accordionShortcode: shortcode,
     faqs,
-    yoastTitle: `${resolvedCity} Meal & Rest Break Lawyer | Atoyan Law`,
-    yoastMetaDesc: `Aggressive ${resolvedCity} meal and rest break attorney fighting for unpaid Labor Code § 226.7 premium pay and waiting time penalties. Call (888) 807-0077.`,
+    yoastTitle: `${resolvedCity} Meal & Rest Break Lawyer | WP Post Project`,
+    yoastMetaDesc: `Aggressive ${resolvedCity} meal and rest break attorney fighting for unpaid Labor Code § 226.7 premium pay and waiting time penalties. Call (323) 968-0000.`,
     yoastFocusKw: `${resolvedCity} meal breaks`,
   };
 }
@@ -1398,7 +1398,7 @@ California Government Code § 12940(j) extends broad protections against harassm
   <li><strong>Marital Status and Military/Veteran Status</strong>: Disparaging military deployment or veteran obligations.</li>
 </ul>
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Enduring slurs, hostile remarks, or severe harassment at your ${resolvedCity} workplace? You have enforceable rights under California FEHA. Call Atoyan Law Firm at <a href="tel:8888070077">(888) 807-0077</a> or <a href="/contact/">contact our legal team online</a>.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Enduring slurs, hostile remarks, or severe harassment at your ${resolvedCity} workplace? You have enforceable rights under California FEHA. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a> or <a href="/contact/">contact our legal team online</a>.</strong></em></p>
 
 <h2 class="h2dav">The Legal Standard: "Severe or Pervasive" Under California Senate Bill 1300</h2>
 
@@ -1421,7 +1421,7 @@ In the landmark decision <em>Reno v. Baird</em> (1998) 18 Cal.4th 640, the Calif
   <li><strong>Individual Personal Liability</strong>: Under California Government Code § 12940(j)(3), <strong>individual harassers can be sued directly in Superior Court and held personally liable</strong> for the damages they inflict, separate and apart from corporate employer liability.</li>
 </ul>
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did a supervisor or coworker subject you to hostile comments or targeted abuse in ${resolvedCity}? Harassers can be held individually liable under Gov Code § 12940(j)(3). <a href="tel:8888070077">Call (888) 807-0077</a> to speak with Atoyan Law Firm.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did a supervisor or coworker subject you to hostile comments or targeted abuse in ${resolvedCity}? Harassers can be held individually liable under Gov Code § 12940(j)(3). <a href="tel:3239680000">Call (323) 968-0000</a> to speak with WP Post Project.</strong></em></p>
 
 <h2 class="h2dav">Employer Liability: Strict Liability for Supervisors vs. Negligence for Coworkers</h2>
 
@@ -1443,7 +1443,7 @@ Workers often ask whether they forfeit their legal claims if they resign because
 
 A constructive discharge claim allows the victim to seek full wrongful termination remedies, including back pay, front pay, lost future benefits, and emotional distress compensation.
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Were you forced to resign because management refused to stop workplace harassment in ${resolvedCity}? You may have an actionable constructive discharge claim. Contact Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a> for a free legal evaluation.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Were you forced to resign because management refused to stop workplace harassment in ${resolvedCity}? You may have an actionable constructive discharge claim. Contact WP Post Project at <a href="tel:3239680000">(323) 968-0000</a> for a free legal evaluation.</strong></em></p>
 
 <h2 class="h2dav">Workplace Retaliation and California Senate Bill 497</h2>
 
@@ -1460,7 +1460,7 @@ ${buildAdministrativeRoadmap("Workplace Harassment and Hostile Work Environment"
 ${buildIndustryScenarios("Workplace Harassment and Hostile Work Environment", resolvedCity)}
 `.trim();
 
-  const howDoHeading = `How Can a ${resolvedCity} Workplace Harassment Lawyer at Atoyan Law Help?`;
+  const howDoHeading = `How Can a ${resolvedCity} Workplace Harassment Lawyer at WP Post Project Help?`;
   const howDoContent = `
 <strong>Preserve contemporaneous evidence outside of employer systems</strong>. Save emails, Slack or Teams messages, text messages, voicemails, and personal journal notes on personal devices. Document dates, times, exact words spoken, and witnesses present before your network access is revoked.
 
@@ -1468,14 +1468,14 @@ ${buildIndustryScenarios("Workplace Harassment and Hostile Work Environment", re
 
 <strong>Do not resign abruptly without legal counsel</strong>. Quitting prematurely can give corporate defense lawyers grounds to argue that you departed voluntarily. Our attorneys can evaluate whether the conditions satisfy California's constructive discharge standard under Turner v. Anheuser-Busch.
 
-<strong>Let Atoyan Law Firm fight for you</strong>. We immediately secure your Right-to-Sue notice from the California Civil Rights Department (CRD), subpoena electronic records, depose supervisory personnel, and aggressively pursue the full compensation you deserve under California law.
+<strong>Let WP Post Project fight for you</strong>. We immediately secure your Right-to-Sue notice from the California Civil Rights Department (CRD), subpoena electronic records, depose supervisory personnel, and aggressively pursue the full compensation you deserve under California law.
 `.trim();
 
   const compensationHeading = `What Results and Compensation Can I Expect from a ${resolvedCity} Workplace Harassment Claim?`;
   const compensationIntro = `
 You have the fundamental right to earn a living in ${resolvedCity} without enduring targeted discrimination, hostile insults, or retaliatory punishment. California law provides comprehensive legal remedies to restore your dignity and compensate you for financial and emotional injury.
 
-Under California FEHA, you can recover economic damages for back pay, front pay, lost bonuses, and healthcare coverage, as well as uncapped non-economic damages for emotional distress, mental anguish, anxiety, depression, and reputational harm. Where corporate management acted with malice, oppression, or fraud, punitive damages under California Civil Code § 3294 can be awarded. Furthermore, California Government Code § 12965 requires the employer to pay all reasonable attorney fees and litigation costs. Call Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a> or <a href="/contact/">contact us online</a> for a confidential, no-cost consultation with our <b>${resolvedCity} workplace harassment attorneys</b>.
+Under California FEHA, you can recover economic damages for back pay, front pay, lost bonuses, and healthcare coverage, as well as uncapped non-economic damages for emotional distress, mental anguish, anxiety, depression, and reputational harm. Where corporate management acted with malice, oppression, or fraud, punitive damages under California Civil Code § 3294 can be awarded. Furthermore, California Government Code § 12965 requires the employer to pay all reasonable attorney fees and litigation costs. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a> or <a href="/contact/">contact us online</a> for a confidential, no-cost consultation with our <b>${resolvedCity} workplace harassment attorneys</b>.
 `.trim();
 
   const faqs: AtoyanFaq[] = buildDavidAtoyanFaqs("workplace_harassment", resolvedCity, cleanTopic);
@@ -1493,8 +1493,8 @@ Under California FEHA, you can recover economic damages for back pay, front pay,
     compensationIntro,
     accordionShortcode: shortcode,
     faqs,
-    yoastTitle: `${resolvedCity} Workplace Harassment Lawyer | Atoyan Law`,
-    yoastMetaDesc: `Experienced ${resolvedCity} workplace harassment attorney fighting hostile work environment, supervisor bias, and retaliation under California FEHA. Call (888) 807-0077.`,
+    yoastTitle: `${resolvedCity} Workplace Harassment Lawyer | WP Post Project`,
+    yoastMetaDesc: `Experienced ${resolvedCity} workplace harassment attorney fighting hostile work environment, supervisor bias, and retaliation under California FEHA. Call (323) 968-0000.`,
     yoastFocusKw: `${resolvedCity} workplace harassment`,
   };
 }
@@ -1517,7 +1517,7 @@ In California employment litigation, sexual harassment claims generally fall int
   <li><strong>Hostile Work Environment Harassment</strong>: This occurs when an employee is subjected to unwelcome sexual, romantic, or gender-based conduct that is either <strong>severe or pervasive</strong> enough to alter the conditions of their working environment and create an intimidating, hostile, abusive, or offensive workplace.</li>
 </ul>
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Subjected to unwanted sexual advances, lewd comments, or a hostile work environment in ${city}? That is not just inappropriate - it is unlawful under California FEHA. Call Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a> or <a href="/contact/">contact us online</a>.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Subjected to unwanted sexual advances, lewd comments, or a hostile work environment in ${city}? That is not just inappropriate - it is unlawful under California FEHA. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a> or <a href="/contact/">contact us online</a>.</strong></em></p>
 
 <h2 class="h2dav">The Legal Standard: California Law Does Not Require "Severe AND Pervasive"</h2>
 
@@ -1541,7 +1541,7 @@ Harassment does not require physical touching. Actionable sexual harassment in $
   <li>Gender-based hostility: demeaning or insulting comments directed at women, men, or non-binary individuals simply because of their gender identity or presentation, even without sexual attraction.</li>
 </ul>
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your supervisor touch you inappropriately, make lewd comments, or retaliate after you said no? California law holds employers strictly liable for supervisor harassment. Call Atoyan Law Firm at <a href="tel:8888070077">(888) 807-0077</a>.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your supervisor touch you inappropriately, make lewd comments, or retaliate after you said no? California law holds employers strictly liable for supervisor harassment. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a>.</strong></em></p>
 
 <h2 class="h2dav">Employer Liability: Supervisors vs. Coworkers</h2>
 
@@ -1566,7 +1566,7 @@ Under California Government Code § 12940(h) and Labor Code § 1102.5, it is ill
 
 Under California Senate Bill 497, if an employer takes an adverse action against you within <strong>90 days</strong> of making a harassment complaint, the law creates a <strong>rebuttable presumption of retaliation</strong>.
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Were you fired, demoted, or isolated after reporting sexual harassment in ${city}? Under California SB 497, adverse action within 90 days is presumed retaliatory. Call Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a> today.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Were you fired, demoted, or isolated after reporting sexual harassment in ${city}? Under California SB 497, adverse action within 90 days is presumed retaliatory. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a> today.</strong></em></p>
 
 <h2 class="h2dav">The "Silenced No More Act": Non-Disclosure Agreements Are Banned</h2>
 
@@ -1584,7 +1584,7 @@ ${buildAdministrativeRoadmap("Sexual Harassment and Hostile Work Environment", c
 ${buildIndustryScenarios("Sexual Harassment and Hostile Work Environment", city)}
 `.trim();
 
-  const howDoHeading = `How Can a ${city} Sexual Harassment Lawyer at Atoyan Law Help?`;
+  const howDoHeading = `How Can a ${city} Sexual Harassment Lawyer at WP Post Project Help?`;
   const howDoContent = `
 <strong>Preserve all digital evidence outside of company systems</strong>. Take screenshots of text messages, WhatsApp chats, social media interactions, Slack or Teams messages, and voicemail recordings before you are locked out of work devices.
 
@@ -1592,14 +1592,14 @@ ${buildIndustryScenarios("Sexual Harassment and Hostile Work Environment", city)
 
 <strong>Do not quit your job prematurely without legal guidance</strong>. If you resign abruptly, the company will argue you departed voluntarily. An employment attorney can evaluate whether the harassment meets California's strict constructive discharge standard under Turner v. Anheuser-Busch.
 
-<strong>Let Atoyan Law Firm stand between you and your employer</strong>. We protect you from retaliatory retaliation, obtain your Right to Sue notice from the California Civil Rights Department (CRD), depose the harasser and negligent HR executives, and aggressively pursue the maximum financial compensation available under California law.
+<strong>Let WP Post Project stand between you and your employer</strong>. We protect you from retaliatory retaliation, obtain your Right to Sue notice from the California Civil Rights Department (CRD), depose the harasser and negligent HR executives, and aggressively pursue the maximum financial compensation available under California law.
 `.trim();
 
   const compensationHeading = `What Results and Compensation Can I Expect from a ${city} Sexual Harassment Claim?`;
   const compensationIntro = `
-You have the right to work without being subjected to unwanted sexual advances, lewd comments, or an intimidating hostile working environment. You have the right to <a href="https://www.atoyanlaw.com/practice-areas/employment-law/what-is-employment-discrimination/">report discrimination</a> and harassment without fear of being fired, demoted, or ostracized by management. You have the right to hold both the harasser and the negligent company legally accountable under California law.
+You have the right to work without being subjected to unwanted sexual advances, lewd comments, or an intimidating hostile working environment. You have the right to <a href="https://demo.wp-post.com/contact-us/">report discrimination</a> and harassment without fear of being fired, demoted, or ostracized by management. You have the right to hold both the harasser and the negligent company legally accountable under California law.
 
-Workplace sexual harassment inflicts deep emotional trauma. It causes anxiety, insomnia, panic attacks, depression, and tears apart your sense of professional security. But California law gives you powerful legal tools to fight back. If you experienced sexual harassment, assault, or retaliation in ${city}, call us. Atoyan Law offers completely confidential consultations. No judgment. No pressure. Real answers. Call <a href="tel:8888070077">(888) 807-0077</a> or contact us online to schedule a free consultation with our <b>${city} sexual harassment lawyers</b>.
+Workplace sexual harassment inflicts deep emotional trauma. It causes anxiety, insomnia, panic attacks, depression, and tears apart your sense of professional security. But California law gives you powerful legal tools to fight back. If you experienced sexual harassment, assault, or retaliation in ${city}, call us. WP Post Project offers completely confidential consultations. No judgment. No pressure. Real answers. Call <a href="tel:3239680000">(323) 968-0000</a> or contact us online to schedule a free consultation with our <b>${city} sexual harassment lawyers</b>.
 `.trim();
 
   const faqs: AtoyanFaq[] = buildDavidAtoyanFaqs("sexual_harassment", city, keyword);
@@ -1617,8 +1617,8 @@ Workplace sexual harassment inflicts deep emotional trauma. It causes anxiety, i
     compensationIntro,
     accordionShortcode: shortcode,
     faqs,
-    yoastTitle: `${city} Sexual Harassment Lawyer | Atoyan Law`,
-    yoastMetaDesc: `Experienced ${city} sexual harassment attorney fighting for victims of hostile work environment, quid pro quo & retaliation. Call (888) 807-0077.`,
+    yoastTitle: `${city} Sexual Harassment Lawyer | WP Post Project`,
+    yoastMetaDesc: `Experienced ${city} sexual harassment attorney fighting for victims of hostile work environment, quid pro quo & retaliation. Call (323) 968-0000.`,
     yoastFocusKw: `${city} sexual harassment`,
   };
 }
@@ -1648,7 +1648,7 @@ Under the California Fair Employment and Housing Act (FEHA), codified at Califor
   <li><strong>Duty to Engage in the Interactive Process (Gov Code § 12940(n))</strong>: An employer must engage in a timely, good-faith interactive process with the employee to determine effective reasonable accommodations.</li>
 </ol>
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your employer ignore your doctor's note, refuse reasonable accommodations, or fire you after a medical leave in ${resolvedCity}? California law heavily penalizes these violations. Call Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a>.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your employer ignore your doctor's note, refuse reasonable accommodations, or fire you after a medical leave in ${resolvedCity}? California law heavily penalizes these violations. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a>.</strong></em></p>
 
 <h2 class="h2dav">What qualifies as a physical or mental disability under California FEHA?</h2>
 
@@ -1711,7 +1711,7 @@ ${buildAdministrativeRoadmap("Disability Discrimination", resolvedCity)}
 ${buildIndustryScenarios("Disability Discrimination", resolvedCity)}
 `.trim();
 
-  const howDoHeading = `How Can a ${resolvedCity} Disability Discrimination Lawyer at Atoyan Law Help?`;
+  const howDoHeading = `How Can a ${resolvedCity} Disability Discrimination Lawyer at WP Post Project Help?`;
   const howDoContent = `
 <strong>Establish employer liability under Government Code § 12940(n)</strong>. Even if an employer claims an accommodation was impossible, their failure to engage in the interactive process creates independent liability under California law.
 
@@ -1719,14 +1719,14 @@ ${buildIndustryScenarios("Disability Discrimination", resolvedCity)}
 
 <strong>Subpoena doctor communications and HR records</strong>. We demonstrate that you provided clear medical notes and that management arbitrarily refused to accommodate your documented restrictions.
 
-<strong>Recover maximum financial damages</strong>. From lost past and future earnings to substantial emotional distress and punitive damages, Atoyan Law fights for the full financial compensation you are owed.
+<strong>Recover maximum financial damages</strong>. From lost past and future earnings to substantial emotional distress and punitive damages, WP Post Project fights for the full financial compensation you are owed.
 `.trim();
 
   const compensationHeading = `What Results and Compensation Can I Expect from a ${resolvedCity} Disability Claim?`;
   const compensationIntro = `
-You have the right to earn a living without having your medical condition weaponized against you. You have the right to fair accommodations, an honest interactive dialogue, and a workplace free from disability bias. You have the right to <a href="https://www.atoyanlaw.com/practice-areas/employment-law/what-is-employment-discrimination/">report discrimination</a> without being terminated by your employer.
+You have the right to earn a living without having your medical condition weaponized against you. You have the right to fair accommodations, an honest interactive dialogue, and a workplace free from disability bias. You have the right to <a href="https://demo.wp-post.com/contact-us/">report discrimination</a> without being terminated by your employer.
 
-Disability discrimination threatens your livelihood at the exact moment you are most vulnerable. California law provides strong protections to restore your financial security. If your employer denied accommodations or fired you after an injury in ${resolvedCity}, call Atoyan Law. We provide confidential, experienced legal counsel. Real answers. Call <a href="tel:8888070077">(888) 807-0077</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} disability discrimination lawyers</b>.
+Disability discrimination threatens your livelihood at the exact moment you are most vulnerable. California law provides strong protections to restore your financial security. If your employer denied accommodations or fired you after an injury in ${resolvedCity}, call WP Post Project. We provide confidential, experienced legal counsel. Real answers. Call <a href="tel:3239680000">(323) 968-0000</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} disability discrimination lawyers</b>.
 `.trim();
 
   const faqs: AtoyanFaq[] = buildDavidAtoyanFaqs("disability", resolvedCity, cleanTopic);
@@ -1744,8 +1744,8 @@ Disability discrimination threatens your livelihood at the exact moment you are 
     compensationIntro,
     accordionShortcode: shortcode,
     faqs,
-    yoastTitle: `${resolvedCity} Disability Discrimination Lawyer | Atoyan Law`,
-    yoastMetaDesc: `Experienced ${resolvedCity} disability discrimination attorney fighting for employees denied reasonable accommodations & interactive process. Call (888) 807-0077.`,
+    yoastTitle: `${resolvedCity} Disability Discrimination Lawyer | WP Post Project`,
+    yoastMetaDesc: `Experienced ${resolvedCity} disability discrimination attorney fighting for employees denied reasonable accommodations & interactive process. Call (323) 968-0000.`,
     yoastFocusKw: `${resolvedCity} disability discrimination`,
   };
 }
@@ -1770,7 +1770,7 @@ Yet across businesses in ${resolvedCity}, employers frequently deny eligible lea
 
 <h3 class="h3dav">What are my key rights under the California Family Rights Act (CFRA)?</h3>
 
-Under CFRA (<a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">Gov Code § 12945.2</span></a>), eligible employees are entitled to up to <strong>12 weeks of job-protected, unpaid leave</strong> in a 12-month period for:
+Under CFRA (<a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollow noopener"><span>Gov Code § 12945.2</span></a>), eligible employees are entitled to up to <strong>12 weeks of job-protected, unpaid leave</strong> in a 12-month period for:
 <ul>
   <li>The employee's own serious health condition that makes them unable to perform their job duties.</li>
   <li>Caring for a child, parent, spouse, domestic partner, grandparent, grandchild, sibling, or "designated person" with a serious health condition.</li>
@@ -1780,7 +1780,7 @@ Under CFRA (<a href="https://calcivilrights.ca.gov" target="_blank" rel="nofollo
 
 To be eligible under CFRA, an employee must have worked for the employer for at least <strong>12 months</strong> and completed at least <strong>1,250 hours of service</strong> in the 12-month period preceding the leave. Crucially, CFRA applies to all employers with <strong>5 or more employees</strong> (dramatically broader than the 50-employee threshold under federal FMLA).
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your employer fire you while on medical leave, deny your CFRA baby bonding, or demote you upon return in ${resolvedCity}? California law protects your right to reinstatement. Call Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a>.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did your employer fire you while on medical leave, deny your CFRA baby bonding, or demote you upon return in ${resolvedCity}? California law protects your right to reinstatement. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a>.</strong></em></p>
 
 <h2 class="h2dav">Do I have a guaranteed right to get my job back after medical or family leave?</h2>
 
@@ -1825,9 +1825,9 @@ ${buildAdministrativeRoadmap("Medical and Family Leave Retaliation", resolvedCit
 ${buildIndustryScenarios("Medical and Family Leave Retaliation", resolvedCity)}
 `.trim();
 
-  const howDoHeading = `How Can a ${resolvedCity} CFRA Leave Lawyer at Atoyan Law Help?`;
+  const howDoHeading = `How Can a ${resolvedCity} CFRA Leave Lawyer at WP Post Project Help?`;
   const howDoContent = `
-<strong>Enforce your statutory right to reinstatement</strong>. If your employer claimed your job was "eliminated" or gave away your shift while you were recovering, Atoyan Law investigates to expose the pretext.
+<strong>Enforce your statutory right to reinstatement</strong>. If your employer claimed your job was "eliminated" or gave away your shift while you were recovering, WP Post Project investigates to expose the pretext.
 
 <strong>Protect your health insurance and benefit continuity</strong>. Under CFRA, employers must maintain your group health coverage during leave under the same conditions as if you were working. We recover out-of-pocket medical bills caused by illegal benefit cancellations.
 
@@ -1838,9 +1838,9 @@ ${buildIndustryScenarios("Medical and Family Leave Retaliation", resolvedCity)}
 
   const compensationHeading = `What Results and Compensation Can I Expect from a ${resolvedCity} CFRA Claim?`;
   const compensationIntro = `
-You have the right to care for your health and your family without sacrificing your career. You have the right to return to your job with your wages, benefits, and dignity intact. You have the right to <a href="https://www.atoyanlaw.com/practice-areas/employment-law/what-is-employment-discrimination/">report labor violations</a> without facing sudden termination from your employer.
+You have the right to care for your health and your family without sacrificing your career. You have the right to return to your job with your wages, benefits, and dignity intact. You have the right to <a href="https://demo.wp-post.com/contact-us/">report labor violations</a> without facing sudden termination from your employer.
 
-Losing your job during a medical crisis or after having a child causes catastrophic financial and emotional stress. California law gives you the power to fight back and hold corporate employers fully responsible. If your employer violated your CFRA rights in ${resolvedCity}, contact Atoyan Law. We provide aggressive, experienced legal advocacy. Real answers. Call <a href="tel:8888070077">(888) 807-0077</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} family and medical leave lawyers</b>.
+Losing your job during a medical crisis or after having a child causes catastrophic financial and emotional stress. California law gives you the power to fight back and hold corporate employers fully responsible. If your employer violated your CFRA rights in ${resolvedCity}, contact WP Post Project. We provide aggressive, experienced legal advocacy. Real answers. Call <a href="tel:3239680000">(323) 968-0000</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} family and medical leave lawyers</b>.
 `.trim();
 
   const faqs: AtoyanFaq[] = buildDavidAtoyanFaqs("family_medical_leave", resolvedCity, cleanTopic);
@@ -1858,8 +1858,8 @@ Losing your job during a medical crisis or after having a child causes catastrop
     compensationIntro,
     accordionShortcode: shortcode,
     faqs,
-    yoastTitle: `${resolvedCity} CFRA & Medical Leave Lawyer | Atoyan Law`,
-    yoastMetaDesc: `Experienced ${resolvedCity} family and medical leave attorney protecting employee rights under CFRA & FMLA. Fighting wrongful termination & retaliation. Call (888) 807-0077.`,
+    yoastTitle: `${resolvedCity} CFRA & Medical Leave Lawyer | WP Post Project`,
+    yoastMetaDesc: `Experienced ${resolvedCity} family and medical leave attorney protecting employee rights under CFRA & FMLA. Fighting wrongful termination & retaliation. Call (323) 968-0000.`,
     yoastFocusKw: `${resolvedCity} medical leave`,
   };
 }
@@ -1893,7 +1893,7 @@ California Labor Code § 1102.5 is known as California's "general whistleblower 
 
 Crucially, you do not need to prove that the company actually violated the law—you only need to have had a <strong>reasonable, good-faith belief</strong> that unlawful conduct occurred.
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did management write you up, cut your hours, or fire you after you complained about illegal conduct in ${resolvedCity}? Under SB 497, retaliation is legally presumed. Call Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a>.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Did management write you up, cut your hours, or fire you after you complained about illegal conduct in ${resolvedCity}? Under SB 497, retaliation is legally presumed. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a>.</strong></em></p>
 
 <h2 class="h2dav">What burden of proof applies under the California Supreme Court's Lawson standard?</h2>
 
@@ -1943,7 +1943,7 @@ ${buildAdministrativeRoadmap("Workplace Retaliation and Whistleblower Claims", r
 ${buildIndustryScenarios("Workplace Retaliation and Whistleblower Claims", resolvedCity)}
 `.trim();
 
-  const howDoHeading = `How Can a ${resolvedCity} Workplace Retaliation Lawyer at Atoyan Law Help?`;
+  const howDoHeading = `How Can a ${resolvedCity} Workplace Retaliation Lawyer at WP Post Project Help?`;
   const howDoContent = `
 <strong>Leverage California's 90-day statutory presumption under SB 497</strong>. When an adverse action happens within 90 days of your complaint, we shift the legal burden onto the employer from day one.
 
@@ -1956,9 +1956,9 @@ ${buildIndustryScenarios("Workplace Retaliation and Whistleblower Claims", resol
 
   const compensationHeading = `What Results and Compensation Can I Expect from a ${resolvedCity} Retaliation Claim?`;
   const compensationIntro = `
-You had the courage to speak up against unlawful workplace conduct. You have the right to work without being targeted, punished, or fired for doing the right thing. You have the right to <a href="https://www.atoyanlaw.com/practice-areas/employment-law/what-is-employment-discrimination/">report violations</a> without management destroying your career.
+You had the courage to speak up against unlawful workplace conduct. You have the right to work without being targeted, punished, or fired for doing the right thing. You have the right to <a href="https://demo.wp-post.com/contact-us/">report violations</a> without management destroying your career.
 
-Retaliation strikes at the core of your professional identity and financial security. California juries consistently award substantial damages to punish employers who punish honest workers. If you faced workplace retaliation in ${resolvedCity}, contact Atoyan Law. We provide confidential, relentless legal representation. Real answers. Call <a href="tel:8888070077">(888) 807-0077</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} workplace retaliation lawyers</b>.
+Retaliation strikes at the core of your professional identity and financial security. California juries consistently award substantial damages to punish employers who punish honest workers. If you faced workplace retaliation in ${resolvedCity}, contact WP Post Project. We provide confidential, relentless legal representation. Real answers. Call <a href="tel:3239680000">(323) 968-0000</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} workplace retaliation lawyers</b>.
 `.trim();
 
   const faqs: AtoyanFaq[] = buildDavidAtoyanFaqs("workplace_retaliation", resolvedCity, cleanTopic);
@@ -1976,8 +1976,8 @@ Retaliation strikes at the core of your professional identity and financial secu
     compensationIntro,
     accordionShortcode: shortcode,
     faqs,
-    yoastTitle: `${resolvedCity} Workplace Retaliation Lawyer | Atoyan Law`,
-    yoastMetaDesc: `Tenacious ${resolvedCity} workplace retaliation & whistleblower attorney fighting for employees punished for reporting illegal conduct. Call (888) 807-0077.`,
+    yoastTitle: `${resolvedCity} Workplace Retaliation Lawyer | WP Post Project`,
+    yoastMetaDesc: `Tenacious ${resolvedCity} workplace retaliation & whistleblower attorney fighting for employees punished for reporting illegal conduct. Call (323) 968-0000.`,
     yoastFocusKw: `${resolvedCity} workplace retaliation`,
   };
 }
@@ -2013,7 +2013,7 @@ Major legal exceptions to at-will employment in California include:
   <li><strong>Breach of Employment Contract</strong>: Violating express written contracts, oral promises, or implied-in-fact contracts requiring "good cause" for termination (<em>Foley v. Interactive Data Corp.</em>).</li>
 </ul>
 
-<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Were you fired unfairly or forced to quit your job in ${resolvedCity}? At-will employment does not protect employers who break the law. Call Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a> for a free, confidential case review.</strong></em></p>
+<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Were you fired unfairly or forced to quit your job in ${resolvedCity}? At-will employment does not protect employers who break the law. Call WP Post Project at <a href="tel:3239680000">(323) 968-0000</a> for a free, confidential case review.</strong></em></p>
 
 <h2 class="h2dav">How do California employers disguise unlawful firings behind pretextual reasons?</h2>
 
@@ -2040,7 +2040,7 @@ Crucially, because a Tameny claim sounds in tort rather than contract, you can r
 
 <h2 class="h2dav">Can I still collect EDD unemployment benefits if I was wrongfully fired?</h2>
 
-Yes, in the vast majority of cases. Being fired does not disqualify you from unemployment benefits through the <a class="reset interactable cursor-pointer decoration-1 underline-offset-1 text-super-primary hover:underline" href="https://edd.ca.gov" target="_blank" rel="nofollow noopener"><span class="text-box-trim-both">California EDD</span></a> unless you were discharged for gross misconduct connected with your work. Pretextual, unfair, or discriminatory terminations do not constitute legal misconduct, and you should file your EDD claim immediately.
+Yes, in the vast majority of cases. Being fired does not disqualify you from unemployment benefits through the <a href="https://edd.ca.gov" target="_blank" rel="nofollow noopener"><span>California EDD</span></a> unless you were discharged for gross misconduct connected with your work. Pretextual, unfair, or discriminatory terminations do not constitute legal misconduct, and you should file your EDD claim immediately.
 
 <h2 class="h2dav">Can undocumented workers sue for wrongful termination in California?</h2>
 
@@ -2058,9 +2058,9 @@ ${buildAdministrativeRoadmap("Wrongful Termination and Unlawful Firing", resolve
 ${buildIndustryScenarios("Wrongful Termination and Unlawful Firing", resolvedCity)}
 `.trim();
 
-  const howDoHeading = `How Can a ${resolvedCity} Wrongful Termination Lawyer at Atoyan Law Help?`;
+  const howDoHeading = `How Can a ${resolvedCity} Wrongful Termination Lawyer at WP Post Project Help?`;
   const howDoContent = `
-<strong>Investigate and dismantle employer pretext</strong>. When your former employer claims you were fired for "performance" or "restructuring," Atoyan Law subpoenas years of performance records and internal emails to expose the truth.
+<strong>Investigate and dismantle employer pretext</strong>. When your former employer claims you were fired for "performance" or "restructuring," WP Post Project subpoenas years of performance records and internal emails to expose the truth.
 
 <strong>Preserve crucial workplace evidence</strong>. We issue legal spoliation letters preventing the company from deleting incriminating electronic communications, Slack logs, and personnel files.
 
@@ -2071,9 +2071,9 @@ ${buildIndustryScenarios("Wrongful Termination and Unlawful Firing", resolvedCit
 
   const compensationHeading = `What Results and Compensation Can I Expect from a ${resolvedCity} Wrongful Termination Claim?`;
   const compensationIntro = `
-You dedicated your time, energy, and loyalty to your job. You have the right to be free from unlawful firing, discriminatory termination, and retaliatory discharge. You have the right to <a href="https://www.atoyanlaw.com/practice-areas/employment-law/what-is-employment-discrimination/">oppose illegal practices</a> without your employer taking away your livelihood.
+You dedicated your time, energy, and loyalty to your job. You have the right to be free from unlawful firing, discriminatory termination, and retaliatory discharge. You have the right to <a href="https://demo.wp-post.com/contact-us/">oppose illegal practices</a> without your employer taking away your livelihood.
 
-Wrongful termination inflicts immense emotional trauma and financial devastation on workers and their families. California law provides the tools to fight back and hold corporate employers fully accountable. If you were wrongfully terminated in ${resolvedCity}, contact Atoyan Law. We provide aggressive, experienced, and confidential representation. Real answers. Call <a href="tel:8888070077">(888) 807-0077</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} wrongful termination lawyers</b>.
+Wrongful termination inflicts immense emotional trauma and financial devastation on workers and their families. California law provides the tools to fight back and hold corporate employers fully accountable. If you were wrongfully terminated in ${resolvedCity}, contact WP Post Project. We provide aggressive, experienced, and confidential representation. Real answers. Call <a href="tel:3239680000">(323) 968-0000</a> or contact us online to schedule a free consultation with our <b>${resolvedCity} wrongful termination lawyers</b>.
 `.trim();
 
   const faqs: AtoyanFaq[] = buildDavidAtoyanFaqs("wrongful_termination", resolvedCity, cleanTopic);
@@ -2091,8 +2091,8 @@ Wrongful termination inflicts immense emotional trauma and financial devastation
     compensationIntro,
     accordionShortcode: shortcode,
     faqs,
-    yoastTitle: `${resolvedCity} Wrongful Termination Lawyer | Atoyan Law`,
-    yoastMetaDesc: `Top-rated ${resolvedCity} wrongful termination attorney fighting for employees fired illegally or facing employer retaliation. Call (888) 807-0077.`,
+    yoastTitle: `${resolvedCity} Wrongful Termination Lawyer | WP Post Project`,
+    yoastMetaDesc: `Top-rated ${resolvedCity} wrongful termination attorney fighting for employees fired illegally or facing employer retaliation. Call (323) 968-0000.`,
     yoastFocusKw: `${resolvedCity} wrongful termination`,
   };
 }
@@ -2151,7 +2151,7 @@ Under California appellate precedent established in <em>Johnson v. United Cerebr
 Showing that an employer in ${city} has an ongoing pattern or practice of mistreating employees completely dismantles the defense that your treatment was an "isolated misunderstanding" or an "unfortunate interpersonal personality clash."
 
 <h3 class="h3dav">4. Digital Forensics, Electronic Trails, and Internal Audit Logs</h3>
-In today's digital workplace, crucial evidence is preserved in corporate databases. At Atoyan Law Firm, our attorneys utilize digital discovery to uncover:
+In today's digital workplace, crucial evidence is preserved in corporate databases. At WP Post Project, our attorneys utilize digital discovery to uncover:
 <ul>
   <li><strong>Slack, Microsoft Teams, and Chat Channels</strong>: Informal internal messaging platforms where supervisors, team leads, and human resources representatives let their guard down and reveal discriminatory bias or retaliatory frustration.</li>
   <li><strong>Document Metadata and Version Histories</strong>: Electronic timestamps revealing whether a negative performance review or disciplinary memo was authored weeks after the fact and backdated to create a false record.</li>
@@ -2167,7 +2167,7 @@ export function buildCorporateDefensePlaybook(topicName: string, city: string): 
   return `
 <h2 class="h2dav">The Corporate Defense Playbook: How Employers Try to Defeat Claims</h2>
 
-When employees challenge unlawful workplace practices in ${city}, corporate defense firms deploy predictable, aggressive strategies designed to exhaust, intimidate, and financially strain workers into abandoning their rights. At Atoyan Law Firm, our litigation team anticipates and neutralizes these corporate maneuvers from day one:
+When employees challenge unlawful workplace practices in ${city}, corporate defense firms deploy predictable, aggressive strategies designed to exhaust, intimidate, and financially strain workers into abandoning their rights. At WP Post Project, our litigation team anticipates and neutralizes these corporate maneuvers from day one:
 
 <h3 class="h3dav">1. The Manufactured "Legitimate Business Reason" and Pretextual PIP</h3>
 The primary defense to any California employment lawsuit is asserting that the termination, demotion, or adverse action was motivated by a "legitimate, non-discriminatory business reason." Employers routinely comb through years of personnel files searching for any minor blemish—a late arrival from six months ago, an informal customer remark, or an administrative error.
@@ -2177,7 +2177,7 @@ Employers frequently weaponize a <strong>Performance Improvement Plan (PIP)</str
 <h3 class="h3dav">2. The Biased Internal HR "Investigation" Shield</h3>
 Human resources departments exist to protect the corporation from financial liability, not to safeguard workers. When employees report ${topicName.toLowerCase()}, companies often stage an internal "investigation" conducted by an internal HR manager or outside defense attorney.
 
-These internal investigations frequently interview only management-friendly witnesses, ignore key digital evidence, refuse to review the employee's documentation, and issue a predetermined report concluding that "no policy violation occurred." Atoyan Law Firm deconstructs these biased reports during depositions, demonstrating that the investigation was a self-serving sham.
+These internal investigations frequently interview only management-friendly witnesses, ignore key digital evidence, refuse to review the employee's documentation, and issue a predetermined report concluding that "no policy violation occurred." WP Post Project deconstructs these biased reports during depositions, demonstrating that the investigation was a self-serving sham.
 
 <h3 class="h3dav">3. The Mandatory Arbitration Trap and Unconscionability</h3>
 Many California workers unknowingly signed mandatory arbitration agreements buried in electronic onboarding packets. Corporations use arbitration to avoid public jury trials, limit discovery, and shield their executives from public accountability.
@@ -2229,7 +2229,7 @@ Successfully prosecuting an employment lawsuit against an employer in ${city} re
 <h3 class="h3dav">1. Administrative Exhaustion with the California Civil Rights Department (CRD)</h3>
 Before an employee can file a civil lawsuit for statutory discrimination, harassment, or retaliation under FEHA, they must first exhaust their administrative remedies with the California Civil Rights Department (CRD).
 
-Under California Government Code § 12960, employees have <strong>three years</strong> from the date of the unlawful act to file an administrative complaint. While the CRD can conduct an administrative investigation, in high-stakes litigation Atoyan Law Firm requests an <strong>immediate Right to Sue notice</strong>. This allows us to bypass administrative delays and file directly in California Superior Court within one year of issuance.
+Under California Government Code § 12960, employees have <strong>three years</strong> from the date of the unlawful act to file an administrative complaint. While the CRD can conduct an administrative investigation, in high-stakes litigation WP Post Project requests an <strong>immediate Right to Sue notice</strong>. This allows us to bypass administrative delays and file directly in California Superior Court within one year of issuance.
 
 <h3 class="h3dav">2. Evaluating Labor Commissioner (DLSE) Claims vs. Direct Civil Lawsuits</h3>
 For wage and hour violations—including unpaid overtime, missed meal and rest breaks, and minimum wage violations—workers can pursue an administrative wage claim (Berman hearing) before the California Labor Commissioner (DLSE) or file a direct civil lawsuit in court. While DLSE hearings are informal, complex claims involving high-dollar damages, executive compensation, or widespread corporate retaliation are almost always more effectively resolved through civil court litigation.
@@ -2247,7 +2247,7 @@ Once administrative requirements are satisfied, our attorneys file a comprehensi
 </ul>
 
 <h3 class="h3dav">5. Defeating Defense Motions for Summary Judgment (CCP § 437c)</h3>
-In almost every major employment case, the employer's defense attorneys file a Motion for Summary Judgment attempting to have the case dismissed before trial. Corporate defense firms argue there is "no triable issue of material fact." Atoyan Law Firm meticulously defeats these motions by presenting concrete evidence of pretext, contradictory witness statements, and suspicious temporal timing, forcing the employer to face trial.
+In almost every major employment case, the employer's defense attorneys file a Motion for Summary Judgment attempting to have the case dismissed before trial. Corporate defense firms argue there is "no triable issue of material fact." WP Post Project meticulously defeats these motions by presenting concrete evidence of pretext, contradictory witness statements, and suspicious temporal timing, forcing the employer to face trial.
 
 <h3 class="h3dav">6. Private Mediation, High-Stakes Settlement, or Trial by California Jury</h3>
 Once corporate employers face the prospect of public trial, high financial exposure, and our unyielding evidentiary record, the vast majority agree to participate in private mediation before a retired California Superior Court judge. If the employer refuses to offer a settlement that fully compensates your economic losses and emotional suffering, our veteran trial litigators will present your case before a California jury to fight for a complete verdict and punitive damages.

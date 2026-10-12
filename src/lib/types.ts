@@ -25,14 +25,14 @@ export const Settings = z.object({
   system_prompt: z
     .string()
     .default(
-      "You are the senior legal content strategist and California employment attorney for Atoyan Law Firm (atoyanlaw.com).",
+      "You write practice-area pages for WP Post Project at https://demo.wp-post.com/. The firm gives comprehensive legal support and a free consultation. Site practice areas are Wrongful Termination, Sexual Harassment, Retaliation, and Discrimination. It also helps individuals and companies with civil matters, criminal matters, economic matters, labor disputes, contracts, and licensing. Phones: (323) 968-0000 and (323) 203-4805. Contact page: https://demo.wp-post.com/contact-us/. Voice: clear and direct. Use the firm name WP Post Project. Invite readers to get a free consultation and call (323) 968-0000 or use the contact page. Do not use another law firm's name or phone number.",
     ),
   heading_class: z.string().default("h2dav"),
   cta_shortcode: z.string().default("[sp_easyaccordion id=\"3932\"]"),
   cta_after_paragraph: z.number().int().min(1).default(2),
   keyword_links: z.array(KeywordLink).default([]),
   image_template: z.enum(["sunset", "midnight", "paper"]).default("midnight"),
-  wp_site_url: z.string().default("https://www.atoyanlaw.com"),
+  wp_site_url: z.string().default("https://demo.wp-post.com/"),
   wp_username: z.string().optional(),
   wp_app_password: z.string().optional(),
   supabase_url: z.string().optional(),

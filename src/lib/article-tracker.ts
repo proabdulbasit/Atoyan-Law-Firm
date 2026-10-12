@@ -3,6 +3,33 @@ import path from "path";
 import type { TrackedArticle } from "./types";
 export type { TrackedArticle };
 
+const DEMO_SITE = "https://demo.wp-post.com";
+const DEMO_CONTACT_URL = `${DEMO_SITE}/contact-us/`;
+
+const DEMO_PAGE_BY_SLUG: Record<string, string> = {
+  "wrongful-termination": `${DEMO_SITE}/wrongful-termination/`,
+  "sexual-harassment": `${DEMO_SITE}/sexual-harassment/`,
+  "work-retaliation": `${DEMO_SITE}/california-retaliation-lawyer/`,
+  "whistleblowing-laws": `${DEMO_SITE}/california-retaliation-lawyer/`,
+  "disability-discrimination": `${DEMO_SITE}/california-disability-discrimination-lawyer/`,
+  "pregnancy-discrimination": `${DEMO_SITE}/california-pregnancy-discrimination-lawyer/`,
+};
+
+/** Turns a previous-project URL into a page on this site, or the contact page. */
+export function demoUrlForSlug(slug: string): string {
+  return DEMO_PAGE_BY_SLUG[slug] || DEMO_CONTACT_URL;
+}
+
+function onThisSite(article: TrackedArticle): TrackedArticle | null {
+  if (!article?.slug || !article.url) return null;
+  if (!article.url.includes("atoyanlaw.com")) return article;
+  const url = demoUrlForSlug(article.slug);
+  if (url.endsWith("/contact-us/") && article.isHub !== true && article.slug !== "contact-us") {
+    return null;
+  }
+  return { ...article, url };
+}
+
 /**
  * Pre-seeded authentic Atoyan Law Firm practice area hub pages and live location pages.
  * Verified directly against atoyanlaw.com.
@@ -263,26 +290,23 @@ export function getAllTrackedArticles(): TrackedArticle[] {
 
   const articleMap = new Map<string, TrackedArticle>();
 
-  // 1. Seed Core Hubs
   for (const a of CORE_ATOYAN_HUB_PAGES) {
-    articleMap.set(a.slug, a);
+    const local = onThisSite(a);
+    if (local) articleMap.set(local.slug, local);
   }
 
-  // 2. Seed Location Pages
-  for (const a of CORE_ATOYAN_LOCATION_PAGES) {
-    articleMap.set(a.slug, a);
-  }
+  // Location pages from the first project are not on this site, so they are not linked.
 
-  // 3. Load dynamically tracked articles from local disk
+  // Load pages recorded for this site. Drop any saved link that still points at the first project
+  // unless it maps to a real page here.
   try {
     if (fs.existsSync(LOCAL_STORE_PATH)) {
       const fileData = fs.readFileSync(LOCAL_STORE_PATH, "utf8");
       const parsed = JSON.parse(fileData);
       if (Array.isArray(parsed)) {
         for (const item of parsed) {
-          if (item?.slug && item?.url) {
-            articleMap.set(item.slug, item);
-          }
+          const local = onThisSite(item);
+          if (local) articleMap.set(local.slug, local);
         }
       }
     }
@@ -366,8 +390,8 @@ export function buildLinkingCatalogForLlm(params: {
   });
 
   const lines: string[] = [];
-  lines.push("### LIVE ATOYAN LAW FIRM INTERNAL LINK CATALOG (USE FOR SEO LINKING):");
-  lines.push("You MUST contextually weave 3 to 5+ of these exact live links into `servicesContent`, 1-2 into `howDoContent`, and `/contact/` into `compensationIntro`. DO NOT link to the current page itself.");
+  lines.push("### INTERNAL LINKS ON DEMO.WP-POST.COM:");
+  lines.push("Link only to the pages below or to https://demo.wp-post.com/contact-us/. Never link to atoyanlaw.com or any other law firm. Do not link to the current page itself.");
   lines.push("");
   lines.push("#### Priority Hub & Practice Area Pages:");
 

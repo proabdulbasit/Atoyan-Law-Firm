@@ -197,7 +197,7 @@ export function buildDavidAccordionUploadOptions(params: {
       const citySlug = resolvedCity.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
       const topicSlug = cleanTopic.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
       const slug = `talk-to-a-${citySlug}-${topicSlug}-lawyer`;
-      const ctaHtml = `\r\n<h2 id="${slug}" class="font-semibold leading-tight text-pretty mb-2 mt-4 [.has-inline-images_&]:clear-end text-base first:mt-0">Talk to a ${resolvedCity} ${cleanTopic} Lawyer</h2>\r\n<p class="my-2 [&+p]:mt-4 [&_strong:has(+br)]:inline-block [&_strong:has(+br)]:align-top">If you believe your workplace rights were violated in ${resolvedCity}, time limits apply under California law. <strong>Contact Atoyan Law at (888) 807-0077</strong> or through the online form at <a class="reset interactable cursor-pointer decoration-1 underline-offset-1 text-super-primary hover:underline" href="https://www.atoyanlaw.com/contact/" target="_blank" rel="noopener"><span class="text-box-trim-both">atoyanlaw.com</span></a> for a free, confidential case evaluation.</p>`;
+      const ctaHtml = `\r\n<h2 id="${slug}">Talk to a ${resolvedCity} ${cleanTopic} Lawyer</h2>\r\n<p>If you believe your workplace rights were violated in ${resolvedCity}, time limits apply under California law. <strong>Contact WP Post Project at (323) 968-0000</strong> or through the online form at <a href="https://demo.wp-post.com/contact-us/" target="_blank" rel="noopener">demo.wp-post.com</a> for a free, confidential case evaluation.</p>`;
       last.accordion_content_description += ctaHtml;
     }
   }

@@ -23,8 +23,13 @@ export function loadSettings(): Settings {
 
     const parsed = Settings.parse(JSON.parse(raw));
 
-    // Ensure prompt strictly belongs to Atoyan Law Firm and has no legacy text
-    if (parsed.system_prompt?.includes("David") || !parsed.system_prompt?.includes("Atoyan")) {
+    const prompt = parsed.system_prompt || "";
+    const previousProjectPrompt =
+      prompt.includes("Atoyan") ||
+      prompt.includes("atoyanlaw.com") ||
+      prompt.includes("888) 807-0077") ||
+      prompt.startsWith("You write California employment law practice pages for this website.");
+    if (previousProjectPrompt) {
       parsed.system_prompt = defaultSettings().system_prompt;
       saveSettings(parsed);
     }

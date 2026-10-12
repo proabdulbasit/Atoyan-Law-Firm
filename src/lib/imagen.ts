@@ -26,7 +26,7 @@ export function deriveAtoyanCategory(keyword: string, city?: string): string {
 }
 
 /**
- * Composites the official Atoyan Law Firm 'A' logo and dark gradient on the left side
+ * Composites the official WP Post Project 'A' logo and dark gradient on the left side
  * of the 1920x451 banner image to match authentic live site banners (e.g. Burbank-Wrongful-Termination-Lawyer-bar.jpg).
  */
 
@@ -74,165 +74,47 @@ export function renderTextAsSvgPath(
   return { pathData: p.toPathData(2), fontSize };
 }
 
-let cachedPsdOverlayBuffer: Buffer | null = null;
+/** Header photo size used by the Wrongful Termination reference page. */
+export const SITE_BANNER_WIDTH = 1000;
+export const SITE_BANNER_HEIGHT = 583;
+
+/** Article photo size used by the Wrongful Termination reference page. */
+export const SITE_BODY_WIDTH = 850;
+export const SITE_BODY_HEIGHT = 567;
 
 /**
- * Retrieves or builds the client authentic 1920x451 PSD banner overlay template.
- * Maps directly from docs/topImage.psd preserving the exact client styling:
- * - Left 0..465px: Authentic Atoyan A watermark and warm #9c6941 / brown styling from Layer 0.
- * - Right 459..1920px: Client exact Photoshop Gradient Fill 1 fading smoothly into the underlying photo.
+ * Header photo for this site: a bright photograph at the reference page size.
+ * A light wash keeps the theme's dark title readable. The previous project's logo is not applied.
  */
-export async function getAtoyanBannerOverlay(): Promise<Buffer | null> {
-  if (cachedPsdOverlayBuffer) return cachedPsdOverlayBuffer;
-
-  const templatePath = path.join(process.cwd(), "public/images/atoyan-psd-banner-template.png");
-  if (fs.existsSync(templatePath)) {
-    try {
-      cachedPsdOverlayBuffer = fs.readFileSync(templatePath);
-      return cachedPsdOverlayBuffer;
-    } catch (err) {
-      console.warn("Could not read atoyan-psd-banner-template.png:", err);
-    }
-  }
-
-  return null;
-}
-
 export async function compositeAtoyanBanner(
   imageBuffer: Buffer
 ): Promise<{ buffer: Buffer; width: number; height: number }> {
-  const width = 1920;
-  const height = 451;
-
-  // Direct reference to the client PSD template (docs/topImage.psd)
-  const psdOverlay = await getAtoyanBannerOverlay();
-
-  if (psdOverlay) {
-    const brandedBuffer = await sharp(imageBuffer)
-      .resize(width, height, { fit: "cover" })
-      .composite([{ input: psdOverlay, top: 0, left: 0 }])
-      .jpeg({ quality: 90 })
-      .toBuffer();
-
-    return { buffer: brandedBuffer, width, height };
-  }
-
-  // Graceful fallback SVG overlay if PSD template is unavailable
-  let logoB64 = "";
-  try {
-    const logoPath = path.join(process.cwd(), "public/images/atoyan-logo-icon.png");
-    if (fs.existsSync(logoPath)) {
-      logoB64 = fs.readFileSync(logoPath).toString("base64");
-    }
-  } catch (err) {
-    console.warn("Could not read atoyan-logo-icon.png:", err);
-  }
-
-  const logoElement = logoB64
-    ? `<g opacity="0.45" transform="translate(-25, 0)">
-        <image xlink:href="data:image/png;base64,${logoB64}" x="0" y="0" width="451" height="451" preserveAspectRatio="none" />
-      </g>`
-    : "";
-
-  const svgOverlay = Buffer.from(`
-    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-      <defs>
-        <linearGradient id="warmGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#9c6941" stop-opacity="0.95"/>
-          <stop offset="20%" stop-color="#8a5732" stop-opacity="0.88"/>
-          <stop offset="38%" stop-color="#6e4222" stop-opacity="0.65"/>
-          <stop offset="52%" stop-color="#482711" stop-opacity="0.35"/>
-          <stop offset="65%" stop-color="#18120b" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <rect x="0" y="0" width="${Math.round(width * 0.65)}" height="${height}" fill="url(#warmGrad)" />
-      ${logoElement}
-    </svg>
-  `);
-
+  const wash = Buffer.from(
+    `<svg width="${SITE_BANNER_WIDTH}" height="${SITE_BANNER_HEIGHT}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#ffffff" fill-opacity="0.42"/></svg>`,
+  );
   const brandedBuffer = await sharp(imageBuffer)
-    .resize(width, height, { fit: "cover" })
-    .composite([{ input: svgOverlay, top: 0, left: 0 }])
+    .resize(SITE_BANNER_WIDTH, SITE_BANNER_HEIGHT, { fit: "cover", position: "attention" })
+    .composite([{ input: wash, top: 0, left: 0 }])
     .jpeg({ quality: 90 })
     .toBuffer();
 
-  return { buffer: brandedBuffer, width, height };
+  return { buffer: brandedBuffer, width: SITE_BANNER_WIDTH, height: SITE_BANNER_HEIGHT };
 }
 
 /**
- * Formats the 600x400 services editorial image.
- * Per client specification (David): Clean image without text overlays or dark bars.
+ * Article photo for this site: a plain photograph at the reference page size.
+ * The previous project's dark caption bar and yellow title are not applied.
  */
 export async function compositeAtoyanServicesImage(
   imageBuffer: Buffer,
-  params: { headline: string; category: string }
+  _params: { headline: string; category: string }
 ): Promise<{ buffer: Buffer; width: number; height: number }> {
-  const width = 600;
-  const height = 400;
-  const barTop = 32;
-  const barHeight = 64;
-
-  const escapeXml = (str: string) =>
-    str.replace(/[<>&'"]/g, (c) => {
-      switch (c) {
-        case "<": return "&lt;";
-        case ">": return "&gt;";
-        case "&": return "&amp;";
-        case "'": return "&apos;";
-        case '"': return "&quot;";
-        default: return c;
-      }
-    });
-
-  const rawCategory = (params?.category || "CALIFORNIA EMPLOYMENT LAW").toUpperCase();
-  const rawHeadline = (params?.headline || params?.category || "EMPLOYMENT LAWYER").toUpperCase();
-
-  const font = getAtoyanFont();
-  let textElements = "";
-
-  if (font) {
-    // Render exact vector bezier paths so Sharp renders pure vectors without system font dependencies
-    // Baseline for line 1: barTop + 24 = 56px; Baseline for line 2: barTop + 51 = 83px
-    const line1 = renderTextAsSvgPath(font, rawCategory, 18, barTop + 24, 17, width - 36);
-    const line2 = renderTextAsSvgPath(font, rawHeadline, 18, barTop + 51, 20, width - 36);
-    textElements = `
-      <path d="${line1.pathData}" fill="#FFFFFF" filter="url(#shadow)" />
-      <path d="${line2.pathData}" fill="#D7E434" filter="url(#shadow)" />
-    `;
-  } else {
-    // Defensive fallback if font file could not be read
-    const category = escapeXml(rawCategory);
-    const headline = escapeXml(rawHeadline);
-    const catLen = category.length;
-    const line1FontSize = catLen > 35 ? Math.max(13, Math.floor(560 / (catLen * 0.65))) : 17;
-    const hLen = headline.length;
-    const line2FontSize = hLen > 36 ? Math.max(14, Math.floor(560 / (hLen * 0.62))) : 20;
-
-    textElements = `
-      <text x="18" y="${barTop + 24}" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="${line1FontSize}" font-weight="900" letter-spacing="0.5" filter="url(#shadow)">${category}</text>
-      <text x="18" y="${barTop + 50}" fill="#D7E434" font-family="Arial, Helvetica, sans-serif" font-size="${line2FontSize}" font-weight="900" letter-spacing="0.5" filter="url(#shadow)">${headline}</text>
-    `;
-  }
-
-  const svgOverlay = Buffer.from(`
-    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
-          <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.8"/>
-        </filter>
-      </defs>
-      <rect x="0" y="${barTop}" width="${width}" height="${barHeight}" fill="rgba(20, 25, 32, 0.78)" />
-      ${textElements}
-    </svg>
-  `);
-
   const brandedBuffer = await sharp(imageBuffer)
-    .resize(width, height, { fit: "cover" })
-    .composite([{ input: svgOverlay, top: 0, left: 0 }])
+    .resize(SITE_BODY_WIDTH, SITE_BODY_HEIGHT, { fit: "cover", position: "attention" })
     .jpeg({ quality: 90 })
     .toBuffer();
 
-  return { buffer: brandedBuffer, width, height };
+  return { buffer: brandedBuffer, width: SITE_BODY_WIDTH, height: SITE_BODY_HEIGHT };
 }
 
 /**
@@ -284,7 +166,7 @@ function createSolidPngBuffer(width: number, height: number, r: number, g: numbe
 }
 
 /**
- * Deterministic branded fallback image: serves authentic high-resolution Atoyan Law Firm
+ * Deterministic branded fallback image: serves authentic high-resolution WP Post Project
  * practice area photography from local disk so previews never render as an empty blank box.
  */
 function generateBrandedFallbackImage(opts: GenerateSingleImageOptions): AtoyanGeneratedImage {
@@ -516,45 +398,40 @@ async function generateSingleImage(opts: GenerateSingleImageOptions): Promise<At
   return { ...generateBrandedFallbackImage(opts), source: "fallback" };
 }
 
+const HEADER_PHOTO_RULES =
+  "Bright high-key professional stock photograph for a law firm page header, natural daylight, light center so dark title text stays readable. No text, no letters, no logos, no watermarks, no dark gradient, no color overlay. Landscape photo.";
+
 /**
- * Builds a dynamic, 100% topic-specific visual prompt for the 1920x451 Panoramic Hero Banner.
- * Strictly enforces negative space on the left for the Atoyan logo & dark gradient overlay.
+ * Header photo prompt. Matches the bright reference photos on this site, not the previous project's dark logo banner.
  */
 export function buildTopicBannerPrompt(cleanTopic: string, city: string, topicKey: string): string {
-  switch (topicKey) {
-    case "wrongful_termination":
-      return `Cinematic professional 35mm panoramic photography of an executive modern California corporate office in ${city} at dusk. On the right side, an empty executive boardroom with glass walls overlooking city skyline, polished dark mahogany conference table with scattered legal briefs and a discreet cardboard personal belongings box on a side credenza symbolizing an abrupt departure. The left half has generous empty space with moody atmospheric shadows. Warm amber interior glow, shallow depth of field. Clean photograph with zero text, no letters, no words, no signage. 16:9 wide landscape orientation.`;
-
-    case "workplace_harassment":
-      return `Cinematic professional 35mm panoramic photography of an open-plan contemporary California corporate workplace in ${city} after hours. On the right side, sleek glass partition walls, empty workstations with personal desks, and ambient architectural lighting casting long shadows across the floor, conveying the isolation of a hostile workplace and legal accountability. The left half features expansive, deep negative space with rich architectural depth. Moody, dignified ambiance, shallow depth of field. Zero text, no letters, no words, no signage. 16:9 wide landscape orientation.`;
-
-    case "sexual_harassment":
-      return `Cinematic professional 35mm panoramic photography of a high-end California corporate office suite in ${city} during late evening. On the center-right side, architectural glass partitions, warm architectural downlights illuminating an empty corridor between executive offices, expressing tension and legal gravity. The left portion features deep, soft, moody negative space with elegant dark wood paneling and soft ambient shadows. Dramatic warm lighting, clean architectural composition. Zero text, no letters, no words, no signage. 16:9 wide landscape orientation.`;
-
-    case "race_discrimination":
-      return `Cinematic professional 35mm panoramic photography of a sunlit modern California corporate workplace in ${city}. On the right side, an architectural boardroom with glass walls and contemporary walnut fixtures, looking out toward urban architecture under warm California sunlight, symbolizing workplace equality and accountability. The left half features clean, minimalist negative space with soft architectural shadows and shallow depth of field. Professional architectural composition. Zero text, no letters, no words, no signage. 16:9 wide landscape orientation.`;
-
-    case "wage_theft":
-      return `Cinematic professional 35mm panoramic photography of a California corporate compliance and finance office in ${city}. On the right side, a dimly lit executive wooden desk with neatly arranged timecards, payroll ledger records, an antique brass balance scale of justice, and a luxury fountain pen under a warm desk lamp. The left side has expansive, clean, dark negative space with soft shadows. Rich mahogany tones, moody ambiance, shallow depth of field. Zero text, no letters, no words, no signage. 16:9 wide landscape orientation.`;
-
-    case "meal_breaks":
-      return `Cinematic professional 35mm panoramic photography of a contemporary California workplace environment in ${city}. On the right side, a quiet employee breakroom or outdoor patio courtyard adjacent to modern glass corporate offices, bathed in golden hour California sunlight, with a clean table, an empty ceramic mug, and a digital clock reflection, highlighting labor rights and statutory time compliance. The left side has smooth negative space with soft architectural blur. Warm natural lighting. Zero text, no letters, no words, no signage. 16:9 wide landscape orientation.`;
-
-    case "disability":
-      return `Cinematic professional 35mm panoramic photography of an accessible, elegant modern California corporate office in ${city}. On the right side, a beautifully designed ergonomic executive workstation with an adjustable standing desk, wide accessible pathways, warm ambient lighting, and natural greenery through large windows. The left side provides clean negative space with soft warm shadows. Respectful, dignified corporate atmosphere, shallow depth of field. Zero text, no letters, no words, no signage. 16:9 wide landscape orientation.`;
-
-    case "workplace_retaliation":
-      return `Cinematic professional 35mm panoramic photography of a moody, high-stakes corporate environment in ${city} at twilight. On the right side, a modern corner office with floor-to-ceiling glass windows looking out over illuminated city buildings, a desk with a glowing tablet and confidential legal file folders. Dramatic contrast between warm interior lamp light and cool twilight exterior, conveying truth-telling and legal courage. The left side has deep, clean negative space. Zero text, no letters, no words, no signage. 16:9 wide landscape orientation.`;
-
-    case "family_medical_leave":
-      return `Cinematic professional 35mm panoramic photography of a serene, warm California executive office setting in ${city}. On the right side, a polished wooden desk near sun-drenched windows with an organized calendar, a fountain pen, and a warm framed scenic landscape photograph in the soft background, balancing career and family rights. The left side has expansive, soft negative space with gentle bokeh. Golden hour warmth. Zero text, no letters, no words, no signage. 16:9 wide landscape orientation.`;
-
-    case "age_discrimination":
-      return `Cinematic professional 35mm panoramic photography of a distinguished California law firm partner office or executive suite in ${city}. On the right side, classic dark walnut bookshelves lined with leather-bound legal treatises, an executive leather chair, and polished wood surfaces bathed in warm afternoon sunlight, conveying seniority, experience, and dignity. The left side offers ample clean negative space with soft shadows. Zero text, no letters, no words, no signage. 16:9 wide landscape orientation.`;
-
-    default:
-      return `Cinematic professional 35mm panoramic photography of a prestigious California employment law firm library and conference setting in ${city}. On the right side, a polished conference table with leather case binders, warm architectural lighting, and floor-to-ceiling glass windows. The left side has generous clean negative space with soft dark tones. Professional architectural composition. Zero text, no letters, no words, no signage. 16:9 wide landscape orientation.`;
-  }
+  const scene = (() => {
+    switch (topicKey) {
+      case "wrongful_termination":
+        return `A professional in business clothes sitting beside a cardboard box of office belongings and loose papers outside a bright glass office in ${city}, looking concerned.`;
+      case "workplace_harassment":
+        return `An employee in business attire standing in a bright modern office in ${city}, holding a folder and looking uneasy while a coworker sits out of focus behind them.`;
+      case "sexual_harassment":
+        return `A professional woman in a light blazer holding documents in a bright white office in ${city}, with a coworker seated at a desk in the soft background.`;
+      case "race_discrimination":
+        return `Diverse professionals in a bright sunlit conference room in ${city}, seated around a light table with papers, in a serious but calm discussion.`;
+      case "wage_theft":
+        return `Close view of an employee and a notepad of timesheets on a bright wooden desk in ${city}, with pay stubs and a calculator, natural window light.`;
+      case "meal_breaks":
+        return `Employees in business casual clothes in a bright office break area in ${city}, with a wall clock and a simple table, natural daylight.`;
+      case "disability":
+        return `An employee at a bright accessible workstation in ${city}, reviewing workplace paperwork with a colleague, large windows and an open walkway.`;
+      case "workplace_retaliation":
+        return `An employee holding a closed folder in a bright private office in ${city}, looking determined, with a laptop and papers on a light desk.`;
+      case "family_medical_leave":
+        return `A working parent meeting with a professional at a bright sunlit desk in ${city}, reviewing leave forms, warm and calm.`;
+      case "age_discrimination":
+        return `An experienced older professional in a suit reviewing employment papers with a colleague at a bright conference table in ${city}.`;
+      default:
+        return `An employee and an employment lawyer reviewing case papers at a bright conference table in ${city}, natural daylight, ${cleanTopic}.`;
+    }
+  })();
+  return `${scene} ${HEADER_PHOTO_RULES}`;
 }
 
 /**
@@ -599,9 +476,9 @@ export function buildTopicServicesPrompt(cleanTopic: string, city: string, topic
 }
 
 /**
- * Generates both Atoyan practice area images dynamically tailored to the topic:
- * 1. Banner Image (1920x451): Topic-specific cinematic office scene with Atoyan 'A' brand mark & dark left gradient.
- * 2. Services Image (600x400): Topic-specific editorial corporate photo without text overlays or dark bars.
+ * Generates both practice-area photos for this site:
+ * 1. Header photo (1000x583): bright scene, no logo and no gradient. The theme draws the title.
+ * 2. Article photo (850x567): plain editorial photo, no caption bar.
  */
 export async function generateAtoyanImages(params: {
   keyword: string;
@@ -626,24 +503,24 @@ export async function generateAtoyanImages(params: {
     generateSingleImage({
       prompt: bannerPrompt,
       filename: `${safeSlug}-banner.jpg`,
-      altText: `${city} ${cleanTopic} Employment Lawyers - Atoyan Law Firm`,
-      width: 1920,
-      height: 451,
+      altText: `${city} ${cleanTopic} Employment Lawyers - WP Post Project`,
+      width: SITE_BANNER_WIDTH,
+      height: SITE_BANNER_HEIGHT,
       apiKey,
       openaiKey,
     }),
     generateSingleImage({
       prompt: servicesPrompt,
       filename: `${safeSlug}-services.jpg`,
-      altText: `${city} ${cleanTopic} Legal Representation & Rights - Atoyan Law`,
-      width: 600,
-      height: 400,
+      altText: `${city} ${cleanTopic} Legal Representation & Rights - WP Post Project`,
+      width: SITE_BODY_WIDTH,
+      height: SITE_BODY_HEIGHT,
       apiKey,
       openaiKey,
     }),
   ]);
 
-  // Apply Atoyan Law Firm Branding Composites
+  // Apply WP Post Project Branding Composites
   let banner = rawBanner;
   try {
     const rawBannerBuf = Buffer.from(rawBanner.base64, "base64");

@@ -379,7 +379,7 @@ export default function Home() {
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold text-text">Atoyan Law Firm</span>
+              <span className="font-semibold text-text">WP Post Project</span>
               <span className="text-xs px-2 py-0.5 rounded-full bg-good/10 text-good border border-good/20">
                 Live WP REST Connected
               </span>
@@ -410,7 +410,7 @@ export default function Home() {
                 )
               )}
             </div>
-            <p className="text-xs text-muted">Practice Area Autopilot • SCF Field Group 348 • Gemini Imagen 3</p>
+            <p className="text-xs text-muted">Practice Area Autopilot • demo.wp-post.com</p>
           </div>
         </div>
 
@@ -460,7 +460,7 @@ export default function Home() {
             <div className="space-y-1">
               <h1 className="text-2xl font-bold tracking-tight">Generate &amp; Publish Practice Area Page</h1>
               <p className="text-sm text-muted">
-                Automates legal content writing (California FEHA &amp; Labor Code depth), Gemini Imagen visuals (16:9 header + 4:3 services), media library uploads, SCF Field Group 348 mapping, and Yoast SEO synchronization.
+                Writes California employment pages for demo.wp-post.com, generates the header and article photos, and publishes them with Yoast SEO.
               </p>
             </div>
 
@@ -594,7 +594,7 @@ export default function Home() {
                       {publishResult.status === "future" ? "Page Scheduled in WordPress!" : "Published Live to WordPress!"}
                     </h2>
                     <p className="text-xs text-muted">
-                      Created under parent #750 (employment-law) with labor-law.php template and full SCF Field Group 348 payload.
+                      Published as a top-level page on demo.wp-post.com with a WoodMart header photo and Yoast SEO.
                     </p>
                   </div>
                 </div>
@@ -639,7 +639,7 @@ export default function Home() {
                   <span className="font-semibold">#{publishResult.bannerAttachmentId || "Default"}</span>
                 </div>
                 <div className="bg-panel p-3 rounded-lg border border-line">
-                  <span className="text-muted block">ACF Labor Law Content:</span>
+                  <span className="text-muted block">Page Sections:</span>
                   <span className="font-semibold text-good flex items-center gap-1">
                     <CheckCircle2 className="size-3 text-good" /> 3 Unique Sections
                   </span>
@@ -705,7 +705,7 @@ export default function Home() {
                       activeTab === "acf" ? "bg-accent text-white" : "text-muted hover:text-text bg-panel-2 border border-line",
                     )}
                   >
-                    ACF Field Mapping
+                    Page Layout
                   </button>
                 </div>
 
@@ -765,7 +765,7 @@ export default function Home() {
                           )}
                         </div>
                         <p className="text-xs text-muted mt-0.5">
-                          Auditing pure reader-visible words (HTML tags, CSS, scripts, and markup stripped) against David Atoyan&apos;s editorial standards.
+                          Auditing pure reader-visible words (HTML tags, CSS, scripts, and markup stripped).
                         </p>
                       </div>
                     </div>
@@ -788,7 +788,7 @@ export default function Home() {
                       wordAudit.meetsServicesCriteria ? "border-good/40" : "border-bad/50 ring-1 ring-bad/30"
                     )}>
                       <div className="flex items-center justify-between text-xs text-muted mb-1">
-                        <span className="font-semibold text-text truncate">ACF Tab 2 Services</span>
+                        <span className="font-semibold text-text truncate">Opening section</span>
                         <span className={cn(
                           "text-[10px] font-mono font-bold px-1.5 py-0.5 rounded",
                           wordAudit.meetsServicesCriteria ? "bg-good/15 text-good" : "bg-bad/15 text-bad"
@@ -816,7 +816,7 @@ export default function Home() {
                     {/* Card 2: Tab 4 How Do We Stand */}
                     <div className="rounded-xl border border-line p-3 bg-panel">
                       <div className="flex items-center justify-between text-xs text-muted mb-1">
-                        <span className="font-semibold text-text truncate">ACF Tab 4 How Do</span>
+                        <span className="font-semibold text-text truncate">How we help</span>
                         <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-panel-2 text-muted">
                           {wordAudit.howDoWords >= 150 ? "PASS" : "OK"}
                         </span>
@@ -839,7 +839,7 @@ export default function Home() {
                     {/* Card 3: Tab 6 Compensation */}
                     <div className="rounded-xl border border-line p-3 bg-panel">
                       <div className="flex items-center justify-between text-xs text-muted mb-1">
-                        <span className="font-semibold text-text truncate">ACF Tab 6 Remedy</span>
+                        <span className="font-semibold text-text truncate">Remedies</span>
                         <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-panel-2 text-muted">
                           {wordAudit.compensationWords >= 150 ? "PASS" : "OK"}
                         </span>
@@ -930,7 +930,7 @@ export default function Home() {
                         {result.content.yoastTitle}
                       </div>
                       <div className="text-good text-xs font-mono">
-                        https://www.atoyanlaw.com/practice-areas/employment-law/{result.content.slug}/
+                        https://demo.wp-post.com/{result.content.slug}/
                       </div>
                       <p className="text-xs text-muted leading-relaxed">
                         {result.content.yoastMetaDesc}
@@ -946,15 +946,15 @@ export default function Home() {
                           <ImageIcon className="size-4 text-accent" />
                           <h3 className="font-semibold text-base text-text">Panoramic Hero Banner (Tab 1)</h3>
                           <span className="text-xs px-2 py-0.5 rounded bg-accent/10 text-accent border border-accent/20 font-mono">
-                            personal_injury_image
+                            Header photo
                           </span>
                         </div>
                         <span className="text-xs font-mono px-2.5 py-1 rounded-md bg-panel-2 border border-line text-accent font-semibold">
-                          1920 &times; 451 (4.25:1)
+                          1000 &times; 583
                         </span>
                       </div>
 
-                      <div className="w-full aspect-[1920/451] rounded-xl overflow-hidden border border-line bg-panel-2 shadow-inner">
+                      <div className="w-full aspect-[1000/583] rounded-xl overflow-hidden border border-line bg-panel-2 shadow-inner">
                         <img
                           src={result.images.banner.dataUrl}
                           alt={result.images.banner.altText}
@@ -978,12 +978,12 @@ export default function Home() {
                     <div className="flex items-center justify-between border-b border-line pb-4">
                       <div>
                         <span className="text-xs font-semibold uppercase tracking-wider text-accent bg-accent/10 px-2 py-0.5 rounded border border-accent/20">
-                          1st Section &bull; ACF Tab 2 (Services Content)
+                          Opening section
                         </span>
                         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text mt-2">
                           {result.content.heroTitle}
                         </h1>
-                        <p className="text-xs text-muted mt-1">H1 Title mapped to personal_injury_title (Formula: [City] [Topic] Employment Lawyers - [Subtopic])</p>
+                        <p className="text-xs text-muted mt-1">Page title shown on demo.wp-post.com</p>
                       </div>
                       {wordAudit && (wordAudit.meetsServicesCriteria ? (
                         <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full bg-good/15 text-good border border-good/30 font-semibold font-mono">
@@ -1036,7 +1036,7 @@ export default function Home() {
                     <div className="border-b border-line pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div>
                         <span className="text-xs font-semibold uppercase tracking-wider text-accent bg-accent/10 px-2 py-0.5 rounded border border-accent/20">
-                          2nd Section &bull; ACF Tab 4 (How Do We Stand Section)
+                          How we help
                         </span>
                         <h3 className="text-xl font-bold text-text mt-2">{result.content.howDoHeading}</h3>
                       </div>
@@ -1058,7 +1058,7 @@ export default function Home() {
                     <div className="border-b border-accent/20 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div>
                         <span className="text-xs font-semibold uppercase tracking-wider text-accent bg-accent/10 px-2 py-0.5 rounded border border-accent/20">
-                          3rd Section &bull; ACF Tab 6 (Compensation &amp; Remedies)
+                          Remedies
                         </span>
                         <h3 className="text-xl font-bold text-accent mt-2">{result.content.compensationHeading}</h3>
                       </div>
@@ -1149,7 +1149,7 @@ export default function Home() {
                         </span>
                       </div>
                       <p className="text-xs text-muted leading-relaxed">
-                        Cleanly parsed into <code className="text-accent">compensation_content</code> right below the legal damages guidance. Triggers the native interactive FAQ accordion on <code className="text-accent">templates/labor-law.php</code> without inserting raw styles or scripts into WordPress.
+                        Inserted on the page as an Easy Accordion, the same way the live demo.wp-post.com practice pages show their questions.
                       </p>
                     </div>
                   </div>
@@ -1164,19 +1164,19 @@ export default function Home() {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div>
                         <h3 className="font-bold text-base text-text">Panoramic Hero Banner (Tab 1)</h3>
-                        <p className="text-xs text-muted">Atoyan Law Firm header banner &bull; mapped to <code className="text-accent">personal_injury_image</code></p>
+                        <p className="text-xs text-muted">Header photo for the WoodMart page title on demo.wp-post.com</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-mono px-2.5 py-1 rounded-md bg-panel-2 border border-line text-accent font-semibold">
-                          1920 x 451 (4.25:1)
+                          1000 x 583
                         </span>
                         <span className="text-xs px-2 py-0.5 rounded bg-good/10 text-good border border-good/20 font-medium">
-                          Warm Gradient &bull; Atoyan Watermark
+                          Light wash &bull; dark title
                         </span>
                       </div>
                     </div>
 
-                    <div className="w-full aspect-[1920/451] rounded-xl overflow-hidden border border-line bg-panel-2 shadow-inner">
+                    <div className="w-full aspect-[1000/583] rounded-xl overflow-hidden border border-line bg-panel-2 shadow-inner">
                       <img
                         src={result.images.banner.dataUrl}
                         alt={result.images.banner.altText}
@@ -1204,7 +1204,7 @@ export default function Home() {
                           <p className="text-xs text-muted">Injected directly after primary H2 heading with <code className="text-accent">alignleft</code></p>
                         </div>
                         <span className="text-xs font-mono px-2.5 py-1 rounded-md bg-panel-2 border border-line text-accent font-semibold">
-                          600 x 400 (3:2)
+                          850 x 567
                         </span>
                       </div>
 
@@ -1230,27 +1230,27 @@ export default function Home() {
                     <div className="rounded-2xl border border-line bg-panel p-6 space-y-4">
                       <h3 className="font-bold text-base text-text">WordPress Asset Configuration</h3>
                       <p className="text-xs text-muted leading-relaxed">
-                        Images are composited with exact production dimensions and branding to match Atoyan Law Firm labor law templates.
+                        Photos match the header and article sizes used on demo.wp-post.com.
                       </p>
 
                       <div className="space-y-3 text-xs">
                         <div className="p-3 rounded-xl border border-line bg-panel-2 space-y-1">
                           <div className="font-semibold text-text flex items-center justify-between">
                             <span>Hero Banner Placement</span>
-                            <span className="font-mono text-accent">1920 × 451 px</span>
+                            <span className="font-mono text-accent">1000 × 583 px</span>
                           </div>
                           <p className="text-muted text-[11px] leading-relaxed">
-                            Uploaded to WP Media Library, mapped to ACF field <code className="text-accent">personal_injury_image</code>, with Atoyan warm gradient (#9c6941) and brand watermark.
+                            Uploaded to the media library and set as the WoodMart page-title photo, with a light wash so the dark title stays readable.
                           </p>
                         </div>
 
                         <div className="p-3 rounded-xl border border-line bg-panel-2 space-y-1">
                           <div className="font-semibold text-text flex items-center justify-between">
                             <span>Services Graphic Placement</span>
-                            <span className="font-mono text-accent">600 × 400 px</span>
+                            <span className="font-mono text-accent">850 × 567 px</span>
                           </div>
                           <p className="text-muted text-[11px] leading-relaxed">
-                            Embedded inside <code className="text-accent">_personal_injury_services_content</code> directly after the primary H2 with <code className="text-accent">alignleft size-full</code>. Clean image without text overlays or dark bars.
+                            Placed after the opening heading with <code className="text-accent">alignleft</code>, the same way the live practice pages show their article photo. No caption bar.
                           </p>
                         </div>
 
@@ -1287,7 +1287,7 @@ export default function Home() {
 
                       <div className="flex items-center gap-2">
                         <a
-                          href="https://www.atoyanlaw.com/wp-admin/edit.php?post_type=sp_easy_accordion"
+                          href="https://demo.wp-post.com/wp-admin/edit.php?post_type=sp_easy_accordion"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-panel-2 hover:bg-panel text-xs text-muted hover:text-text transition"
@@ -1364,55 +1364,48 @@ export default function Home() {
                 <div className="rounded-2xl border border-line bg-panel p-6 space-y-5">
                   <div className="flex items-center justify-between border-b border-line pb-4">
                     <div>
-                      <h3 className="font-semibold text-lg">ACF Field Group 348 (personal_injury_group)</h3>
+                      <h3 className="font-semibold text-lg">demo.wp-post.com Page Layout</h3>
                       <p className="text-xs text-muted">
-                        Template: <code className="text-accent font-mono">templates/labor-law.php</code> &bull; Parent ID: <code className="text-accent font-mono">750 (employment-law)</code>
+                        Template: <code className="text-accent font-mono">WoodMart default</code> &bull; Parent: <code className="text-accent font-mono">Top level</code>
                       </p>
                     </div>
                     <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-good/10 text-good border border-good/20">
-                      post_content: "" (Strictly Empty)
+                      Visible page body
                     </span>
                   </div>
 
                   <div className="grid sm:grid-cols-2 gap-4 text-xs font-mono">
                     <div className="p-4 rounded-xl bg-panel-2 border border-line space-y-2">
-                      <span className="text-accent font-semibold block font-sans">Tab 1: Personal Injury (Hero Banner)</span>
-                      <p className="text-muted">personal_injury_image: <span className="text-text font-sans">1920x451 Panoramic Banner</span></p>
-                      <p className="text-muted">personal_injury_title: <span className="text-text font-sans">{result.content.heroTitle}</span></p>
+                      <span className="text-accent font-semibold block font-sans">Header</span>
+                      <p className="text-muted">Title: <span className="text-text font-sans">{result.content.heroTitle}</span></p>
+                      <p className="text-muted">Photo: <span className="text-text font-sans">1000×583, dark title on a lightened photo</span></p>
                     </div>
 
                     <div className="p-4 rounded-xl bg-panel-2 border border-line space-y-2">
-                      <span className="text-accent font-semibold block font-sans">Tab 2: Services Section (2,000+ Words)</span>
-                      <p className="text-muted">_personal_injury_services_heading: <span className="text-text font-sans">{result.content.servicesHeading}</span></p>
-                      <p className="text-muted">_personal_injury_services_sub_heading: <span className="text-text font-sans">{result.content.servicesSubHeading}</span></p>
-                      <p className="text-muted">_personal_injury_services_content: <span className="text-good font-sans">2,000+ words deep analysis with h2dav/h3dav and clean 600x400 image</span></p>
-                      <p className="text-muted">_personal_injury_services_Sidebar: <span className="text-good font-sans">27 Practice Area Term IDs Cloned</span></p>
+                      <span className="text-accent font-semibold block font-sans">Opening Section</span>
+                      <p className="text-muted">Heading: <span className="text-text font-sans">{result.content.servicesHeading}</span></p>
+                      <p className="text-muted">Photo: <span className="text-good font-sans">850×567, aligned left</span></p>
                     </div>
 
                     <div className="p-4 rounded-xl bg-panel-2 border border-line space-y-2">
-                      <span className="text-accent font-semibold block font-sans">Tab 3: Testimonials Section</span>
-                      <p className="text-muted">testimonials_reviews_repet: <span className="text-good font-sans">8 Authentic Client Reviews Cloned</span></p>
-                      <p className="text-muted">testimonials_reviews_bg_image: <span className="text-good font-sans">Preserved from Reference Page</span></p>
+                      <span className="text-accent font-semibold block font-sans">Shared Blocks</span>
+                      <p className="text-muted">Directions and testimonials use the blocks already on demo.wp-post.com.</p>
                     </div>
 
                     <div className="p-4 rounded-xl bg-panel-2 border border-line space-y-2">
-                      <span className="text-accent font-semibold block font-sans">Tab 4: How Do Section</span>
-                      <p className="text-muted">how_do_heading: <span className="text-text font-sans">{result.content.howDoHeading}</span></p>
-                      <p className="text-muted">how_do_content: <span className="text-text font-sans">Actionable Legal Guidance</span></p>
-                      <p className="text-muted">how_do_contact_form_shortcode: <span className="text-good font-sans">[contact-form-7 id="2701763"]</span></p>
+                      <span className="text-accent font-semibold block font-sans">How We Help</span>
+                      <p className="text-muted">Heading: <span className="text-text font-sans">{result.content.howDoHeading}</span></p>
                     </div>
 
                     <div className="p-4 rounded-xl bg-panel-2 border border-line space-y-2">
-                      <span className="text-accent font-semibold block font-sans">Tab 5: CTA Section</span>
-                      <p className="text-muted">cta_heading: <span className="text-good font-sans">Get The Representation You Deserve</span></p>
-                      <p className="text-muted">cta_button: <span className="text-good font-sans">Free Consultation &bull; (747) 888-0077</span></p>
+                      <span className="text-accent font-semibold block font-sans">Consultation</span>
+                      <p className="text-muted">Free consultation at <span className="text-good font-sans">(323) 968-0000</span> or the contact page.</p>
                     </div>
 
                     <div className="p-4 rounded-xl bg-panel-2 border border-line space-y-2">
-                      <span className="text-accent font-semibold block font-sans">Tab 6: Compensation Section</span>
-                      <p className="text-muted">compensation_heading: <span className="text-text font-sans">{result.content.compensationHeading}</span></p>
-                      <p className="text-muted">compensation_content: <span className="text-good font-sans">Legal intro + Topic CTA with (747) 888-0077 + [sp_easyaccordion id="..."]</span></p>
-                      <p className="text-muted">code_injection: <span className="text-good font-sans">Zero inline CSS or toggle scripts</span></p>
+                      <span className="text-accent font-semibold block font-sans">Questions</span>
+                      <p className="text-muted">Heading: <span className="text-text font-sans">{result.content.compensationHeading}</span></p>
+                      <p className="text-muted">FAQ: <span className="text-good font-sans">Easy Accordion on the page</span></p>
                     </div>
                   </div>
                 </div>
@@ -1449,7 +1442,7 @@ export default function Home() {
 
             <p className="text-xs text-muted leading-relaxed">
               This action publishes directly to the live site at{" "}
-              <strong className="text-text">atoyanlaw.com</strong>. Enter the{" "}
+              <strong className="text-text">demo.wp-post.com</strong>. Enter the{" "}
               <code className="text-accent bg-accent/10 px-1 py-0.5 rounded text-[11px]">WP_SUPER_ADMIN</code>{" "}
               password to authorize.
             </p>

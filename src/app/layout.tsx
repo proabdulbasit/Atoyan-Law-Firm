@@ -8,9 +8,9 @@ import { Footer } from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Atoyan Law Firm • Practice Area Content Autopilot",
+  title: "WP Post Project • Practice Area Content Autopilot",
   description:
-    "Automated California employment law content generation, ACF Field Group 348 payload mapping, visual asset synthesis, and WordPress REST publishing.",
+    "California employment law pages for demo.wp-post.com, with header photos, Easy Accordion FAQs, and WordPress REST publishing.",
 };
 
 export default function RootLayout({

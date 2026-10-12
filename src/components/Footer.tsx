@@ -6,22 +6,22 @@ const PIPELINE_PILLARS = [
   {
     icon: Scale,
     title: "California Legal Depth",
-    body: "Strictly aligns with Atoyan Law Firm standards, citing FEHA, CRD regulations, Labor Code §§ 98.6 & 1102.5, and SB 497 rebuttable presumption.",
+    body: "Practice pages for WP Post Project cite FEHA, CRD regulations, Labor Code §§ 98.6 & 1102.5, and the SB 497 rebuttable presumption.",
   },
   {
     icon: Layers,
-    title: "ACF Field Group 348",
-    body: "Maps all 27 subfields across 6 tabs. Clones 8 verified client reviews and 27 practice area sidebar navigation links directly from Page 3933.",
+    title: "Easy Accordion FAQs",
+    body: "Each page includes a 10-question accordion, the shared directions block, and the shared testimonials block used on demo.wp-post.com.",
   },
   {
     icon: ImageIcon,
-    title: "Dual AI Visual Pair",
-    body: "Synthesizes 16:9 header banners (moody mahogany law desk) and 4:3 editorial illustrations with pure binary PNG fallback guarantee.",
+    title: "Header and Article Photos",
+    body: "Builds a 1000×583 header photo with a light wash for the dark page title, and an 850×567 article photo with no caption bar.",
   },
   {
     icon: ShieldCheck,
     title: "WordPress & Yoast REST",
-    body: "Publishes under parent page #750 (Employment Law) with templates/labor-law.php, linking media and syncing Yoast SEO titles & descriptions.",
+    body: "Publishes a top-level WoodMart page on demo.wp-post.com, sets the header photo, and writes the Yoast title and description.",
   },
 ];
 
@@ -36,10 +36,10 @@ export function Footer() {
                 <FileText className="size-3.5" /> Production Publishing Engine
               </div>
               <h3 className="text-xl font-bold tracking-tight text-text">
-                Atoyan Law Firm • Practice Area Automation
+                WP Post Project • Practice Area Automation
               </h3>
               <p className="mt-2 text-sm text-muted leading-relaxed max-w-xl">
-                End-to-end programmatic publishing platform engineered specifically for Atoyan Law Firm (atoyanlaw.com). Automates deep legal research, conversational client tone, visual asset generation, and full WordPress REST API deployment.
+                Publishing platform for WP Post Project at demo.wp-post.com. It writes California employment pages, generates the header and article photos, and publishes them through the WordPress REST API.
               </p>
             </div>
 
@@ -65,19 +65,19 @@ export function Footer() {
             <div className="space-y-2.5 text-xs">
               <div className="flex items-center justify-between p-2.5 rounded-lg bg-panel-2 border border-line">
                 <span className="text-muted">Target Domain:</span>
-                <span className="font-semibold text-text font-mono">atoyanlaw.com</span>
+                <span className="font-semibold text-text font-mono">demo.wp-post.com</span>
               </div>
               <div className="flex items-center justify-between p-2.5 rounded-lg bg-panel-2 border border-line">
                 <span className="text-muted">Parent Post:</span>
-                <span className="font-semibold text-text font-mono">#750 (Employment Law)</span>
+                <span className="font-semibold text-text font-mono">Top level</span>
               </div>
               <div className="flex items-center justify-between p-2.5 rounded-lg bg-panel-2 border border-line">
                 <span className="text-muted">Page Template:</span>
-                <span className="font-semibold text-text font-mono">templates/labor-law.php</span>
+                <span className="font-semibold text-text font-mono">WoodMart default</span>
               </div>
               <div className="flex items-center justify-between p-2.5 rounded-lg bg-panel-2 border border-line">
-                <span className="text-muted">Field Group:</span>
-                <span className="font-semibold text-text font-mono">SCF Group 348</span>
+                <span className="text-muted">Page Builder:</span>
+                <span className="font-semibold text-text font-mono">Easy Accordion + Yoast</span>
               </div>
             </div>
 
@@ -86,7 +86,7 @@ export function Footer() {
                 <CheckCircle2 className="size-3.5" /> Ready for Immediate Client Publishing
               </div>
               <p className="text-[11px] text-muted">
-                Generates complete, verified WordPress pages with 100% theme fidelity.
+                Generates complete pages that follow the live demo.wp-post.com layout.
               </p>
             </div>
           </div>
@@ -94,7 +94,7 @@ export function Footer() {
 
         <div className="pt-8 border-t border-line flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-muted">
           <div>
-            &copy; {new Date().getFullYear()} <strong>Atoyan Law Firm</strong>. All rights reserved.
+            &copy; {new Date().getFullYear()} <strong>WP Post Project</strong>. All rights reserved.
           </div>
           <div className="flex items-center gap-4 font-medium">
             <span className="flex items-center gap-1.5 text-good">
@@ -103,7 +103,7 @@ export function Footer() {
             <span>•</span>
             <span>WordPress REST API</span>
             <span>•</span>
-            <span>SCF / ACF 348</span>
+            <span>demo.wp-post.com</span>
           </div>
         </div>
       </div>

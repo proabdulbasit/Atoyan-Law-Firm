@@ -3,8 +3,8 @@
  * 
  * Guarantees 100% distinct, bespoke question headings, statutory depth,
  * and search FAQs across every California employment practice area.
- * Eliminates generic cross-topic duplication and enforces attorney David Atoyan's
- * 2,200+ word requirement with pure, domain-specific legal doctrine.
+ * Eliminates generic cross-topic duplication and keeps each practice area
+ * at 2,200+ words of domain-specific legal doctrine.
  */
 
 export interface TopicQuestionBlueprint {
@@ -46,9 +46,9 @@ export function getTopicPromptBlueprint(
           "State Dept. of Health Services v. Superior Court (2003) (Strict supervisor liability without Faragher/Ellerth defense)",
           "Labor Code § 1102.5 & SB 497 (Whistleblower protections and 90-day rebuttable presumption of retaliation)"
         ],
-        earlyCtaText: `If you or a loved one are enduring severe, pervasive, or discriminatory harassment in ${city}, call Atoyan Law. Call <a href="tel:8888070077">(888) 807-0077</a> or <a href="/contact/">contact us online</a> for a confidential consultation with our ${city} Workplace Harassment lawyer.`,
-        midCtaText: `Facing discriminatory slurs, relentless bullying, or employer hostility in ${city}? You have protected rights under California FEHA. Our ${city} Workplace Harassment Lawyers are prepared to hold management accountable. <a href="tel:8888070077">Call (888) 807-0077</a> for immediate help.`,
-        closingCtaText: `Workplace harassment destroys personal dignity and career livelihoods. Don’t face your employer alone. <a href="tel:8888070077">Contact Atoyan Law Firm’s ${city} Workplace Harassment team</a> today at (888) 807-0077 to demand full financial restitution.`,
+        earlyCtaText: `If you or a loved one are enduring severe, pervasive, or discriminatory harassment in ${city}, call the firm. Call <a href="tel:3239680000">(323) 968-0000</a> or <a href="/contact/">contact us online</a> for a confidential consultation with our ${city} Workplace Harassment lawyer.`,
+        midCtaText: `Facing discriminatory slurs, relentless bullying, or employer hostility in ${city}? You have protected rights under California FEHA. Our ${city} Workplace Harassment Lawyers are prepared to hold management accountable. <a href="tel:3239680000">Call (323) 968-0000</a> for immediate help.`,
+        closingCtaText: `Workplace harassment destroys personal dignity and career livelihoods. Don’t face your employer alone. <a href="tel:3239680000">Contact the firm’s ${city} Workplace Harassment team</a> today at (323) 968-0000 to demand full financial restitution.`,
         questions: [
           {
             questionNumber: 1,
@@ -108,7 +108,7 @@ export function getTopicPromptBlueprint(
           {
             questionNumber: 12,
             heading: `What Is the Process for Filing with the California Civil Rights Department (CRD)?`,
-            instructions: `Explain administrative exhaustion under California Government Code § 12960. Detail the generous 3-year statute of limitations to file an administrative complaint with the California Civil Rights Department (CRD, formerly DFEH). Explain why Atoyan Law Firm frequently requests an immediate Right-to-Sue notice to bypass slow administrative backlogs and proceed directly to filing a lawsuit in California Superior Court.`
+            instructions: `Explain administrative exhaustion under California Government Code § 12960. Detail the generous 3-year statute of limitations to file an administrative complaint with the California Civil Rights Department (CRD, formerly DFEH). Explain why the firm frequently requests an immediate Right-to-Sue notice to bypass slow administrative backlogs and proceed directly to filing a lawsuit in California Superior Court.`
           },
           {
             questionNumber: 13,
@@ -117,8 +117,8 @@ export function getTopicPromptBlueprint(
           },
           {
             questionNumber: 14,
-            heading: `Why Choose Atoyan Law Firm to Fight Workplace Harassment in ${city}?`,
-            instructions: `Describe Atoyan Law Firm's trial-tested representation of California workers: contingency fee model (no fees unless we win), aggressive discovery targeting corporate email servers and HR communications, personalized client focus, and fearless litigation against Fortune 500 companies and entrenched corporate defense firms in California Superior Court.`
+            heading: `Why Speak With a ${city} Workplace Harassment Lawyer?`,
+            instructions: `Describe the firm's trial-tested representation of California workers: contingency fee model (no fees unless we win), aggressive discovery targeting corporate email servers and HR communications, personalized client focus, and fearless litigation against Fortune 500 companies and entrenched corporate defense firms in California Superior Court.`
           }
         ],
         faqs: [
@@ -178,9 +178,9 @@ export function getTopicPromptBlueprint(
           "Pantoja v. Anton (2011) (Admissibility of me-too witness evidence in sexual harassment litigation)",
           "Labor Code § 1102.5 & SB 497 (90-day statutory rebuttable presumption of retaliation)"
         ],
-        earlyCtaText: `Subjected to unwanted sexual conduct, inappropriate comments, or a hostile work environment in ${city}? That violates California FEHA. Call Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a> or <a href="/contact/">contact us online</a> for a confidential consultation.`,
-        midCtaText: `Unwanted sexual advances? Quid pro quo demands? Retaliation for saying no in ${city}? You have protected legal rights. Our ${city} Sexual Harassment Lawyers are ready to fight for your dignity and financial recovery. <a href="tel:8888070077">Call (888) 807-0077</a> for immediate guidance.`,
-        closingCtaText: `No worker should have to trade their personal dignity or endure sexual abuse to earn a living. Don’t suffer in silence. <a href="tel:8888070077">Contact Atoyan Law Firm’s ${city} Sexual Harassment team</a> today at (888) 807-0077 for aggressive, confidential representation.`,
+        earlyCtaText: `Subjected to unwanted sexual conduct, inappropriate comments, or a hostile work environment in ${city}? That violates California FEHA. Call the firm at <a href="tel:3239680000">(323) 968-0000</a> or <a href="/contact/">contact us online</a> for a confidential consultation.`,
+        midCtaText: `Unwanted sexual advances? Quid pro quo demands? Retaliation for saying no in ${city}? You have protected legal rights. Our ${city} Sexual Harassment Lawyers are ready to fight for your dignity and financial recovery. <a href="tel:3239680000">Call (323) 968-0000</a> for immediate guidance.`,
+        closingCtaText: `No worker should have to trade their personal dignity or endure sexual abuse to earn a living. Don’t suffer in silence. <a href="tel:3239680000">Contact the firm’s ${city} Sexual Harassment team</a> today at (323) 968-0000 for aggressive, confidential representation.`,
         questions: [
           {
             questionNumber: 1,
@@ -249,8 +249,8 @@ export function getTopicPromptBlueprint(
           },
           {
             questionNumber: 14,
-            heading: `Why Choose Atoyan Law Firm for Confidential, Aggressive Sexual Harassment Advocacy in ${city}?`,
-            instructions: `Highlight Atoyan Law Firm's compassionate, trauma-informed approach paired with an aggressive litigation posture: strict client confidentiality, no recovery/no fee contingency representation, comprehensive digital evidence preservation, and fearless courtroom advocacy against corporate defense firms.`
+            heading: `Why Speak With a ${city} Sexual Harassment Lawyer?`,
+            instructions: `Highlight the firm's compassionate, trauma-informed approach paired with an aggressive litigation posture: strict client confidentiality, no recovery/no fee contingency representation, comprehensive digital evidence preservation, and fearless courtroom advocacy against corporate defense firms.`
           }
         ],
         faqs: [
@@ -310,9 +310,9 @@ export function getTopicPromptBlueprint(
           "Guz v. Bechtel National, Inc. (2000) (Burden-shifting framework and pretext analysis)",
           "Labor Code § 1171.5 (Undocumented worker protections)"
         ],
-        earlyCtaText: `Were you fired abruptly, unfairly, or in retaliation in ${city}? That may be wrongful termination under California law. Call Atoyan Law at <a href="tel:8888070077">(888) 807-0077</a> or <a href="/contact/">contact us online</a> for a free, confidential consultation.`,
-        midCtaText: `Facing a sudden termination, bogus disciplinary write-up, or retaliatory firing in ${city}? You have protected rights under California labor statutes. Our ${city} Wrongful Termination Lawyers are ready to fight for you. <a href="tel:8888070077">Call (888) 807-0077</a> today.`,
-        closingCtaText: `An unlawful firing can derail your financial security and career. Don’t let your former employer violate your rights with impunity. <a href="tel:8888070077">Contact Atoyan Law Firm’s ${city} Wrongful Termination team</a> today at (888) 807-0077 for a full case review.`,
+        earlyCtaText: `Were you fired abruptly, unfairly, or in retaliation in ${city}? That may be wrongful termination under California law. Call the firm at <a href="tel:3239680000">(323) 968-0000</a> or <a href="/contact/">contact us online</a> for a free, confidential consultation.`,
+        midCtaText: `Facing a sudden termination, bogus disciplinary write-up, or retaliatory firing in ${city}? You have protected rights under California labor statutes. Our ${city} Wrongful Termination Lawyers are ready to fight for you. <a href="tel:3239680000">Call (323) 968-0000</a> today.`,
+        closingCtaText: `An unlawful firing can derail your financial security and career. Don’t let your former employer violate your rights with impunity. <a href="tel:3239680000">Contact the firm’s ${city} Wrongful Termination team</a> today at (323) 968-0000 for a full case review.`,
         questions: [
           {
             questionNumber: 1,
@@ -381,8 +381,8 @@ export function getTopicPromptBlueprint(
           },
           {
             questionNumber: 14,
-            heading: `Why Choose Atoyan Law Firm for Your Wrongful Termination Claim in ${city}?`,
-            instructions: `Highlight Atoyan Law Firm's contingency fee representation (no recovery, no fees), trial experience, and dedication to protecting California workers against corporate defense firms.`
+            heading: `Why Speak With a ${city} Wrongful Termination Lawyer?`,
+            instructions: `Highlight the firm's contingency fee representation (no recovery, no fees), trial experience, and dedication to protecting California workers against corporate defense firms.`
           }
         ],
         faqs: [

@@ -247,7 +247,7 @@ export function ClientReportsView({ onSwitchToGenerator }: ClientReportsViewProp
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `atoyan-content-autopilot-report-${timeframe}.csv`);
+    link.setAttribute("download", `wp-post-project-report-${timeframe}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -257,7 +257,7 @@ export function ClientReportsView({ onSwitchToGenerator }: ClientReportsViewProp
   };
 
   const copySqlSchema = () => {
-    const schemaSql = `-- Atoyan Law Firm • Generation Reports Table Schema
+    const schemaSql = `-- WP Post Project • Generation Reports Table Schema
 CREATE TABLE IF NOT EXISTS public.generation_reports (
   id TEXT PRIMARY KEY,
   timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -328,7 +328,7 @@ CREATE POLICY "Allow public delete access on generation_reports"
             </div>
           </div>
           <p className="text-xs sm:text-sm text-muted mt-1">
-            Real-time generation volume, statutory content speed, and exact visual synthesis cost tracking for Atoyan Law Firm.
+            Real-time generation volume, content speed, and image cost tracking for WP Post Project.
           </p>
         </div>
 
@@ -479,7 +479,7 @@ CREATE POLICY "Public full access" ON public.generation_reports FOR ALL USING (t
             </div>
           </div>
           <div className="pt-2 border-t border-line/60 flex items-center justify-between text-[11px] text-muted">
-            <span>Parent #750 (Labor Law)</span>
+            <span>demo.wp-post.com</span>
             <span className="font-mono text-accent font-semibold">{stats.totalWords} words</span>
           </div>
         </div>
@@ -623,7 +623,7 @@ CREATE POLICY "Public full access" ON public.generation_reports FOR ALL USING (t
                 </span>
                 <span className="font-mono text-good font-bold">$0.0000 (Free)</span>
               </div>
-              <span className="text-[10px] text-muted">Direct HTTP REST bridge into ACF Field Group 348 and WP Rocket cache flush</span>
+              <span className="text-[10px] text-muted">Direct HTTP REST publishing to demo.wp-post.com</span>
             </div>
           </div>
 
@@ -634,11 +634,11 @@ CREATE POLICY "Public full access" ON public.generation_reports FOR ALL USING (t
               <span className="line-through text-muted font-normal">$175.00</span>
             </div>
             <div className="flex items-center justify-between text-xs font-bold text-text">
-              <span>Atoyan Autopilot Cost:</span>
+              <span>Autopilot Cost:</span>
               <span className="font-mono text-good font-extrabold text-sm">$0.043</span>
             </div>
             <p className="text-[11px] text-muted pt-1 border-t border-good/10">
-              Saves Atoyan Law Firm <strong className="text-good font-semibold">99.97%</strong> on every published practice area.
+              Saves <strong className="text-good font-semibold">99.97%</strong> on every published practice area.
             </p>
           </div>
         </div>
@@ -868,7 +868,7 @@ CREATE POLICY "Public full access" ON public.generation_reports FOR ALL USING (t
                                 target="_blank"
                                 rel="noreferrer"
                                 className="p-1 rounded text-muted hover:text-accent transition"
-                                title="View live page on atoyanlaw.com"
+                                title="View live page on demo.wp-post.com"
                               >
                                 <ExternalLink className="size-3.5" />
                               </a>

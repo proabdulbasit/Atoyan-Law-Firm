@@ -9,7 +9,6 @@ import {
   Globe,
   Layers,
   ShieldCheck,
-  FileCode,
   Building2,
   CheckCircle2,
   RotateCcw,
@@ -109,13 +108,13 @@ export default function SettingsPage() {
   const resetToAtoyanDefaults = () => {
     update({
       llm_provider: "openai",
-      wp_site_url: "https://www.atoyanlaw.com",
+      wp_site_url: "https://demo.wp-post.com/",
       wp_username: "",
       wp_app_password: "",
       heading_class: "h2dav",
       cta_shortcode: "[sp_easyaccordion id=\"3932\"]",
       system_prompt:
-        "You are the senior legal content strategist and California employment attorney for Atoyan Law Firm (atoyanlaw.com). Write authoritative, localized practice area articles citing FEHA, California Labor Code §§ 98.6/1102.5, SB 497, and Yanowitz v. L'Oreal.",
+        "You write practice-area pages for WP Post Project at https://demo.wp-post.com/. The firm gives comprehensive legal support and a free consultation. Site practice areas are Wrongful Termination, Sexual Harassment, Retaliation, and Discrimination. It also helps individuals and companies with civil matters, criminal matters, economic matters, labor disputes, contracts, and licensing. Phones: (323) 968-0000 and (323) 203-4805. Contact page: https://demo.wp-post.com/contact-us/. Voice: clear and direct. Use the firm name WP Post Project. Invite readers to get a free consultation and call (323) 968-0000 or use the contact page. Do not use another law firm's name or phone number.",
     });
     flashSaved();
   };
@@ -133,13 +132,13 @@ export default function SettingsPage() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-text">Pipeline Settings</h1>
             <p className="text-muted mt-1 text-sm">
-              Configure credentials and AI engine settings. Pre-configured for <strong>Atoyan Law Firm</strong>.
+              Configure credentials and AI engine settings. Pre-configured for <strong>WP Post Project</strong>.
             </p>
           </div>
           <button
             onClick={resetToAtoyanDefaults}
             className="inline-flex items-center gap-1.5 text-xs text-muted hover:text-accent border border-line rounded-lg px-3 py-2 bg-panel-2 transition self-start"
-            title="Reset to verified Atoyan Law Firm defaults"
+            title="Reset to WP Post Project defaults"
           >
             <RotateCcw className="size-3.5" /> Reset Defaults
           </button>
@@ -161,7 +160,7 @@ export default function SettingsPage() {
           <Field label="WordPress Site URL" hint="Target domain with https://">
             <input
               className={inputCls}
-              placeholder="https://www.atoyanlaw.com"
+              placeholder="https://demo.wp-post.com/"
               value={settings.wp_site_url ?? ""}
               onChange={(e) => update({ wp_site_url: e.target.value })}
             />
@@ -194,8 +193,8 @@ export default function SettingsPage() {
             <span>Target WordPress Page Architecture</span>
           </div>
           <div className="grid sm:grid-cols-3 gap-2 pt-1 font-mono">
-            <div>Parent Page: <strong className="text-text font-sans">#750 (Employment Law)</strong></div>
-            <div>Page Template: <strong className="text-text font-sans">templates/labor-law.php</strong></div>
+            <div>Parent Page: <strong className="text-text font-sans">Top level</strong></div>
+            <div>Page Template: <strong className="text-text font-sans">WoodMart default</strong></div>
             <div>REST Endpoint: <strong className="text-text font-sans">/wp-json/wp/v2/pages</strong></div>
           </div>
         </div>
@@ -219,7 +218,7 @@ export default function SettingsPage() {
         </div>
 
         <p className="text-xs text-muted leading-relaxed">
-          Protects the <strong>1-Click Publish Now</strong> and <strong>Publish Previewed Page</strong> buttons from accidentally publishing unverified articles to the live WordPress site (<strong>atoyanlaw.com</strong>).
+          Protects the <strong>1-Click Publish Now</strong> and <strong>Publish Previewed Page</strong> buttons from accidentally publishing unverified articles to <strong>demo.wp-post.com</strong>.
           When configured on Vercel environment variables as <code className="text-accent bg-accent/10 px-1 py-0.5 rounded font-mono text-[11px]">WP_SUPER_ADMIN</code>, all publish API calls require this password.
         </p>
 
@@ -320,7 +319,7 @@ export default function SettingsPage() {
           </summary>
           <div className="mt-4 space-y-2 pt-3 border-t border-line/60">
             <p className="text-muted text-xs">
-              Replicates Atoyan Law Firm's exact tone: punchy 1-3 sentence paragraphs, FEHA citations, and question subheadings.
+              This is the prompt sent to the AI for pages on demo.wp-post.com.
             </p>
             <textarea
               className={cn(inputCls, "min-h-32 text-xs leading-relaxed font-mono")}
@@ -335,25 +334,14 @@ export default function SettingsPage() {
       <section className="rounded-2xl border border-line bg-panel-2 p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold flex items-center gap-2 text-text">
-            <Layers className="size-4 text-accent" /> Secure Custom Fields (SCF / ACF Field Group 348)
+            <Layers className="size-4 text-accent" /> demo.wp-post.com Page Layout
           </h2>
-          <span className="text-xs text-muted font-mono">personal_injury_group</span>
+          <span className="text-xs text-muted font-mono">WoodMart + Easy Accordion</span>
         </div>
 
         <p className="text-xs text-muted leading-relaxed">
-          The pipeline maps all 27 subfields across 6 tabs automatically. Global assets (8 verified client reviews, 27 practice area sidebar cross-links, CTA background, and Contact Form 7 shortcode) are cloned from live Page 3933 to maintain 100% theme consistency.
+          Pages publish at the top level of demo.wp-post.com. Each one gets a header photo, an article photo, the shared directions and testimonials blocks, an Easy Accordion, and a Yoast title and description.
         </p>
-
-        <div className="pt-2">
-          <a
-            href="/docs/acf-field-group-348-personal-injury.json"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs text-accent hover:underline font-medium"
-          >
-            <FileCode className="size-3.5" /> View ACF Field Group 348 Schema Export
-          </a>
-        </div>
       </section>
 
       {/* Supabase Analytics Database */}

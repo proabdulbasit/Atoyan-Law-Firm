@@ -84,11 +84,11 @@ export function middleware(req: NextRequest) {
 
   // 5. Unauthenticated: trigger native browser login prompt (.htaccess style)
   return new NextResponse(
-    "401 Unauthorized: Access to Atoyan Law Publisher is private. Please enter your credentials to continue.",
+    "401 Unauthorized: Access to the WP Post Project publisher is private. Please enter your credentials to continue.",
     {
       status: 401,
       headers: {
-        "WWW-Authenticate": 'Basic realm="Atoyan Law Publisher (Private)", charset="UTF-8"',
+        "WWW-Authenticate": 'Basic realm="WP Post Project Publisher (Private)", charset="UTF-8"',
         "Content-Type": "text/plain; charset=utf-8",
         "X-Robots-Tag": "noindex, nofollow, noarchive",
       },

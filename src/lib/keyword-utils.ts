@@ -253,7 +253,10 @@ export function isInformationalQuery(text: string): boolean {
 /** Snippet Yoast shows under the blue title, written the same way for every practice area. */
 export function practiceMetaDescription(city: string, cleanTopic: string, topicKey: string): string {
   const topic = cleanTopic.toLowerCase();
-  const phone = "Call (888) 807-0077.";
+  const phone = "Call (323) 968-0000.";
+  if (/\bpregnancy\b/i.test(cleanTopic)) {
+    return `Experienced ${city} pregnancy discrimination attorney protecting employees from bias, denied leave, and retaliation. ${phone}`;
+  }
   switch (topicKey) {
     case "disability":
       return `Experienced ${city} disability discrimination attorney fighting for employees denied reasonable accommodations & interactive process. ${phone}`;
@@ -376,9 +379,9 @@ export function decomposeKeyword(rawKeyword: string, rawCity?: string): Decompos
       .replace(/^-|-$/g, "");
 
     const heroTitle = cleanQuestion;
-    const lawyerTitle = `${cleanQuestion} | Atoyan Law`;
-    const yoastTitle = `${cleanQuestion} | Atoyan Law`;
-    const yoastMetaDesc = `Comprehensive California employee guide: ${cleanQuestion}. Learn your legal rights under California employment law & FEHA. Free consultation: (888) 807-0077.`;
+    const lawyerTitle = `${cleanQuestion} | WP Post Project`;
+    const yoastTitle = `${cleanQuestion} | WP Post Project`;
+    const yoastMetaDesc = `Comprehensive California employee guide: ${cleanQuestion}. Learn your legal rights under California employment law & FEHA. Free consultation: (323) 968-0000.`;
     const yoastFocusKw = `${cleanTopic.toLowerCase()} in California`;
 
     return {
@@ -442,7 +445,7 @@ export function decomposeKeyword(rawKeyword: string, rawCity?: string): Decompos
   const citySlug = city.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const slug = `${citySlug}-${slugSuffix}`.replace(/-+/g, "-").replace(/^-|-$/g, "");
 
-  const yoastTitle = `${city} ${cleanTopic} Lawyer | Atoyan Law`;
+  const yoastTitle = `${city} ${cleanTopic} Lawyer | WP Post Project`;
   const yoastMetaDesc = practiceMetaDescription(city, cleanTopic, topicKey);
   const yoastFocusKw = `${city} ${cleanTopic.toLowerCase()} lawyer`;
 

@@ -1,3 +1,5 @@
+import { stripCopiedClasses } from "./seo-linking";
+
 interface AccordionFaq {
   question?: string;
   answer?: string;
@@ -230,7 +232,7 @@ export async function saveEasyAccordionItems(params: {
 
   fields = fields.filter(([key]) => !key.includes("accordion_content_source") && key !== "publish" && key !== "save");
   items.forEach((faq, index) => {
-    const answer = /<p[\s>]/i.test(faq.answer) ? faq.answer : `<p>${faq.answer}</p>`;
+    const answer = stripCopiedClasses(/<p[\s>]/i.test(faq.answer) ? faq.answer : `<p>${faq.answer}</p>`);
     fields.push([`sp_eap_upload_options[accordion_content_source][${index}][accordion_content_title]`, faq.question.trim()]);
     fields.push([`sp_eap_upload_options[accordion_content_source][${index}][accordion_content_description]`, answer]);
   });
@@ -251,6 +253,47 @@ export async function saveEasyAccordionItems(params: {
 
   const confirmed = await readEditForm(params.wpSiteUrl, cookie, params.postId);
   return confirmed.includes(items[0].question.trim().slice(0, 40));
+}
+
+/**
+ * Removes editor classes that were pasted into an already saved page or accordion.
+ */
+export async function cleanStoredCopiedClasses(params: {
+  wpSiteUrl: string;
+  postIds: number[];
+  wpUser?: string;
+  wpPassword?: string;
+}): Promise<Array<{ id: number; status: string }>> {
+  const user = params.wpUser?.trim() || process.env.WP_USER?.trim();
+  const password = params.wpPassword?.trim() || loginPassword();
+  if (!user || !password) throw new Error("WordPress admin login is not configured");
+
+  const cookie = await loginToWordPressAdmin(params.wpSiteUrl, user, password);
+  const results: Array<{ id: number; status: string }> = [];
+
+  for (const postId of params.postIds) {
+    const html = await readEditForm(params.wpSiteUrl, cookie, postId);
+    let fields = parseAdminForm(html);
+    let changed = false;
+    fields = fields.map(([key, value]) => {
+      if (!value.includes("class=")) return [key, value] as FormField;
+      const next = stripCopiedClasses(value);
+      if (next !== value) changed = true;
+      return [key, next] as FormField;
+    });
+    if (!changed) {
+      results.push({ id: postId, status: "clean" });
+      continue;
+    }
+    fields = fields.filter(([key]) => key !== "publish" && key !== "save");
+    fields = replaceField(fields, "action", "editpost");
+    fields = replaceField(fields, "originalaction", "editpost");
+    fields.push(["save", "Update"]);
+    const saved = await submitEditForm(params.wpSiteUrl, cookie, fields);
+    results.push({ id: postId, status: saved ? "cleaned" : "save-failed" });
+  }
+
+  return results;
 }
 
 /**
@@ -276,7 +319,7 @@ export async function setWoodmartTitleImage(params: {
   fields = replaceField(fields, "_woodmart_title_image[id]", String(params.imageId));
   fields = replaceField(fields, "_woodmart_title_image[url]", params.imageUrl);
   fields = replaceField(fields, "_woodmart_title_image_size", "full");
-  fields = replaceField(fields, "_woodmart_title_color", "light");
+  fields = replaceField(fields, "_woodmart_title_color", "dark");
   fields = replaceField(fields, "_thumbnail_id", String(params.imageId));
   if (params.content) fields = replaceField(fields, "content", params.content);
   if (params.seo?.description) fields = applyYoastFields(fields, params.seo);

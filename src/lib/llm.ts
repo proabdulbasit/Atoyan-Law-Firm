@@ -1,7 +1,7 @@
 import { buildLinkingCatalogForLlm, trackPublishedArticle } from "./article-tracker";
 import { decomposeKeyword, extractCityFromText } from "./keyword-utils";
 import { getTopicPromptBlueprint, getTopicEnrichmentModules } from "./topic-prompt-blueprints";
-import { injectInternalLinks, formatHowDoContentWithLinks, formatCompensationContentWithLinks, generateContextualCta } from "./seo-linking";
+import { injectInternalLinks, formatHowDoContentWithLinks, formatCompensationContentWithLinks, rewriteLegacyProjectLinks } from "./seo-linking";
 import {
   generateAtoyanSimulated,
   buildStatutoryDeadlineTableHtml,
@@ -39,11 +39,11 @@ function cleanApiKey(raw?: string): string | undefined {
   return cleaned.length > 5 ? cleaned : undefined;
 }
 
-const ATOYAN_SYSTEM_PROMPT = `
-You are the senior legal content strategist and employment litigation attorney at Atoyan Law Firm (atoyanlaw.com).
-Your job is to generate authoritative, deeply compelling California employment practice area content matching the exact conversational, punchy tone and structure used by Atoyan Law and attorney David Atoyan.
+const SITE_SYSTEM_PROMPT = `
+You write California employment law practice pages for this website.
+Use a clear, direct voice for workers. Do not write as Atoyan Law, David Atoyan, or any previous client, and do not link to atoyanlaw.com.
 
-CRITICAL CLIENT RULES (CLIENT DAVID - ATOYAN LAW FIRM):
+PAGE RULES:
 
 1. TITLE & DECOMPOSITION FORMULA:
    Hero title MUST follow this exact formula without keyword repetition or phrase doubling:
@@ -59,8 +59,8 @@ CRITICAL CLIENT RULES (CLIENT DAVID - ATOYAN LAW FIRM):
    - "Glendale Workplace Retaliation Employment Lawyers - Whistleblower Protection"
    NEVER double phrases like "Glendale Glendale Wrongful Termination Lawyer Lawyer". Isolate City and Topic cleanly.
 
-2. CONVERSATIONAL, WORKER-FIRST TONE (DAVID ATOYAN GOLD STANDARD):
-   Replicate the conversational, empathetic, worker-first tone of David's live Burbank Overtime article:
+2. CONVERSATIONAL, WORKER-FIRST TONE:
+   Write in a clear, empathetic voice for California workers:
    - Use conversational, question-based H2/H3 subheadings written as direct questions that anxious California workers ask:
      e.g., "What is overtime under California law?", "When should a Burbank employee receive time-and-a-half pay?", "Can an employer require me to work overtime without paying me?", "What if my employer asks me to work off the clock?", "What if my employer says I am salaried?", "Can undocumented workers recover unpaid overtime?", "What if I was forced to quit?".
    - Include concrete arithmetic calculations and numbers for wage, overtime, meal/rest break, and waiting time scenarios:
@@ -73,15 +73,15 @@ CRITICAL CLIENT RULES (CLIENT DAVID - ATOYAN LAW FIRM):
 3. THREE UNIQUE CONTENT SECTIONS (ACF TABS 2, 4, 6):
    - 1ST: SERVICES CONTENT (Tab 2 - servicesContent):
      Must be MINIMUM 2,200 to 3,500+ pure words of deep, high-authority California employment legal analysis ("strictly huge content").
-     David Atoyan strictly requires at least 2,200 words of pure substantive text (excluding HTML tags and callout boxes).
+     The services section needs at least 2,200 words of pure substantive text (excluding HTML tags and callout boxes).
      Structure with:
        * Short punchy paragraphs (1-3 sentences max). No dense walls of text.
        * 14 direct question-based subheadings formatted with <h2 class="h2dav"> and <h3 class="h3dav">.
        * Each of the 14 question sections MUST contain 3 to 5 substantial paragraphs (160-200 words per heading) to guarantee 2,200+ total words.
        * Bold key phrases for readability (e.g. <strong>That timeline matters.</strong>, <strong>First</strong>, <strong>Second</strong>).
        * Bullet lists (<ul><li>...</li></ul>) and numbered lists (<ol><li>...</li></ol>).
-       * 3 topic-specific callout boxes (Early, Mid, and Closing) matching David Atoyan's exact styling:
-         <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>[Text with phone (888) 807-0077 and contact link]</strong></em></p>
+       * 3 topic-specific callout boxes (Early, Mid, and Closing) using this styling:
+         <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>[Text with phone (323) 968-0000 and contact link]</strong></em></p>
        * California statutory depth (FEHA Gov Code § 12940, CRD, Labor Code §§ 98.6, 201-203, 226, 226.7, 244, 510, 512, 1102.5, 1171.5, SB 497 90-day presumption, CROWN Act SB 188, case law).
 
      MANDATORY 7-SECTION LEGAL LITIGATION FRAMEWORK:
@@ -89,7 +89,7 @@ CRITICAL CLIENT RULES (CLIENT DAVID - ATOYAN LAW FIRM):
        Heading: <h2 class="h2dav">Understanding [Topic] Under California Law: Rights, Definitions, and Statutory Protections</h2>
        Detail FEHA Gov Code § 12940, protected classes, strict supervisor liability vs coworker negligence under Gov Code § 12940(j), Labor Code protections.
        Include Early Callout Box:
-       <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>If your employer has subjected you to [topic] in [City], Atoyan Law Firm is here to fight for your rights. <a href="tel:8888070077">Contact our [City] [Topic] Attorneys</a> at (888) 807-0077 today for a free, confidential case evaluation.</strong></em></p>
+       <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>If your employer has subjected you to [topic] in [City], speak with a [City] [Topic] lawyer. <a href="/contact/">Contact the firm</a> for a free, confidential case evaluation.</strong></em></p>
 
      * SECTION 2: WORKPLACE MANIFESTATIONS & UNLAWFUL CONDUCT IN [CITY]
        Heading: <h2 class="h2dav">Common Forms of [Topic] in California Workplaces</h2>
@@ -100,7 +100,7 @@ CRITICAL CLIENT RULES (CLIENT DAVID - ATOYAN LAW FIRM):
        Heading: <h2 class="h2dav">How California Employers Mask [Topic]: Pretext, Paper Trails, and Sham HR Investigations</h2>
        Detail McDonnell Douglas / Guz v. Bechtel National burden-shifting, bogus write-ups right after complaints, sudden restructuring/RIFs, HR bias.
        Include Mid Callout Box:
-       <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Facing sudden write-ups, bogus disciplinary reviews, or employer retaliation in [City]? You have legal rights under California law. Our [City] [Topic] Lawyers are prepared to hold them accountable. <a href="tel:8888070077">Call (888) 807-0077</a> for an immediate consultation.</strong></em></p>
+       <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Facing sudden write-ups, bogus disciplinary reviews, or employer retaliation in [City]? You have legal rights under California law. Our [City] [Topic] Lawyers are prepared to hold them accountable. <a href="tel:3239680000">Call (323) 968-0000</a> for an immediate consultation.</strong></em></p>
 
      * SECTION 4: WORKPLACE RETALIATION & CALIFORNIA'S STATUTORY 90-DAY PRESUMPTION
        Heading: <h2 class="h2dav">Workplace Retaliation Under California Law: Labor Code § 1102.5 & Senate Bill 497</h2>
@@ -119,21 +119,21 @@ CRITICAL CLIENT RULES (CLIENT DAVID - ATOYAN LAW FIRM):
        Heading: <h2 class="h2dav">What Compensation and Financial Damages Can You Recover in California?</h2>
        Subheadings with <h3 class="h3dav"> covering Economic Damages, Non-Economic Damages, Punitive Damages (Civil Code § 3294), Statutory Attorneys' Fees (Gov Code § 12965(b)), and statutory penalties.
        Include Closing Callout Box:
-       <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>[Topic] is an unacceptable violation of California labor protections. Don’t face your employer alone. <a href="tel:8888070077">Contact Atoyan Law Firm’s [City] [Topic] team</a> today at (888) 807-0077 to demand the full compensation you are owed.</strong></em></p>
+       <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>[Topic] is an unacceptable violation of California labor protections. Don’t face your employer alone. <a href="/contact/">Contact a [City] [Topic] lawyer</a> to review the compensation you may be owed.</strong></em></p>
 
    - 2ND: HOW DO SECTION (Tab 4 - howDoHeading & howDoContent):
-     Unique heading (e.g., "How Can a [City] [Topic] Lawyer at Atoyan Law Help?") and actionable guidance.
+     Unique heading (e.g., "How Can a [City] [Topic] Lawyer Help?") and actionable guidance.
      Format with diagnostic questions including internal link:
-     e.g., "Did the <a href="https://www.atoyanlaw.com/practice-areas/employment-law/work-retaliation/">employer retaliate after the employee complained?</a>"
+     e.g., "Did the employer retaliate after the employee complained?"
 
    - 3RD: COMPENSATION SECTION (Tab 6 - compensationHeading & compensationIntro):
      Unique heading (e.g., "What Results and Compensation Can I Expect from a California [Topic] Claim?")
-     Paragraph 1: Employee rights regarding this topic with internal link (<a href="https://www.atoyanlaw.com/practice-areas/employment-law/what-is-employment-discrimination/">report discrimination</a>).
-     Paragraph 2: Impact statement and topic-tailored CTA with phone <a href="tel:8888070077">(888) 807-0077</a>.
+     Paragraph 1: Employee rights regarding this topic. Link only to pages on this website, never to atoyanlaw.com.
+     Paragraph 2: Impact statement and topic-tailored CTA with phone <a href="tel:3239680000">(323) 968-0000</a>.
      Conclude with firm contact link:
-     "If you believe your workplace rights were violated in [City], Atoyan Employment Law can help you evaluate your claim. <a href="/contact/">Contact</a> the firm to discuss what happened and learn what options may be available to you."
+     "If you believe your workplace rights were violated in [City], a lawyer can help you evaluate your claim. <a href="/contact/">Contact</a> the firm to discuss what happened and learn what options may be available to you."
 
-4. DAVID ATOYAN APPROVED 10-QUESTION HIGH-INTENT GOOGLE SEARCH FAQ STRUCTURE (MANDATORY):
+4. 10-QUESTION HIGH-INTENT GOOGLE SEARCH FAQ STRUCTURE (MANDATORY):
    You MUST generate EXACTLY 10 practical, multi-paragraph FAQs for [Topic] in [City], strictly adhering to this searcher progression:
    1. What Qualifies as [Topic] in [City], California?
    2. What Are Common Examples of [Topic] at Work?
@@ -144,12 +144,10 @@ CRITICAL CLIENT RULES (CLIENT DAVID - ATOYAN LAW FIRM):
    7. Can I Have a [Topic] Case If My Coworker Violated My Rights Instead of My Boss?
    8. Do I Have to Report [Topic] to HR Before I Can Sue?
    9. How Long Do I Have to File a [Topic] Claim in California? (MUST include the responsive comparison table comparing FEHA 3 years, EEOC 300 days, Tameny 2 years, Written Contract 4 years, Oral Contract 2 years, Whistleblower § 1102.5 3 years, Wage Theft 3-4 years, Workers' Comp § 132a 1 year, and links to calcivilrights.ca.gov and leginfo.legislature.ca.gov)
-   10. How Much Is a [Topic] Case Worth in California? (MUST conclude with David Atoyan's localized attorney CTA block with clean slug and link to atoyanlaw.com)
+   10. How Much Is a [Topic] Case Worth in California? (MUST conclude with a localized lawyer CTA that links to this site's /contact/ page. Do not name Atoyan Law or link to atoyanlaw.com.)
 
-   Every FAQ answer MUST contain 2-3 substantive paragraphs with Tailwind styling:
-   <p class="my-2 [&+p]:mt-4 [&_strong:has(+br)]:inline-block [&_strong:has(+br)]:align-top">
-   <ul class="marker:text-secondary list-disc pl-8">
-   <ol class="marker:text-secondary list-decimal pl-8">
+   Every FAQ answer MUST contain 2-3 substantive paragraphs of plain HTML.
+   Use <p>, <ul>, <ol>, and <li> with no class attributes. Do not paste Tailwind classes.
 
 5. DYNAMIC EASY ACCORDION & FAQS:
    Set "accordionShortcode" to "" (empty string) in your JSON output.
@@ -170,7 +168,7 @@ OUTPUT MUST BE VALID JSON with this exact schema:
   "howDoHeading": "string",
   "howDoContent": "string",
   "compensationHeading": "string",
-  "compensationIntro": "string (Rights intro and topic CTA with (888) 807-0077)",
+  "compensationIntro": "string (Rights intro and topic CTA with (323) 968-0000)",
   "accordionShortcode": "string (leave empty \"\" for dynamic creation)",
   "faqs": [
     {
@@ -329,8 +327,8 @@ function validateAndNormalizeAtoyanContent(
     .replace(/\[sp_easyaccordion\s+id=["']?\d+["']?\]/gi, "")
     .trim();
 
-  if (!finalCompIntro.includes('href="/contact/"') && !finalCompIntro.includes('href="https://www.atoyanlaw.com/contact/"')) {
-    finalCompIntro = finalCompIntro + " If you believe your rights were violated in " + resolvedCity + ', Atoyan Employment Law can evaluate your claim. <a href="/contact/">Contact</a> the firm to discuss what happened.';
+  if (!finalCompIntro.includes('href="/contact/"') && !finalCompIntro.includes('href="https://demo.wp-post.com/contact-us/"')) {
+    finalCompIntro = finalCompIntro + " If you believe your rights were violated in " + resolvedCity + ', <a href="/contact/">contact the firm</a> to discuss what happened.';
   }
 
   // Guarantee Question 9 contains David Atoyan's statutory deadline comparison table
@@ -350,7 +348,7 @@ function validateAndNormalizeAtoyanContent(
       const ctaHeading = decomposed.isArticle
         ? `Talk to a California ${cleanTopic} Lawyer`
         : `Talk to a ${validatedCity} ${cleanTopic} Lawyer`;
-      const ctaBlock = `\r\n<h2 id="talk-to-a-${citySlug}-${topicSlug}-lawyer" class="font-semibold leading-tight text-pretty mb-2 mt-4 text-base">${ctaHeading}</h2>\r\n<p class="my-2">If you believe your workplace rights were violated, time limits apply under California law. <strong>Contact Atoyan Law at (888) 807-0077</strong> or through the online form at <a class="reset interactable cursor-pointer decoration-1 underline-offset-1 text-super-primary hover:underline" href="https://www.atoyanlaw.com/contact/" target="_blank" rel="noopener"><span class="text-box-trim-both">atoyanlaw.com</span></a> for a free, confidential case evaluation.</p>`;
+      const ctaBlock = `\r\n<h2 id="talk-to-a-${citySlug}-${topicSlug}-lawyer">${ctaHeading}</h2>\r\n<p>If you believe your workplace rights were violated, time limits apply under California law. <a href="/contact/">Contact the firm</a> for a free, confidential case evaluation.</p>`;
       lastFaq.answer = lastFaq.answer.trim() + ctaBlock;
     }
   }
@@ -382,22 +380,29 @@ function validateAndNormalizeAtoyanContent(
       typeof obj.servicesSubHeading === "string" && obj.servicesSubHeading
         ? obj.servicesSubHeading
         : sim.servicesSubHeading,
-    servicesContent: linkedServices,
+    servicesContent: rewriteLegacyProjectLinks(linkedServices),
     howDoHeading:
       typeof obj.howDoHeading === "string" && obj.howDoHeading
         ? obj.howDoHeading
         : sim.howDoHeading,
-    howDoContent: finalHowDoContent,
+    howDoContent: rewriteLegacyProjectLinks(finalHowDoContent),
     compensationHeading:
       typeof obj.compensationHeading === "string" && obj.compensationHeading
         ? obj.compensationHeading
         : sim.compensationHeading,
-    compensationIntro: finalCompIntro,
-    faqs: finalFaqs,
+    compensationIntro: rewriteLegacyProjectLinks(finalCompIntro),
+    faqs: finalFaqs.map((faq) => ({
+      ...faq,
+      answer: rewriteLegacyProjectLinks(faq.answer || ""),
+    })),
     yoastTitle: finalYoastTitle,
     yoastMetaDesc: (() => {
-      const fromModel = typeof obj.yoastMetaDesc === "string" ? obj.yoastMetaDesc.trim() : "";
-      return fromModel.length >= 80 ? fromModel : decomposed.yoastMetaDesc;
+      const fromModel =
+        typeof obj.yoastMetaDesc === "string"
+          ? rewriteLegacyProjectLinks(obj.yoastMetaDesc).trim()
+          : "";
+      const mentionsOldFirm = /atoyan|807-0077|747\)\s*888/i.test(fromModel);
+      return fromModel.length >= 80 && !mentionsOldFirm ? fromModel : decomposed.yoastMetaDesc;
     })(),
     yoastFocusKw: finalYoastFocusKw,
     accordionShortcode:
@@ -413,7 +418,7 @@ function validateAndNormalizeAtoyanContent(
     keyword: result.keyword,
     city: result.city,
     category: keyword.toLowerCase(),
-    url: "https://www.atoyanlaw.com/practice-areas/employment-law/" + result.slug + "/",
+    url: "https://demo.wp-post.com/" + result.slug + "/",
     publishedAt: new Date().toISOString(),
   });
 
@@ -421,17 +426,14 @@ function validateAndNormalizeAtoyanContent(
 }
 
 /**
- * Builds the effective system prompt by preserving ATOYAN_SYSTEM_PROMPT as the foundational legal schema
- * and cleanly appending custom attorney directives or ChatGPT conversation context.
+ * The Settings prompt is the voice. The site prompt only supplies page structure and the JSON schema.
  */
 export function buildActiveSystemPrompt(customDirectives?: string, chatContext?: string): string {
-  let prompt = ATOYAN_SYSTEM_PROMPT.trim();
+  const voice = customDirectives?.trim();
+  let prompt = SITE_SYSTEM_PROMPT.trim();
 
-  if (customDirectives && customDirectives.trim()) {
-    const trimmed = customDirectives.trim();
-    if (!prompt.includes(trimmed)) {
-      prompt += `\n\nADDITIONAL ATTORNEY DIRECTIVES & PREFERENCES:\n${trimmed}`;
-    }
+  if (voice && !prompt.includes(voice)) {
+    prompt = `${voice}\n\nFollow the firm name, phone, and tone above. Use the rules below only for page structure and JSON shape. Do not mention Atoyan Law, David Atoyan, or atoyanlaw.com.\n\n${prompt}`;
   }
 
   if (chatContext && chatContext.trim()) {
@@ -469,8 +471,8 @@ You MUST strictly follow the attorney's tone and structure above:
 4. Distribute the comprehensive ~2,200-word analysis across the 3 WordPress ACF content sections:
    - servicesContent: Main substantive discussion (questions 1 through 10-12 as <h2 class="h2dav">).
    - howDoHeading: "Why should you speak with a ${resolvedCity} ${cleanTopic} lawyer?"
-   - howDoContent: Practical guidance and bullet points on when workers should reach out to Atoyan Law.
-   - compensationHeading: "Contact Atoyan Law for a Free Consultation"
+   - howDoContent: Practical guidance and bullet points on when workers should speak with a lawyer.
+   - compensationHeading: "Contact the firm for a free consultation"
    - compensationIntro: Concluding rights summary and consultation call to action.
    - faqs: 8-10 direct search-intent FAQs.
 `
@@ -500,24 +502,24 @@ ${blueprint.closingCtaText}`;
   return `${linkCatalog}${customContextDirective}
 
 CRITICAL REQUIREMENT: servicesContent MUST be 2,200-3,500+ words of exhaustive, high-authority California employment law analysis for "${cleanTopic}" in ${resolvedCity}.
-Tone MUST replicate David Atoyan's conversational, worker-first style with direct question-based headings (<h2 class="h2dav">), short active-voice sentences, no em dashes, concrete arithmetic examples ($25/hr -> $37.50 overtime, $3,600/yr off-the-clock, $11,000/yr break premiums, $6,000 waiting time penalties), and California Labor Code § 1171.5 undocumented worker protections.
+Tone must be clear and direct for workers, with question-based headings (<h2 class="h2dav">), short active-voice sentences, no em dashes, concrete arithmetic examples ($25/hr -> $37.50 overtime, $3,600/yr off-the-clock, $11,000/yr break premiums, $6,000 waiting time penalties), and California Labor Code § 1171.5 undocumented worker protections. Do not mention Atoyan Law or David Atoyan.
 DO NOT generate a short generic summary. Use question-based headings formatted with <h2 class="h2dav"> matching the topics below:
 
-CRITICAL CLIENT DIRECTIVE (ATTORNEY DAVID ATOYAN):
+PAGE LENGTH:
 servicesContent MUST contain a MINIMUM of 2,200 to 3,500 pure words of substantive legal analysis (counted strictly on body text, excluding HTML tags, classes, and callout boxes).
 DO NOT summarize or compress. Any generation under 2,200 pure words is strictly unacceptable.
 To guarantee reaching 2,200+ words, you MUST generate all 14 question sections below. Each question section MUST contain 3 to 5 substantial, multi-sentence paragraphs (160 to 200 words each):
 
 ${questionDirectives}
 
-MANDATORY 10-QUESTION HIGH-INTENT GOOGLE SEARCH FAQ STRUCTURE (DAVID ATOYAN APPROVED):
+MANDATORY 10-QUESTION HIGH-INTENT GOOGLE SEARCH FAQ STRUCTURE:
 You MUST generate EXACTLY 10 practical, multi-paragraph FAQs for "${cleanTopic}" in ${resolvedCity}, covering this exact searcher progression:
 ${faqDirectives}
 
 Every answer MUST contain 2-3 substantive paragraphs citing California Civil Rights Department (CRD), California Labor Code, and EEOC regulations.
-The 10th FAQ answer MUST conclude with David Atoyan's localized attorney CTA block:
-<h2 id="talk-to-a-${citySlug}-${topicSlug}-lawyer" class="font-semibold leading-tight text-pretty mb-2 mt-4 text-base">Talk to a ${resolvedCity} ${cleanTopic} Lawyer</h2>
-<p class="my-2">If you believe your workplace rights were violated, time limits apply under California law. <strong>Contact Atoyan Law at (888) 807-0077</strong> or through the online form at <a class="reset interactable cursor-pointer decoration-1 underline-offset-1 text-super-primary hover:underline" href="https://www.atoyanlaw.com/contact/" target="_blank" rel="noopener"><span class="text-box-trim-both">atoyanlaw.com</span></a> for a free, confidential case evaluation.</p>
+The 10th FAQ answer MUST conclude with this localized CTA. Do not name Atoyan Law or link to atoyanlaw.com:
+<h2 id="talk-to-a-${citySlug}-${topicSlug}-lawyer">Talk to a ${resolvedCity} ${cleanTopic} Lawyer</h2>
+<p>If you believe your workplace rights were violated, time limits apply under California law. <a href="/contact/">Contact the firm</a> for a free, confidential case evaluation.</p>
 
 Output strictly valid JSON matching the schema.`;
 }
