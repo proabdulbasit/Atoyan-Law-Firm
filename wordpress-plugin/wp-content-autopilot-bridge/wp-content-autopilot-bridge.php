@@ -329,75 +329,12 @@ class WP_Content_Autopilot_Bridge {
 
                     if (e.cancelable) { e.preventDefault(); }
                     e.stopPropagation();
-                    return;
-                }
-
-                var header = e.target.closest(".ea-header, .sp-ea-single .ea-header a");
-                if (!header) return;
-
-                var lCard = header.closest(".ea-card, .sp-ea-single");
-                if (!lCard) return;
-
-                var lBody = lCard.querySelector(".sp-collapse, [id^=ea-collapse]");
-                if (!lBody) return;
-
-                var lLink = lCard.querySelector(".ea-header a, a[role=button]");
-                var lIcon = lCard.querySelector(".ea-expand-icon");
-                var lIsExpanded = lCard.classList.contains("ea-expand") || lBody.classList.contains("show") || lBody.style.display === "block";
-
-                var lContainer = lCard.closest(".sp-ea-one, .sp-easy-accordion");
-                if (lContainer) {
-                    var lSiblings = lContainer.querySelectorAll(".sp-ea-single, .ea-card");
-                    lSiblings.forEach(function(sib) {
-                        if (sib !== lCard) {
-                            sib.classList.remove("ea-expand");
-                            var sBody = sib.querySelector(".sp-collapse, [id^=ea-collapse]");
-                            if (sBody) {
-                                sBody.style.display = "none";
-                                sBody.classList.remove("show");
-                                sBody.classList.add("collapsed");
-                            }
-                            var sLink = sib.querySelector(".ea-header a, a[role=button]");
-                            if (sLink) {
-                                sLink.classList.add("collapsed");
-                                sLink.setAttribute("aria-expanded", "false");
-                            }
-                            var sIcon = sib.querySelector(".ea-expand-icon");
-                            if (sIcon) { sIcon.textContent = "+"; }
-                        }
-                    });
-                }
-
-                if (lIsExpanded) {
-                    lBody.style.display = "none";
-                    lBody.classList.remove("show");
-                    lBody.classList.add("collapsed");
-                    lCard.classList.remove("ea-expand");
-                    if (lLink) {
-                        lLink.classList.add("collapsed");
-                        lLink.setAttribute("aria-expanded", "false");
-                    }
-                    if (lIcon) { lIcon.textContent = "+"; }
-                } else {
-                    lBody.style.display = "block";
-                    lBody.classList.add("show");
-                    lBody.classList.remove("collapsed");
-                    lCard.classList.add("ea-expand");
-                    if (lLink) {
-                        lLink.classList.remove("collapsed");
-                        lLink.setAttribute("aria-expanded", "true");
-                    }
-                    if (lIcon) { lIcon.textContent = "−"; }
-                }
-
-                if (e.cancelable && e.type === "click") {
-                    e.preventDefault();
                 }
             }
 
             document.addEventListener("click", handleAccordionToggle, true);
             document.addEventListener("keydown", function(e) {
-                if ((e.key === "Enter" || e.key === " ") && (e.target.closest(".ea-header a") || e.target.closest(".atoyan-faq-toggle"))) {
+                if ((e.key === "Enter" || e.key === " ") && e.target.closest(".atoyan-faq-toggle, .atoyan-faq-header")) {
                     handleAccordionToggle(e);
                 }
             }, true);
