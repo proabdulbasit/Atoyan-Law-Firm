@@ -441,6 +441,18 @@ class WP_Content_Autopilot_Bridge {
 
         register_rest_route(
             "autopilot/v1",
+            "/title-image",
+            array(
+                "methods"             => "POST",
+                "callback"            => array( $this, "rest_set_title_image" ),
+                "permission_callback" => function() {
+                    return current_user_can( "edit_pages" );
+                },
+            )
+        );
+
+        register_rest_route(
+            "autopilot/v1",
             "/accordion",
             array(
                 "methods"             => "POST",
@@ -479,6 +491,37 @@ class WP_Content_Autopilot_Bridge {
                 ),
             )
         );
+    }
+
+    public function rest_set_title_image( $request ) {
+        $params    = $request->get_json_params();
+        $post_id   = ! empty( $params["post_id"] ) ? intval( $params["post_id"] ) : 0;
+        $image_id  = ! empty( $params["image_id"] ) ? intval( $params["image_id"] ) : 0;
+        $image_url = ! empty( $params["image_url"] ) ? esc_url_raw( $params["image_url"] ) : "";
+
+        if ( ! $post_id || ! $image_id || empty( $image_url ) ) {
+            return new WP_Error( "invalid_title_image", "post_id, image_id, and image_url are required", array( "status" => 400 ) );
+        }
+
+        update_post_meta( $post_id, "_woodmart_title_image", array(
+            "id"  => (string) $image_id,
+            "url" => $image_url,
+        ) );
+        update_post_meta( $post_id, "_woodmart_title_image_size", "full" );
+        update_post_meta( $post_id, "_woodmart_title_color", "dark" );
+        update_post_meta( $post_id, "_woodmart_title_bg_color", "rgb(255,255,255)" );
+        update_post_meta( $post_id, "_thumbnail_id", $image_id );
+
+        if ( function_exists( "rocket_clean_post" ) ) {
+            rocket_clean_post( $post_id );
+        }
+
+        return rest_ensure_response( array(
+            "success"   => true,
+            "post_id"   => $post_id,
+            "image_id"  => $image_id,
+            "image_url" => $image_url,
+        ) );
     }
 
     public function rest_set_head_script( $request ) {
@@ -563,8 +606,12 @@ class WP_Content_Autopilot_Bridge {
             }
         }
 
-        // Build exact Shortcode Options per David Atoyan specifications
-        $shortcode_options = array(
+        // Prefer the demo site's reference accordion style when it exists.
+        $style_source = get_post_meta( 36907, "sp_eap_shortcode_options", true );
+        if ( isset( $style_source[0] ) && is_array( $style_source[0] ) ) {
+            $style_source = $style_source[0];
+        }
+        $shortcode_options = is_array( $style_source ) && ! empty( $style_source ) ? $style_source : array(
             "eap_accordion_layout"            => "vertical",
                 "accordion_margin_bottom"         => array( "all" => 10 ),
                 "eap_accordion_event"             => "ea-click",
@@ -667,6 +714,7 @@ class WP_Content_Autopilot_Bridge {
                     "unit"           => "px",
                 ),
         );
+        $shortcode_options["eap_accordion_uniq_id"] = "sp_easy_accordion-" . time();
 
         // Allow overriding shortcode options if explicitly provided
         if ( ! empty( $params["shortcode_options"] ) && is_array( $params["shortcode_options"] ) ) {
@@ -708,12 +756,12 @@ class WP_Content_Autopilot_Bridge {
         if ( ! empty( $accordion_content_source ) && ( ! empty( $city ) || ! empty( $topic ) ) ) {
             $last_idx = count( $accordion_content_source ) - 1;
             $last_desc = $accordion_content_source[$last_idx]["accordion_content_description"];
-            if ( strpos( $last_desc, "Talk to a" ) === false && strpos( $last_desc, "807-0077" ) === false ) {
+            if ( strpos( $last_desc, "Talk to a" ) === false ) {
                 $loc_city = ! empty( $city ) ? $city : "California";
                 $loc_topic = ! empty( $topic ) ? $topic : "Employment Law";
                 $cta_slug = sanitize_title( "talk to a {$loc_city} {$loc_topic} lawyer" );
                 $cta_html = sprintf(
-                    "<h2 id=\"%s\" class=\"font-semibold leading-tight text-pretty mb-2 mt-4 text-base\">Talk to a %s %s Lawyer</h2><p class=\"my-2\">If you believe your workplace rights were violated, time limits apply. <strong>Contact Atoyan Law at (888) 807-0077</strong> or through the online form at <a class=\"reset interactable cursor-pointer decoration-1 underline-offset-1 text-super-primary hover:underline\" href=\"https://www.atoyanlaw.com/contact/\" target=\"_blank\" rel=\"noopener\"><span class=\"text-box-trim-both\">atoyanlaw.com</span></a> for a free, confidential case evaluation.</p>",
+                    "<h2 id=\"%s\">Talk to a %s %s Lawyer</h2><p>If you believe your workplace rights were violated, time limits apply under California law. <a href=\"https://demo.wp-post.com/contact-us/\">Contact WP Post Project</a> at (323) 968-0000 for a free, confidential case evaluation.</p>",
                     esc_attr( $cta_slug ),
                     esc_html( $loc_city ),
                     esc_html( $loc_topic )

@@ -70,7 +70,7 @@ export async function POST(req: Request) {
             wpUser,
             wpPassword,
           });
-          if (acc && acc.shortcode) {
+          if (acc && acc.id && acc.shortcode && acc.source !== "mapped" && acc.source !== "failed") {
             content.accordionShortcode = acc.shortcode;
           }
         } catch (accErr) {

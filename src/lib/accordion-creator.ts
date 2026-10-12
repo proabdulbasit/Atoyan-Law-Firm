@@ -23,7 +23,7 @@ export interface CreateAccordionResult {
   id: number;
   title: string;
   shortcode: string;
-  source: "bridge" | "wp-rest" | "wp-admin" | "mapped";
+  source: "bridge" | "wp-rest" | "wp-admin" | "mapped" | "failed";
   faqCount: number;
 }
 
@@ -381,7 +381,24 @@ export async function createEasyAccordion(
     console.warn("Standard WP REST accordion creation failed:", stdErr);
   }
 
-  // Strategy 3: Graceful fallback to verified live catalog mapping
+  // Old catalog IDs belong to another site. This site must create its own accordion.
+  const demoSite = (() => {
+    try {
+      return new URL(cleanBase).hostname.replace(/^www\./, "") === "demo.wp-post.com";
+    } catch {
+      return false;
+    }
+  })();
+  if (demoSite) {
+    return {
+      id: 0,
+      title,
+      shortcode: "",
+      source: "failed",
+      faqCount: 0,
+    };
+  }
+
   const fallbackShortcode = resolveDefaultAccordionShortcode(topic, city);
   const idMatch = fallbackShortcode.match(/\d+/);
   const id = idMatch ? parseInt(idMatch[0], 10) : 0;

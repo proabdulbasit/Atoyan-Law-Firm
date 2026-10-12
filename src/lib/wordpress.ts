@@ -398,12 +398,31 @@ export async function publishAtoyanPage(params: {
     !(content.city?.toLowerCase() === "burbank" && content.keyword?.toLowerCase().includes("wrongful termination"));
 
   const demoSite = siteHost(cleanBase) === "demo.wp-post.com";
+  let previewAccordionReady = false;
+  if (demoSite && accordionId && accordionShortcode && !isOldBurbank4176) {
+    try {
+      const existingAccordion = await fetch(`${cleanBase}/wp-json/autopilot/v1/accordion/${accordionId}`, {
+        headers: { Authorization: `Basic ${authHeader}` },
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (existingAccordion.ok) {
+        const existingJson = (await existingAccordion.json()) as {
+          upload_options?: { accordion_content_source?: unknown[] };
+        };
+        const questions = existingJson.upload_options?.accordion_content_source;
+        previewAccordionReady = Array.isArray(questions) && questions.length > 0;
+      }
+    } catch (existingErr) {
+      console.warn("Could not confirm the preview accordion:", existingErr);
+    }
+  }
   const needsAccordionCreation =
-    demoSite ||
-    !accordionShortcode ||
-    accordionShortcode.includes("pending") ||
-    accordionShortcode.includes("auto") ||
-    isStale4176;
+    !previewAccordionReady &&
+    (demoSite ||
+      !accordionShortcode ||
+      accordionShortcode.includes("pending") ||
+      accordionShortcode.includes("auto") ||
+      isStale4176);
 
   if (needsAccordionCreation && content.faqs && content.faqs.length > 0) {
     try {
@@ -417,7 +436,16 @@ export async function publishAtoyanPage(params: {
         wpUser,
         wpPassword,
       });
-      if (demoSite && accordionResult.source !== "wp-admin") {
+      const bridgeSaved =
+        accordionResult.source === "bridge" &&
+        accordionResult.id > 0 &&
+        accordionResult.faqCount > 0;
+      if (demoSite && accordionResult.source === "failed") {
+        accordionShortcode = "";
+        accordionId = undefined;
+        content.accordionShortcode = "";
+        console.warn("[Atoyan WordPress] Demo accordion was not created. The page will show the questions in the body instead.");
+      } else if (demoSite && !bridgeSaved && accordionResult.source !== "wp-admin") {
         const saved = accordionResult.id
           ? await saveEasyAccordionItems({
               wpSiteUrl: cleanBase,
@@ -569,8 +597,28 @@ export async function publishAtoyanPage(params: {
 
   const titleImageId = newlyUploadedBannerId || bannerAttachmentId;
   if (useVisibleBody && titleImageId) {
+    let titleSaved = false;
     try {
-      const titleSaved = await setWoodmartTitleImage({
+      const bridgeImage = await fetch(`${cleanBase}/wp-json/autopilot/v1/title-image`, {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${authHeader}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          post_id: createdPageId,
+          image_id: titleImageId,
+          image_url: bannerUrl,
+        }),
+        signal: AbortSignal.timeout(20_000),
+      });
+      const bridgeJson = (await bridgeImage.json().catch(() => null)) as { success?: boolean } | null;
+      titleSaved = bridgeImage.ok && bridgeJson?.success === true;
+    } catch (bridgeImageErr) {
+      console.warn("Title image bridge save failed:", bridgeImageErr);
+    }
+    if (!titleSaved) try {
+      titleSaved = await setWoodmartTitleImage({
         wpSiteUrl: cleanBase,
         postId: createdPageId,
         imageId: titleImageId,
