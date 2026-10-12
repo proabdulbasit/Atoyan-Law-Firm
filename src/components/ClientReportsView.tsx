@@ -74,7 +74,7 @@ export function ClientReportsView({ onSwitchToGenerator }: ClientReportsViewProp
         if (json.error) {
           setErrorMessage(json.error);
         }
-        // Fallback to local storage if API returned empty
+        // Fallback to local storage if API returned empty.
         const localStored = localStorage.getItem("atoyan_generation_reports");
         if (localStored) {
           try {
