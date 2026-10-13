@@ -8,7 +8,7 @@ import { Footer } from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "WP Post Project • Practice Area Content Autopilot",
+  title: "WoodMart Law • Practice Area Content Autopilot",
   description:
     "California employment law pages for demo.wp-post.com, with header photos, Easy Accordion FAQs, and WordPress REST publishing.",
 };

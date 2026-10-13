@@ -379,7 +379,7 @@ export default function Home() {
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold text-text">WP Post Project</span>
+              <span className="font-semibold text-text">WoodMart Law</span>
               <span className="text-xs px-2 py-0.5 rounded-full bg-good/10 text-good border border-good/20">
                 Live WP REST Connected
               </span>

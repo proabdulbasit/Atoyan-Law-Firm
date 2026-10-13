@@ -25,7 +25,7 @@ export const HERO_TITLE_PHOTO_STYLE =
 
 /**
  * Cloned sidebar practice area page IDs from Page 3933.
- * Preserves the exact 27 employment law cross-links on WP Post Project.
+ * Preserves the exact 27 employment law cross-links on WoodMart Law.
  */
 export const ATOYAN_DEFAULT_SIDEBAR_IDS: number[] = [
   1590, 770, 791, 808, 821, 838, 852, 872, 888, 908, 925, 951, 970, 1070, 1090, 1044,
@@ -39,15 +39,15 @@ export const ATOYAN_TESTIMONIALS_SUB_HEADING = "Hear from Our Former Clients";
 
 export const ATOYAN_TESTIMONIALS_REVIEWS: TestimonialReviewItem[] = [
   {
-    title: "\"I recommend WP Post Project with your legal concerns.\"",
+    title: "\"I recommend WoodMart Law with your legal concerns.\"",
     description:
       "I just had a consultation with attorny Angela Atoyan. I am very satisfied with her professionalism. I am really and highly recommending to hire her as your attorney. Thank you",
     name: "-  Hak H.",
   },
   {
-    title: "\"Thanks WP Post Project\"",
+    title: "\"Thanks WoodMart Law\"",
     description:
-      "The legal team at Atoyan Employment law took my case almost from the first call. I had asked other firms but never got an answer, not even to reject my case. Great communication was a constant experience with WP Post Project.",
+      "The legal team at Atoyan Employment law took my case almost from the first call. I had asked other firms but never got an answer, not even to reject my case. Great communication was a constant experience with WoodMart Law.",
     name: "- Edgar P.",
   },
   {
@@ -70,7 +70,7 @@ export const ATOYAN_TESTIMONIALS_REVIEWS: TestimonialReviewItem[] = [
     name: "- Yuri M.",
   },
   {
-    title: "\"I highly recommend WP Post Project for your legal concerns and services!\"",
+    title: "\"I highly recommend WoodMart Law for your legal concerns and services!\"",
     description:
       "I am empressed by their work responsibility. Every time i called they answered all my questions, help me with every problem that the accident caused.\r\n100% reccommended",
     name: "- George A.",
@@ -84,7 +84,7 @@ export const ATOYAN_TESTIMONIALS_REVIEWS: TestimonialReviewItem[] = [
   {
     title: "\"I would recommend this office to everyone.\"",
     description:
-      "I had a great experience working with WP Post Project. The team was very knowledgeable, caring, and professional throughout the entire process. I highly recommend WP Post Project to anyone in need of legal assistance.",
+      "I had a great experience working with WoodMart Law. The team was very knowledgeable, caring, and professional throughout the entire process. I highly recommend WoodMart Law to anyone in need of legal assistance.",
     name: "- Maria K.",
   },
 ];
@@ -110,13 +110,13 @@ export const ATOYAN_CTA_BUTTON = {
 };
 
 /**
- * Builds the signature WP Post Project callout box with exact theme CSS classes.
+ * Builds the signature WoodMart Law callout box with exact theme CSS classes.
  */
 export function formatCalloutBox(
   mainText: string,
   linkCtaText = "Call (323) 968-0000 or contact us online",
 ): string {
-  return `<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>${mainText} <a href="${ATOYAN_PHONE_LINK}">${ATOYAN_PHONE}</a> or <a href="${ATOYAN_CONTACT_URL}">${linkCtaText}</a> to schedule a free consultation with WP Post Project.</strong></em></p>`;
+  return `<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><strong>${mainText} <a href="${ATOYAN_PHONE_LINK}">${ATOYAN_PHONE}</a> or <a href="${ATOYAN_CONTACT_URL}">${linkCtaText}</a> to schedule a free consultation with WoodMart Law.</strong></p>`;
 }
 
 /**
@@ -138,7 +138,7 @@ export function cleanFaqTextForSchema(raw: string): string {
   // 1. Strip the attorney CTA block (e.g., Talk to a ... Lawyer) and any trailing contact CTA
   text = text.replace(/<h[1-6][\s\S]*?(?:talk-to-|Talk to a)[\s\S]*$/i, "");
   text = text.replace(/If you believe your workplace rights were violated[\s\S]*?(?:807-0077|atoyanlaw\.com\/contact)[\s\S]*$/gi, "");
-  text = text.replace(/Contact WP Post Project at \(888\) 807-0077[\s\S]*$/i, "");
+  text = text.replace(/Contact WoodMart Law at \(888\) 807-0077[\s\S]*$/i, "");
 
   // Tag stripping regex that safely ignores '>' inside quoted attributes (e.g., Tailwind [&>p]:mt-2)
   const HTML_TAG_REGEX = /<(?:"[^"]*"|'[^']*'|[^"'>])+>/g;
@@ -284,7 +284,7 @@ export function generateNativeEasyAccordionHtml(
 
     // Ensure 10th/last FAQ item concludes with localized Atoyan attorney CTA
     if (isLast && !answerHtml.includes("Talk to a") && !answerHtml.includes("807-0077")) {
-      const ctaBlock = `\r\n<h2 id="talk-to-a-${citySlug}-${topicSlug}-lawyer">Talk to a ${resolvedCity} ${cleanTopic} Lawyer</h2>\r\n<p>If you believe your workplace rights were violated, time limits apply under California law. <strong>Contact WP Post Project at (323) 968-0000</strong> or through the online form at <a href="https://demo.wp-post.com/contact-us/" target="_blank" rel="noopener">demo.wp-post.com</a> for a free, confidential case evaluation.</p>`;
+      const ctaBlock = `\r\n<h2 id="talk-to-a-${citySlug}-${topicSlug}-lawyer">Talk to a ${resolvedCity} ${cleanTopic} Lawyer</h2>\r\n<p>If you believe your workplace rights were violated, time limits apply under California law. <strong>Contact WoodMart Law at (323) 968-0000</strong> or through the online form at <a href="https://demo.wp-post.com/contact-us/" target="_blank" rel="noopener">demo.wp-post.com</a> for a free, confidential case evaluation.</p>`;
       answerHtml += ctaBlock;
     }
 
@@ -791,9 +791,9 @@ export function buildCompensationSection(
       claimType = "disability discrimination claim";
     }
 
-    cleanIntro = `<p>If you ${harmText}.</p>\r\n\r\n<p>${adviceText}</p>\r\n\r\n<p>${lawText}.</p>\r\n\r\n<p>If you believe ${claimText} in ${city}, WP Post Project can help you understand your rights and evaluate your potential ${claimType}. <a href="/contact/">Contact</a> the firm to discuss what happened and learn what options may be available to you.</p>`;
+    cleanIntro = `<p>If you ${harmText}.</p>\r\n\r\n<p>${adviceText}</p>\r\n\r\n<p>${lawText}.</p>\r\n\r\n<p>If you believe ${claimText} in ${city}, WoodMart Law can help you understand your rights and evaluate your potential ${claimType}. <a href="/contact/">Contact</a> the firm to discuss what happened and learn what options may be available to you.</p>`;
   } else if (!cleanIntro.includes('href="/contact/"') && !cleanIntro.includes('href="https://demo.wp-post.com/contact-us/"')) {
-    cleanIntro = `${cleanIntro}\r\n\r\n<p>If you believe your rights were violated in ${city}, WP Post Project can help you understand your rights and evaluate your potential claim. <a href="/contact/">Contact</a> the firm to discuss what happened and learn what options may be available to you.</p>`;
+    cleanIntro = `${cleanIntro}\r\n\r\n<p>If you believe your rights were violated in ${city}, WoodMart Law can help you understand your rights and evaluate your potential claim. <a href="/contact/">Contact</a> the firm to discuss what happened and learn what options may be available to you.</p>`;
   }
 
   // Return compensation intro followed by the standard Easy Accordion shortcode
@@ -835,7 +835,7 @@ export function buildAcfPersonalInjuryGroup(
     personal_injury_title: content.heroTitle,
     _personal_injury_services_heading: content.servicesHeading,
     _personal_injury_services_sub_heading: content.servicesSubHeading,
-    _personal_injury_services_content: fullServicesContent,
+    _personal_injury_services_content: stripCopiedClasses(fullServicesContent),
     _personal_injury_services_Sidebar:
       baseGroup?._personal_injury_services_Sidebar || ATOYAN_DEFAULT_SIDEBAR_IDS,
     testimonials_reviews_bg_image: ATOYAN_TESTIMONIALS_BG_ATTACHMENT_ID,
@@ -848,7 +848,7 @@ export function buildAcfPersonalInjuryGroup(
     testimonials_reviews_button:
       baseGroup?.testimonials_reviews_button || ATOYAN_TESTIMONIALS_BUTTON,
     how_do_heading: content.howDoHeading,
-    how_do_content: content.howDoContent,
+    how_do_content: stripCopiedClasses(content.howDoContent),
     how_do_contact_form_heading:
       baseGroup?.how_do_contact_form_heading || ATOYAN_CONTACT_FORM_HEADING,
     how_do_contact_form_shortcode:
@@ -858,7 +858,7 @@ export function buildAcfPersonalInjuryGroup(
     cta_content: baseGroup?.cta_content || ATOYAN_CTA_CONTENT,
     cta_button: baseGroup?.cta_button || ATOYAN_CTA_BUTTON,
     compensation_heading: content.compensationHeading,
-    compensation_content: fullCompensationContent,
+    compensation_content: stripCopiedClasses(fullCompensationContent),
   };
 }
 

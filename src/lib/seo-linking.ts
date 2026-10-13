@@ -14,25 +14,34 @@ const DEMO_CONTACT_URL = `${DEMO_SITE}/contact-us/`;
 const DEMO_PHONE = "(323) 968-0000";
 const DEMO_PHONE_LINK = "tel:3239680000";
 
-/** Drops Tailwind classes pasted in from the previous site's editor. */
+/** Drops Tailwind classes pasted in from an AI editor. Leaves real theme classes alone. */
 export function stripCopiedClasses(html: string): string {
   if (!html || !html.includes("class=")) return html;
   return html.replace(/\sclass="([^"]*)"/gi, (match, value: string) => {
+    const decoded = value
+      .replace(/&#0*38;|&#x0*26;|&amp;/gi, "&");
     const copied =
-      value.includes("[&+p]") ||
-      value.includes("[&amp;+p]") ||
-      value.includes("[&_strong") ||
-      value.includes("[&amp;_strong") ||
-      value.includes("prose-p:") ||
-      value.includes("[&>p]") ||
-      value.includes("[&amp;>p]") ||
-      value.includes("text-box-trim") ||
-      value.includes("text-super-primary") ||
-      value.includes("marker:text-secondary") ||
-      value.includes("has-inline-images") ||
-      value.includes("reset interactable");
+      decoded.includes("[&+p]") ||
+      decoded.includes("[&_strong") ||
+      decoded.includes("prose-p:") ||
+      decoded.includes("[&>p]") ||
+      decoded.includes("text-box-trim") ||
+      decoded.includes("text-super-primary") ||
+      decoded.includes("marker:text-secondary") ||
+      decoded.includes("has-inline-images") ||
+      decoded.includes("reset interactable");
     return copied ? "" : match;
   });
+}
+
+function isDemoSite(): boolean {
+  const raw = (process.env.WP_SITE_URL || "").trim();
+  if (!raw) return false;
+  try {
+    return new URL(raw).hostname.replace(/^www\./, "") === "demo.wp-post.com";
+  } catch {
+    return raw.includes("demo.wp-post.com");
+  }
 }
 
 /**
@@ -40,21 +49,28 @@ export function stripCopiedClasses(html: string): string {
  */
 export function rewriteLegacyProjectLinks(html: string): string {
   if (!html) return html;
+  // Atoyan Law keeps its own name, phone, and links. Only the demo site is rewritten.
+  if (!isDemoSite()) return stripCopiedClasses(html);
   const rewritten = html
     .replace(/https?:\/\/(?:www\.)?atoyanlaw\.com\/practice-areas\/employment-law\/([a-z0-9-]+)\/?/gi, (_, slug: string) => demoUrlForSlug(slug))
     .replace(/https?:\/\/(?:www\.)?atoyanlaw\.com[^"'<\s]*/gi, DEMO_CONTACT_URL)
     .replace(/tel:8888070077/g, DEMO_PHONE_LINK)
     .replace(/tel:747888-?0077/g, DEMO_PHONE_LINK)
     .replace(/\(888\) 807-0077/g, DEMO_PHONE)
-    .replace(/\bAtoyan Law Firm\b/g, "WP Post Project")
-    .replace(/\bAtoyan Law\b/g, "WP Post Project")
+    .replace(/\bAtoyan Law Firm\b/g, "WoodMart Law")
+    .replace(/\bAtoyan Law\b/g, "WoodMart Law")
     .replace(/\bDavid Atoyan\b/g, "the firm")
-    .replace(/\(747\) 888-0077/g, DEMO_PHONE);
+    .replace(/\bWP Post Project\b/g, "WoodMart Law")
+    .replace(/\(747\) 888-0077/g, DEMO_PHONE)
+    .replace(
+      /(<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;">)<em>(<strong>[\s\S]*?<\/strong>)<\/em>(<\/p>)/g,
+      "$1$2$3",
+    );
   return stripCopiedClasses(rewritten);
 }
 
 function siteCallout(message: string): string {
-  return `<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>${message} <a href="${DEMO_CONTACT_URL}">Get a free consultation</a> or call <a href="${DEMO_PHONE_LINK}">${DEMO_PHONE}</a>.</strong></em></p>`;
+  return `<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><strong>${message} <a href="${DEMO_CONTACT_URL}">Get a free consultation</a> or call <a href="${DEMO_PHONE_LINK}">${DEMO_PHONE}</a>.</strong></p>`;
 }
 
 /**
@@ -67,12 +83,12 @@ export function generateContextualCta(opts: ContextualCtaOptions): string {
   const cleanTopic = decomposed.cleanTopic;
 
   if (position === "early") {
-    return siteCallout(`Need help with ${cleanTopic.toLowerCase()} in ${resolvedCity}? WP Post Project is ready to answer right now.`);
+    return siteCallout(`Need help with ${cleanTopic.toLowerCase()} in ${resolvedCity}? WoodMart Law is ready to answer right now.`);
   }
   if (position === "mid") {
-    return siteCallout(`WP Post Project gives comprehensive legal support for ${cleanTopic.toLowerCase()} matters in ${resolvedCity}.`);
+    return siteCallout(`WoodMart Law gives comprehensive legal support for ${cleanTopic.toLowerCase()} matters in ${resolvedCity}.`);
   }
-  return siteCallout(`Talk with WP Post Project about your ${cleanTopic.toLowerCase()} concern in ${resolvedCity}.`);
+  return siteCallout(`Talk with WoodMart Law about your ${cleanTopic.toLowerCase()} concern in ${resolvedCity}.`);
 }
 
 interface LinkingTarget {
@@ -84,7 +100,7 @@ interface LinkingTarget {
 
 /**
  * Builds prioritized linking rules mapping natural conversational anchor phrases
- * to live WP Post Project hub pages and location-specific pages.
+ * to live WoodMart Law hub pages and location-specific pages.
  */
 export function buildLinkingTargets(currentSlug: string, city: string): LinkingTarget[] {
   const tracked = getAllTrackedArticles().filter((a) => a.slug !== currentSlug);
@@ -361,6 +377,6 @@ export function formatCompensationContentWithLinks(params: {
   return `<p>If you suffered workplace violations, California law may require your employer to compensate you for all damages, lost wages, and statutory penalties. And if those violations were willful, the employer may be liable for substantial interest and attorney fees.</p>
 <p>Do not assume that an employer's internal explanation is always accurate. Do not assume that being salaried automatically makes you exempt from wage laws. And do not assume that a manager's verbal instructions override statutory employee protections.</p>
 <p>${lawFocus} are designed to protect workers from suffering career and financial harm.</p>
-<p>If you believe your workplace rights were violated in ${resolvedCity}, WP Post Project can help you evaluate your claim. <a href="/contact/">Contact</a> the firm to discuss what happened and learn what options may be available to you.</p>
+<p>If you believe your workplace rights were violated in ${resolvedCity}, WoodMart Law can help you evaluate your claim. <a href="/contact/">Contact</a> the firm to discuss what happened and learn what options may be available to you.</p>
 \r\n${accordionShortcode}`;
 }

@@ -81,7 +81,7 @@ PAGE RULES:
        * Bold key phrases for readability (e.g. <strong>That timeline matters.</strong>, <strong>First</strong>, <strong>Second</strong>).
        * Bullet lists (<ul><li>...</li></ul>) and numbered lists (<ol><li>...</li></ol>).
        * 3 topic-specific callout boxes (Early, Mid, and Closing) using this styling:
-         <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>[Text with phone (323) 968-0000 and contact link]</strong></em></p>
+         <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><strong>[Text with phone (323) 968-0000 and contact link]</strong></p>
        * California statutory depth (FEHA Gov Code § 12940, CRD, Labor Code §§ 98.6, 201-203, 226, 226.7, 244, 510, 512, 1102.5, 1171.5, SB 497 90-day presumption, CROWN Act SB 188, case law).
 
      MANDATORY 7-SECTION LEGAL LITIGATION FRAMEWORK:
@@ -89,7 +89,7 @@ PAGE RULES:
        Heading: <h2 class="h2dav">Understanding [Topic] Under California Law: Rights, Definitions, and Statutory Protections</h2>
        Detail FEHA Gov Code § 12940, protected classes, strict supervisor liability vs coworker negligence under Gov Code § 12940(j), Labor Code protections.
        Include Early Callout Box:
-       <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>If your employer has subjected you to [topic] in [City], speak with a [City] [Topic] lawyer. <a href="/contact/">Contact the firm</a> for a free, confidential case evaluation.</strong></em></p>
+       <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><strong>If your employer has subjected you to [topic] in [City], speak with a [City] [Topic] lawyer. <a href="/contact/">Contact the firm</a> for a free, confidential case evaluation.</strong></p>
 
      * SECTION 2: WORKPLACE MANIFESTATIONS & UNLAWFUL CONDUCT IN [CITY]
        Heading: <h2 class="h2dav">Common Forms of [Topic] in California Workplaces</h2>
@@ -100,7 +100,7 @@ PAGE RULES:
        Heading: <h2 class="h2dav">How California Employers Mask [Topic]: Pretext, Paper Trails, and Sham HR Investigations</h2>
        Detail McDonnell Douglas / Guz v. Bechtel National burden-shifting, bogus write-ups right after complaints, sudden restructuring/RIFs, HR bias.
        Include Mid Callout Box:
-       <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>Facing sudden write-ups, bogus disciplinary reviews, or employer retaliation in [City]? You have legal rights under California law. Our [City] [Topic] Lawyers are prepared to hold them accountable. <a href="tel:3239680000">Call (323) 968-0000</a> for an immediate consultation.</strong></em></p>
+       <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><strong>Facing sudden write-ups, bogus disciplinary reviews, or employer retaliation in [City]? You have legal rights under California law. Our [City] [Topic] Lawyers are prepared to hold them accountable. <a href="tel:3239680000">Call (323) 968-0000</a> for an immediate consultation.</strong></p>
 
      * SECTION 4: WORKPLACE RETALIATION & CALIFORNIA'S STATUTORY 90-DAY PRESUMPTION
        Heading: <h2 class="h2dav">Workplace Retaliation Under California Law: Labor Code § 1102.5 & Senate Bill 497</h2>
@@ -119,7 +119,7 @@ PAGE RULES:
        Heading: <h2 class="h2dav">What Compensation and Financial Damages Can You Recover in California?</h2>
        Subheadings with <h3 class="h3dav"> covering Economic Damages, Non-Economic Damages, Punitive Damages (Civil Code § 3294), Statutory Attorneys' Fees (Gov Code § 12965(b)), and statutory penalties.
        Include Closing Callout Box:
-       <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><em><strong>[Topic] is an unacceptable violation of California labor protections. Don’t face your employer alone. <a href="/contact/">Contact a [City] [Topic] lawyer</a> to review the compensation you may be owed.</strong></em></p>
+       <p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><strong>[Topic] is an unacceptable violation of California labor protections. Don’t face your employer alone. <a href="/contact/">Contact a [City] [Topic] lawyer</a> to review the compensation you may be owed.</strong></p>
 
    - 2ND: HOW DO SECTION (Tab 4 - howDoHeading & howDoContent):
      Unique heading (e.g., "How Can a [City] [Topic] Lawyer Help?") and actionable guidance.

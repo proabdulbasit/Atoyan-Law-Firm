@@ -815,8 +815,8 @@ export async function publishToWordPress(params: {
     compensationHeading: "Legal Recovery & Damages",
     compensationIntro: cta,
     faqs: [],
-    yoastTitle: `${title} | WP Post Project`,
-    yoastMetaDesc: `WP Post Project can help with ${title}. Free consultation: (323) 968-0000.`,
+    yoastTitle: `${title} | WoodMart Law`,
+    yoastMetaDesc: `WoodMart Law can help with ${title}. Free consultation: (323) 968-0000.`,
     yoastFocusKw: title,
   };
 

@@ -257,7 +257,7 @@ export function ClientReportsView({ onSwitchToGenerator }: ClientReportsViewProp
   };
 
   const copySqlSchema = () => {
-    const schemaSql = `-- WP Post Project • Generation Reports Table Schema
+    const schemaSql = `-- WoodMart Law • Generation Reports Table Schema
 CREATE TABLE IF NOT EXISTS public.generation_reports (
   id TEXT PRIMARY KEY,
   timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -328,7 +328,7 @@ CREATE POLICY "Allow public delete access on generation_reports"
             </div>
           </div>
           <p className="text-xs sm:text-sm text-muted mt-1">
-            Real-time generation volume, content speed, and image cost tracking for WP Post Project.
+            Real-time generation volume, content speed, and image cost tracking for WoodMart Law.
           </p>
         </div>
 

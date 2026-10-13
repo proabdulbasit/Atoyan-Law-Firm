@@ -698,7 +698,7 @@ class WP_Content_Autopilot_Bridge {
                 $loc_topic = ! empty( $topic ) ? $topic : "Employment Law";
                 $cta_slug = sanitize_title( "talk to a {$loc_city} {$loc_topic} lawyer" );
                 $cta_html = sprintf(
-                    "<h2 id=\"%s\">Talk to a %s %s Lawyer</h2><p>If you believe your workplace rights were violated, time limits apply under California law. <a href=\"https://demo.wp-post.com/contact-us/\">Contact WP Post Project</a> at (323) 968-0000 for a free, confidential case evaluation.</p>",
+                    "<h2 id=\"%s\">Talk to a %s %s Lawyer</h2><p>If you believe your workplace rights were violated, time limits apply under California law. <a href=\"https://demo.wp-post.com/contact-us/\">Contact WoodMart Law</a> at (323) 968-0000 for a free, confidential case evaluation.</p>",
                     esc_attr( $cta_slug ),
                     esc_html( $loc_city ),
                     esc_html( $loc_topic )

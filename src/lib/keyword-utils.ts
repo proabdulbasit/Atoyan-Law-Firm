@@ -379,8 +379,8 @@ export function decomposeKeyword(rawKeyword: string, rawCity?: string): Decompos
       .replace(/^-|-$/g, "");
 
     const heroTitle = cleanQuestion;
-    const lawyerTitle = `${cleanQuestion} | WP Post Project`;
-    const yoastTitle = `${cleanQuestion} | WP Post Project`;
+    const lawyerTitle = `${cleanQuestion} | WoodMart Law`;
+    const yoastTitle = `${cleanQuestion} | WoodMart Law`;
     const yoastMetaDesc = `Comprehensive California employee guide: ${cleanQuestion}. Learn your legal rights under California employment law & FEHA. Free consultation: (323) 968-0000.`;
     const yoastFocusKw = `${cleanTopic.toLowerCase()} in California`;
 
@@ -445,7 +445,7 @@ export function decomposeKeyword(rawKeyword: string, rawCity?: string): Decompos
   const citySlug = city.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const slug = `${citySlug}-${slugSuffix}`.replace(/-+/g, "-").replace(/^-|-$/g, "");
 
-  const yoastTitle = `${city} ${cleanTopic} Lawyer | WP Post Project`;
+  const yoastTitle = `${city} ${cleanTopic} Lawyer | WoodMart Law`;
   const yoastMetaDesc = practiceMetaDescription(city, cleanTopic, topicKey);
   const yoastFocusKw = `${city} ${cleanTopic.toLowerCase()} lawyer`;
 

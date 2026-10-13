@@ -8,7 +8,7 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     status: "healthy",
-    app: "WP Post Project Content Autopilot",
+    app: "WoodMart Law Content Autopilot",
     environment: {
       llm_default: hasOpenAi ? "OpenAI" : hasGemini ? "Gemini" : "Simulator",
       visual_assets: hasGemini ? "Google Imagen 3" : hasOpenAi ? "OpenAI DALL-E 3" : "Binary PNG Engine",

@@ -6,7 +6,7 @@ const PIPELINE_PILLARS = [
   {
     icon: Scale,
     title: "California Legal Depth",
-    body: "Practice pages for WP Post Project cite FEHA, CRD regulations, Labor Code §§ 98.6 & 1102.5, and the SB 497 rebuttable presumption.",
+    body: "Practice pages for WoodMart Law cite FEHA, CRD regulations, Labor Code §§ 98.6 & 1102.5, and the SB 497 rebuttable presumption.",
   },
   {
     icon: Layers,
@@ -36,10 +36,10 @@ export function Footer() {
                 <FileText className="size-3.5" /> Production Publishing Engine
               </div>
               <h3 className="text-xl font-bold tracking-tight text-text">
-                WP Post Project • Practice Area Automation
+                WoodMart Law • Practice Area Automation
               </h3>
               <p className="mt-2 text-sm text-muted leading-relaxed max-w-xl">
-                Publishing platform for WP Post Project at demo.wp-post.com. It writes California employment pages, generates the header and article photos, and publishes them through the WordPress REST API.
+                Publishing platform for WoodMart Law at demo.wp-post.com. It writes California employment pages, generates the header and article photos, and publishes them through the WordPress REST API.
               </p>
             </div>
 
@@ -94,7 +94,7 @@ export function Footer() {
 
         <div className="pt-8 border-t border-line flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-muted">
           <div>
-            &copy; {new Date().getFullYear()} <strong>WP Post Project</strong>. All rights reserved.
+            &copy; {new Date().getFullYear()} <strong>WoodMart Law</strong>. All rights reserved.
           </div>
           <div className="flex items-center gap-4 font-medium">
             <span className="flex items-center gap-1.5 text-good">

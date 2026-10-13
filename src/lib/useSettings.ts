@@ -28,6 +28,7 @@ export function loadSettings(): Settings {
       prompt.includes("Atoyan") ||
       prompt.includes("atoyanlaw.com") ||
       prompt.includes("888) 807-0077") ||
+      prompt.includes("WP Post Project") ||
       prompt.startsWith("You write California employment law practice pages for this website.");
     if (previousProjectPrompt) {
       parsed.system_prompt = defaultSettings().system_prompt;

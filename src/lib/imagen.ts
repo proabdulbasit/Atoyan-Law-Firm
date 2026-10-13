@@ -26,7 +26,7 @@ export function deriveAtoyanCategory(keyword: string, city?: string): string {
 }
 
 /**
- * Composites the official WP Post Project 'A' logo and dark gradient on the left side
+ * Composites the official WoodMart Law 'A' logo and dark gradient on the left side
  * of the 1920x451 banner image to match authentic live site banners (e.g. Burbank-Wrongful-Termination-Lawyer-bar.jpg).
  */
 
@@ -162,7 +162,7 @@ function createSolidPngBuffer(width: number, height: number, r: number, g: numbe
 }
 
 /**
- * Deterministic branded fallback image: serves authentic high-resolution WP Post Project
+ * Deterministic branded fallback image: serves authentic high-resolution WoodMart Law
  * practice area photography from local disk so previews never render as an empty blank box.
  */
 function generateBrandedFallbackImage(opts: GenerateSingleImageOptions): AtoyanGeneratedImage {
@@ -499,7 +499,7 @@ export async function generateAtoyanImages(params: {
     generateSingleImage({
       prompt: bannerPrompt,
       filename: `${safeSlug}-banner.jpg`,
-      altText: `${city} ${cleanTopic} Employment Lawyers - WP Post Project`,
+      altText: `${city} ${cleanTopic} Employment Lawyers - WoodMart Law`,
       width: SITE_BANNER_WIDTH,
       height: SITE_BANNER_HEIGHT,
       apiKey,
@@ -508,7 +508,7 @@ export async function generateAtoyanImages(params: {
     generateSingleImage({
       prompt: servicesPrompt,
       filename: `${safeSlug}-services.jpg`,
-      altText: `${city} ${cleanTopic} Legal Representation & Rights - WP Post Project`,
+      altText: `${city} ${cleanTopic} Legal Representation & Rights - WoodMart Law`,
       width: SITE_BODY_WIDTH,
       height: SITE_BODY_HEIGHT,
       apiKey,
@@ -516,7 +516,7 @@ export async function generateAtoyanImages(params: {
     }),
   ]);
 
-  // Apply WP Post Project Branding Composites
+  // Apply WoodMart Law Branding Composites
   let banner = rawBanner;
   try {
     const rawBannerBuf = Buffer.from(rawBanner.base64, "base64");
