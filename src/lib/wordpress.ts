@@ -510,6 +510,12 @@ export async function publishAtoyanPage(params: {
           alt: content.heroTitle,
         },
         content.accordionShortcode,
+        {
+          imageAlign: settings?.body_image_align,
+          textAlign: settings?.body_text_align,
+          directionsBelowImage: settings?.directions_below_image,
+          besideImageWords: settings?.beside_image_words,
+        },
       )
     : "";
   const pageTitle = useVisibleBody

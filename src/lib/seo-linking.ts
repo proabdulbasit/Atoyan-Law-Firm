@@ -70,7 +70,7 @@ export function rewriteLegacyProjectLinks(html: string): string {
 }
 
 function siteCallout(message: string): string {
-  return `<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><strong>${message} <a href="${DEMO_CONTACT_URL}">Get a free consultation</a> or call <a href="${DEMO_PHONE_LINK}">${DEMO_PHONE}</a>.</strong></p>`;
+  return `<p>${message} <a href="${DEMO_CONTACT_URL}">Get a free consultation</a> or call <a href="${DEMO_PHONE_LINK}">${DEMO_PHONE}</a>.</p>`;
 }
 
 /**
@@ -221,12 +221,26 @@ export function injectInternalLinks(
     currentSlug: string;
     city: string;
     maxLinks?: number;
+    extraLinks?: { keyword: string; url: string }[];
+    linksOnly?: boolean;
   }
 ): string {
   const { currentSlug, city, maxLinks = 6 } = params;
   if (!html) return "";
 
-  const targets = buildLinkingTargets(currentSlug, city);
+  const targets = params.linksOnly ? [] : buildLinkingTargets(currentSlug, city);
+  for (const link of params.extraLinks || []) {
+    const phrase = link.keyword.trim();
+    const url = link.url.trim();
+    if (!phrase || !url) continue;
+    const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    targets.unshift({
+      pattern: new RegExp(`\\b(${escaped})\\b`, "i"),
+      url,
+      anchorText: phrase,
+      priority: 100,
+    });
+  }
   const usedUrls = new Set<string>();
 
   // Extract existing links to avoid duplicates

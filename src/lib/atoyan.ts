@@ -110,13 +110,13 @@ export const ATOYAN_CTA_BUTTON = {
 };
 
 /**
- * Builds the signature WoodMart Law callout box with exact theme CSS classes.
+ * A call to action written as a normal paragraph. It is not a heading.
  */
 export function formatCalloutBox(
   mainText: string,
   linkCtaText = "Call (323) 968-0000 or contact us online",
 ): string {
-  return `<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;"><strong>${mainText} <a href="${ATOYAN_PHONE_LINK}">${ATOYAN_PHONE}</a> or <a href="${ATOYAN_CONTACT_URL}">${linkCtaText}</a> to schedule a free consultation with WoodMart Law.</strong></p>`;
+  return `<p>${mainText} <a href="${ATOYAN_PHONE_LINK}">${ATOYAN_PHONE}</a> or <a href="${ATOYAN_CONTACT_URL}">${linkCtaText}</a> to schedule a free consultation with WoodMart Law.</p>`;
 }
 
 /**
@@ -418,20 +418,81 @@ function splitAtFirstSubheading(html: string): { intro: string; rest: string } {
  * an Easy Accordion, then the shared testimonials block.
  * The header photo is the featured image, not an image in the body.
  */
+export interface DemoPageLayout {
+  imageAlign?: "left" | "right" | "center";
+  textAlign?: "left" | "right" | "center";
+  directionsBelowImage?: boolean;
+  besideImageWords?: number;
+}
+
+function htmlWordCount(html: string): number {
+  const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  return text ? text.split(" ").length : 0;
+}
+
+/** Moves opening paragraphs up beside the photo until the word count fills that column. */
+function fillBesideImage(intro: string, rest: string, target: number): { intro: string; rest: string } {
+  const goal = Math.max(40, target || 0);
+  if (htmlWordCount(intro) >= goal) return { intro, rest };
+  const blocks = rest.split(/(?=<h[1-6]\b|<p\b)/i);
+  const kept: string[] = [];
+  const left: string[] = [];
+  let words = htmlWordCount(intro);
+  let filling = true;
+  for (const block of blocks) {
+    if (!filling) {
+      left.push(block);
+      continue;
+    }
+    kept.push(block);
+    words += htmlWordCount(block);
+    const trimmed = block.trim();
+    const isHeading = /^<h[1-6]\b/i.test(trimmed);
+    const hasLink = /<a\b/i.test(trimmed);
+    if (hasLink) {
+      kept.pop();
+      words -= htmlWordCount(block);
+      left.push(block);
+      continue;
+    }
+    if (words >= goal && !isHeading) filling = false;
+  }
+  return {
+    intro: [intro, ...kept].filter((part) => part && part.trim()).join("\n"),
+    rest: left.join(""),
+  };
+}
+
+function imageAlignClass(align: "left" | "right" | "center"): string {
+  if (align === "right") return "alignright";
+  if (align === "center") return "aligncenter";
+  return "alignleft";
+}
+
 export function buildDemoPageContent(
   content: AtoyanLegalContent,
   bodyImage?: DemoBodyImage,
   accordionShortcode?: string,
+  layout?: DemoPageLayout,
 ): string {
+  const imageAlign = layout?.imageAlign || "left";
+  const textAlign = layout?.textAlign || "left";
+  const directionsBelowImage = layout?.directionsBelowImage !== false;
+  const besideImageWords = layout?.besideImageWords ?? 120;
   const services = stripInlineImages(content.servicesContent || "");
-  const { intro, rest } = splitAtFirstSubheading(services);
+  const split = splitAtFirstSubheading(services);
+  const filled = fillBesideImage(split.intro, split.rest, besideImageWords);
+  const intro = filled.intro;
+  const rest = filled.rest;
   const heading = escapeHtmlText(content.servicesHeading || content.heroTitle);
   const subheading = content.servicesSubHeading
     ? `<p><strong>${escapeHtmlText(content.servicesSubHeading)}</strong></p>`
     : "";
   const image = bodyImage?.url
-    ? `<img src="${escapeAttr(bodyImage.url)}" alt="${escapeAttr(bodyImage.alt || content.heroTitle)}" width="${bodyImage.width || 400}" height="${bodyImage.height || 267}" class="alignleft size-medium${bodyImage.id ? ` wp-image-${bodyImage.id}` : ""}" />`
+    ? `<img src="${escapeAttr(bodyImage.url)}" alt="${escapeAttr(bodyImage.alt || content.heroTitle)}" width="${bodyImage.width || 400}" height="${bodyImage.height || 267}" class="${imageAlignClass(imageAlign)} size-medium${bodyImage.id ? ` wp-image-${bodyImage.id}` : ""}" />`
     : "";
+  const introHtml = textAlign === "left" ? intro : `<div style="text-align:${textAlign}">${intro}</div>`;
+  const directionsClear = directionsBelowImage ? `<div style="clear:both"></div>\n` : "";
   const compensation = stripInlineImages(content.compensationIntro || "").replace(
     /\[sp_easyaccordion\s+id=["']?\d+["']?\]/gi,
     "",
@@ -456,8 +517,8 @@ export function buildDemoPageContent(
 
   return stripCopiedClasses([
     HERO_TITLE_PHOTO_STYLE,
-    `<p><h2>${heading}</h2>\n${image}${subheading}\n${intro}`.trim(),
-    `<!-- add -->\n[html_block id="${DEMO_DIRECTIONS_BLOCK_ID}"]\n<!-- // -->`,
+    `<p><h2>${heading}</h2>\n${image}${subheading}\n${introHtml}`.trim(),
+    `${directionsClear}<!-- add -->\n[html_block id="${DEMO_DIRECTIONS_BLOCK_ID}"]\n<!-- // -->`,
     rest,
     content.howDoHeading ? `<h2>${escapeHtmlText(content.howDoHeading)}</h2>` : "",
     howDo,

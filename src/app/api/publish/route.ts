@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { PublishRequest, type AtoyanLegalContent } from "@/lib/types";
 import { publishAtoyanPage } from "@/lib/wordpress";
 import { generateAtoyanContent, extractCity } from "@/lib/llm";
+import { articleRulesFromSettings } from "@/lib/article-prompt";
 import { generateAtoyanImages } from "@/lib/imagen";
 
 export const runtime = "nodejs";
@@ -88,6 +89,7 @@ export async function POST(req: Request) {
         provider: settings?.llm_provider,
         systemPrompt: settings?.system_prompt,
         chatContext: parsed.data.chat_context,
+        article: articleRulesFromSettings(settings),
       });
 
       // If legacy content was provided as a string, honor it inside servicesContent

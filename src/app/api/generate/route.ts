@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { GenerateRequest } from "@/lib/types";
 import { generateAtoyanContent, extractCity, activeProvider } from "@/lib/llm";
+import { articleRulesFromSettings } from "@/lib/article-prompt";
 import { generateAtoyanImages } from "@/lib/imagen";
 import { formatArticle } from "@/lib/formatting";
 import { calculateWordAudit } from "@/lib/word-counter";
@@ -29,6 +30,7 @@ export async function POST(req: Request) {
   const { title: keyword, settings, schedule_at, accordion_shortcode, chat_context } = parsed.data;
   const city = extractCity(keyword);
   const provider = await activeProvider(settings);
+  const articleRules = articleRulesFromSettings(settings);
 
   try {
     // 1. Generate high-authority California legal content (OpenAI -> Gemini -> Simulator)
@@ -40,6 +42,7 @@ export async function POST(req: Request) {
       provider: (settings?.llm_provider || provider) as "openai" | "gemini" | "simulator",
       systemPrompt: settings?.system_prompt,
       chatContext: chat_context,
+      article: articleRules,
     });
 
     if (accordion_shortcode && accordion_shortcode.trim()) {
@@ -89,7 +92,7 @@ export async function POST(req: Request) {
     });
 
     // Calculate substantive word audit across all ACF sections and FAQs
-    const wordAudit = calculateWordAudit(content);
+    const wordAudit = calculateWordAudit(content, { services: articleRules.wordCount });
 
     // 3. Generate Accordion & Schema.org JSON-LD
     const accordionHtml = content.accordionShortcode || generateEasyAccordionHtml(content.faqs);

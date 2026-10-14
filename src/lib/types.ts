@@ -1,11 +1,25 @@
 import { z } from "zod";
+import {
+  DEFAULT_ARTICLE_AUTHORITY_RULE,
+  DEFAULT_ARTICLE_BANNED_RULE,
+  DEFAULT_ARTICLE_HEADING_RULE,
+  DEFAULT_ARTICLE_INTRO_RULE,
+  DEFAULT_ARTICLE_READER_RULE,
+  DEFAULT_ARTICLE_RESEARCH_RULE,
+  DEFAULT_ARTICLE_TITLE_RULE,
+  DEFAULT_ARTICLE_WRITING_RULE,
+  DEFAULT_ARTICLE_COMPETITOR_RULE,
+  DEFAULT_ARTICLE_WORD_COUNT,
+  DEFAULT_MAX_INTERNAL_LINKS,
+} from "./article-prompt";
 
 /**
  * Keyword link pair for auto-linking keywords inside content.
+ * Empty rows are allowed while the client is still typing a new link.
  */
 export const KeywordLink = z.object({
-  keyword: z.string().min(1),
-  url: z.string().min(1),
+  keyword: z.string(),
+  url: z.string(),
 });
 export type KeywordLink = z.infer<typeof KeywordLink>;
 
@@ -30,7 +44,24 @@ export const Settings = z.object({
   heading_class: z.string().default("h2dav"),
   cta_shortcode: z.string().default("[sp_easyaccordion id=\"3932\"]"),
   cta_after_paragraph: z.number().int().min(1).default(2),
+  article_word_count: z.number().int().min(300).max(6000).default(DEFAULT_ARTICLE_WORD_COUNT),
+  article_title_rule: z.string().default(DEFAULT_ARTICLE_TITLE_RULE),
+  article_intro_rule: z.string().default(DEFAULT_ARTICLE_INTRO_RULE),
+  article_heading_rule: z.string().default(DEFAULT_ARTICLE_HEADING_RULE),
+  article_writing_rule: z.string().default(DEFAULT_ARTICLE_WRITING_RULE),
+  article_banned_rule: z.string().default(DEFAULT_ARTICLE_BANNED_RULE),
+  article_research_rule: z.string().default(DEFAULT_ARTICLE_RESEARCH_RULE),
+  article_reader_rule: z.string().default(DEFAULT_ARTICLE_READER_RULE),
+  article_competitor_rule: z.string().default(DEFAULT_ARTICLE_COMPETITOR_RULE),
+  article_authority_rule: z.string().default(DEFAULT_ARTICLE_AUTHORITY_RULE),
+  max_internal_links: z.number().int().min(0).max(20).default(DEFAULT_MAX_INTERNAL_LINKS),
+  links_only: z.boolean().default(false),
   keyword_links: z.array(KeywordLink).default([]),
+  body_image_align: z.enum(["left", "right", "center"]).default("left"),
+  body_text_align: z.enum(["left", "right", "center"]).default("left"),
+  directions_below_image: z.boolean().default(true),
+  beside_image_words: z.number().int().min(40).max(400).default(120),
+  demo_1k_applied: z.boolean().default(false),
   image_template: z.enum(["sunset", "midnight", "paper"]).default("midnight"),
   wp_site_url: z.string().default("https://demo.wp-post.com/"),
   wp_username: z.string().optional(),

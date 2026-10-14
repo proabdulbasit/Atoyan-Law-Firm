@@ -13,7 +13,9 @@ import {
 } from "./llm-simulated";
 import type { Settings, AtoyanLegalContent, AtoyanFaq } from "./types";
 import { resolveDefaultAccordionShortcode, ATOYAN_PHONE, ATOYAN_TOLL_FREE } from "./atoyan";
-import { countSubstantiveWords, calculateWordAudit } from "./word-counter";
+import { defaultArticleRules, formatArticleRules, type ArticleRules } from "./article-prompt";
+import { calloutsToNormalText, colorContentLinks, coverRequiredPoints, keepOnlySavedLinks, questionHeadingText, separateStackedHeadings, shapeArticleHtml, shortenIntro } from "./article-enforce";
+import { countSubstantiveWords, calculateWordAudit, limitHtmlToWordCount } from "./word-counter";
 export { countSubstantiveWords, calculateWordAudit };
 
 export interface ArticleResult {
@@ -255,12 +257,59 @@ export function enforceMinimumServicesWordCount(
 }
 
 /**
+ * Puts each saved Settings link in its own later paragraph.
+ * The opening paragraph stays free of those links.
+ */
+function ensureSavedLinks(html: string, links: { keyword: string; url: string }[]): string {
+  let out = html || "";
+  const saved = links
+    .map((link) => ({ phrase: link.keyword.trim(), url: link.url.trim() }))
+    .filter((link) => link.phrase && link.url);
+
+  saved.forEach((link, index) => {
+    const escaped = link.phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    out = out.replace(new RegExp(`<a\\b[^>]*>([^<]*\\b${escaped}\\b[^<]*)</a>`, "gi"), "$1");
+    const parts = out.split(/(<p\b[^>]*>[\s\S]*?<\/p>)/gi);
+    const paragraphIndexes = parts
+      .map((part, partIndex) => (/^<p\b/i.test(part) ? partIndex : -1))
+      .filter((partIndex) => partIndex >= 0)
+      .slice(1);
+    const slot = paragraphIndexes[Math.min(index * 2, Math.max(0, paragraphIndexes.length - 1))];
+    const sentence = /consult/i.test(link.phrase)
+      ? `You can request a <a href="${link.url}">${link.phrase}</a> before you decide on the next step.`
+      : `A <a href="${link.url}">${link.phrase}</a> claim can come from the same events.`;
+    if (slot === undefined) {
+      out = `${out}\n<p>${sentence}</p>`;
+      return;
+    }
+    const searchFrom = paragraphIndexes.slice(paragraphIndexes.indexOf(slot));
+    let placed = false;
+    for (const partIndex of searchFrom) {
+      const plain = parts[partIndex].replace(/<[^>]+>/g, " ");
+      if (!new RegExp(`\\b${escaped}\\b`, "i").test(plain)) continue;
+      parts[partIndex] = parts[partIndex].replace(
+        new RegExp(`\\b(${escaped})\\b`, "i"),
+        `<a href="${link.url}">$1</a>`,
+      );
+      placed = true;
+      break;
+    }
+    if (!placed) {
+      parts[slot] = `${parts[slot]}\n<p>${sentence}</p>`;
+    }
+    out = parts.join("");
+  });
+  return out;
+}
+
+/**
  * Validates and normalizes parsed LLM output, falling back to guaranteed high-quality defaults for any missing fields.
  */
 function validateAndNormalizeAtoyanContent(
   raw: unknown,
   keyword: string,
   city: string,
+  rules: ArticleRules = defaultArticleRules(),
 ): AtoyanLegalContent {
   const decomposed = decomposeKeyword(keyword, city);
   const resolvedCity = decomposed.city;
@@ -298,26 +347,37 @@ function validateAndNormalizeAtoyanContent(
   let finalSlug = decomposed.slug;
 
   let rawServices = typeof obj.servicesContent === "string" && obj.servicesContent ? obj.servicesContent : sim.servicesContent;
+  rawServices = shapeArticleHtml(rawServices, rules);
 
-  // Enforce David Atoyan's strict 2,200+ word requirement on servicesContent
-  rawServices = enforceMinimumServicesWordCount(rawServices, cleanTopic, validatedCity, 2200);
+  // Pad only when the draft is shorter than Settings. A long draft is cut to the Settings length.
+  if (countSubstantiveWords(rawServices) < rules.wordCount) {
+    rawServices = enforceMinimumServicesWordCount(rawServices, cleanTopic, validatedCity, rules.wordCount);
+  }
+  rawServices = limitHtmlToWordCount(rawServices, rules.wordCount);
 
   // Guarantee internal SEO linking on services content
-  const linkedServices = injectInternalLinks(rawServices, {
-    currentSlug: finalSlug,
-    city: validatedCity,
-    maxLinks: 6,
-  });
+  let linkedServices = ensureSavedLinks(
+    injectInternalLinks(rawServices, {
+      currentSlug: finalSlug,
+      city: validatedCity,
+      maxLinks: rules.maxLinks,
+      extraLinks: rules.keywordLinks,
+      linksOnly: rules.linksOnly,
+    }),
+    rules.keywordLinks,
+  );
+  if (rules.linksOnly) linkedServices = keepOnlySavedLinks(linkedServices, rules.keywordLinks);
 
-  // Guarantee How Do Section has strategic diagnostic question linking
+  // Built-in how-do links are skipped when Settings says to use only the saved links.
   let finalHowDoContent = typeof obj.howDoContent === "string" && obj.howDoContent ? obj.howDoContent : sim.howDoContent;
-  if (!finalHowDoContent.includes("<a href=") || !finalHowDoContent.includes("retaliat")) {
+  if (!rules.linksOnly && (!finalHowDoContent.includes("<a href=") || !finalHowDoContent.includes("retaliat"))) {
     finalHowDoContent = formatHowDoContentWithLinks({
       topic: cleanTopic,
       city: validatedCity,
       currentSlug: finalSlug,
     });
   }
+  finalHowDoContent = shapeArticleHtml(finalHowDoContent, rules);
 
   // Guarantee Compensation Section has clean editorial intro and contact link (no raw HTML accordions)
   let rawCompIntro = typeof obj.compensationIntro === "string" && obj.compensationIntro ? obj.compensationIntro : sim.compensationIntro;
@@ -327,7 +387,8 @@ function validateAndNormalizeAtoyanContent(
     .replace(/\[sp_easyaccordion\s+id=["']?\d+["']?\]/gi, "")
     .trim();
 
-  if (!finalCompIntro.includes('href="/contact/"') && !finalCompIntro.includes('href="https://demo.wp-post.com/contact-us/"')) {
+  finalCompIntro = shapeArticleHtml(finalCompIntro, rules);
+  if (!rules.linksOnly && !finalCompIntro.includes('href="/contact/"') && !finalCompIntro.includes('href="https://demo.wp-post.com/contact-us/"')) {
     finalCompIntro = finalCompIntro + " If you believe your rights were violated in " + resolvedCity + ', <a href="/contact/">contact the firm</a> to discuss what happened.';
   }
 
@@ -353,6 +414,22 @@ function validateAndNormalizeAtoyanContent(
     }
   }
 
+  linkedServices = shortenIntro(linkedServices);
+  linkedServices = coverRequiredPoints(linkedServices, rules);
+  linkedServices = ensureSavedLinks(linkedServices, rules.keywordLinks);
+  if (rules.linksOnly) linkedServices = keepOnlySavedLinks(linkedServices, rules.keywordLinks);
+  linkedServices = separateStackedHeadings(linkedServices);
+  finalHowDoContent = separateStackedHeadings(finalHowDoContent);
+  finalCompIntro = separateStackedHeadings(finalCompIntro);
+
+  const extraWords = countSubstantiveWords(finalHowDoContent) + countSubstantiveWords(finalCompIntro);
+  if (countSubstantiveWords(linkedServices) + extraWords > rules.wordCount) {
+    linkedServices = limitHtmlToWordCount(linkedServices, Math.max(350, rules.wordCount - extraWords));
+    linkedServices = ensureSavedLinks(linkedServices, rules.keywordLinks);
+    if (rules.linksOnly) linkedServices = keepOnlySavedLinks(linkedServices, rules.keywordLinks);
+    linkedServices = separateStackedHeadings(linkedServices);
+  }
+
   let finalHeroTitle = decomposed.isArticle
     ? decomposed.heroTitle
     : typeof obj.heroTitle === "string" &&
@@ -368,6 +445,12 @@ function validateAndNormalizeAtoyanContent(
     : `${validatedCity} ${cleanTopic} Lawyer`;
 
   let finalYoastTitle = decomposed.yoastTitle;
+  if (/primary keyword/i.test(rules.titleRule)) {
+    const firm = /woodmart law/i.test(rules.titleRule) ? " | WoodMart Law" : "";
+    finalHeroTitle = keyword;
+    finalServicesHeading = keyword;
+    finalYoastTitle = `${keyword}${firm}`;
+  }
   let finalYoastFocusKw = decomposed.yoastFocusKw;
 
   const result: AtoyanLegalContent = {
@@ -377,20 +460,24 @@ function validateAndNormalizeAtoyanContent(
     heroTitle: finalHeroTitle,
     servicesHeading: finalServicesHeading,
     servicesSubHeading:
-      typeof obj.servicesSubHeading === "string" && obj.servicesSubHeading
+      /two or three sentences|short transition/i.test(rules.introRule)
+        ? ""
+        : typeof obj.servicesSubHeading === "string" && obj.servicesSubHeading
         ? obj.servicesSubHeading
         : sim.servicesSubHeading,
-    servicesContent: rewriteLegacyProjectLinks(linkedServices),
-    howDoHeading:
+    servicesContent: colorContentLinks(rewriteLegacyProjectLinks(linkedServices)),
+    howDoHeading: (/question/i.test(rules.headingRule) ? questionHeadingText : (value: string) => value)(
       typeof obj.howDoHeading === "string" && obj.howDoHeading
         ? obj.howDoHeading
         : sim.howDoHeading,
-    howDoContent: rewriteLegacyProjectLinks(finalHowDoContent),
-    compensationHeading:
+    ),
+    howDoContent: colorContentLinks(rewriteLegacyProjectLinks(finalHowDoContent)),
+    compensationHeading: (/question/i.test(rules.headingRule) ? questionHeadingText : (value: string) => value)(
       typeof obj.compensationHeading === "string" && obj.compensationHeading
         ? obj.compensationHeading
         : sim.compensationHeading,
-    compensationIntro: rewriteLegacyProjectLinks(finalCompIntro),
+    ),
+    compensationIntro: colorContentLinks(rewriteLegacyProjectLinks(finalCompIntro)),
     faqs: finalFaqs.map((faq) => ({
       ...faq,
       answer: rewriteLegacyProjectLinks(faq.answer || ""),
@@ -428,16 +515,20 @@ function validateAndNormalizeAtoyanContent(
 /**
  * The Settings prompt is the voice. The site prompt only supplies page structure and the JSON schema.
  */
-export function buildActiveSystemPrompt(customDirectives?: string, chatContext?: string): string {
+export function buildActiveSystemPrompt(
+  customDirectives?: string,
+  chatContext?: string,
+  rules: ArticleRules = defaultArticleRules(),
+): string {
   const voice = customDirectives?.trim();
-  let prompt = SITE_SYSTEM_PROMPT.trim();
+  let prompt = `${formatArticleRules(rules)}\n\n${SITE_SYSTEM_PROMPT.trim()}`;
 
   if (voice && !prompt.includes(voice)) {
-    prompt = `${voice}\n\nFollow the firm name, phone, and tone above. Use the rules below only for page structure and JSON shape. Do not mention Atoyan Law, David Atoyan, or atoyanlaw.com.\n\n${prompt}`;
+    prompt = `${voice}\n\nFollow the firm name, phone, and tone above. Follow the article generation rules for length, headlines, style, sources, and links. Use the rules below only for page structure and JSON shape. Do not mention Atoyan Law, David Atoyan, or atoyanlaw.com.\n\n${prompt}`;
   }
 
   if (chatContext && chatContext.trim()) {
-    prompt += `\n\nCLIENT CHATGPT CONVERSATION CONTEXT & SPECIAL CASE NOTES:\n${chatContext.trim()}\n\nIntegrate the above discussion, specific California case citations, and nuances directly into the legal analysis while strictly maintaining the required JSON schema and 2,500-3,500+ words depth.`;
+    prompt += `\n\nCLIENT CHATGPT CONVERSATION CONTEXT & SPECIAL CASE NOTES:\n${chatContext.trim()}\n\nIntegrate the above discussion into the legal analysis while strictly maintaining the required JSON schema and approximately ${rules.wordCount} words.`;
   }
 
   return prompt;
@@ -446,7 +537,13 @@ export function buildActiveSystemPrompt(customDirectives?: string, chatContext?:
 /**
  * Builds the exhaustive user prompt mandating the 7 California litigation sections and 8-10 FAQs.
  */
-function buildLegalPrompt(keyword: string, city: string, linkCatalog: string, chatContext?: string): string {
+function buildLegalPrompt(
+  keyword: string,
+  city: string,
+  linkCatalog: string,
+  chatContext?: string,
+  rules: ArticleRules = defaultArticleRules(),
+): string {
   const decomposed = decomposeKeyword(keyword, city);
   const resolvedCity = decomposed.city;
   const cleanTopic = decomposed.cleanTopic;
@@ -468,7 +565,7 @@ You MUST strictly follow the attorney's tone and structure above:
 1. Use direct, bold question-based headings formatted as <h2 class="h2dav">Question?</h2> incorporating the exact questions and topics requested in the attorney's prompt.
 2. Maintain short, simple sentences in active voice with NO em dashes (replace with commas or hyphens).
 3. Weave in the requested local statistics, agency figures, and California statutory citations naturally.
-4. Distribute the comprehensive ~2,200-word analysis across the 3 WordPress ACF content sections:
+4. Distribute the comprehensive ~${rules.wordCount}-word analysis across the 3 WordPress ACF content sections:
    - servicesContent: Main substantive discussion (questions 1 through 10-12 as <h2 class="h2dav">).
    - howDoHeading: "Why should you speak with a ${resolvedCity} ${cleanTopic} lawyer?"
    - howDoContent: Practical guidance and bullet points on when workers should speak with a lawyer.
@@ -478,7 +575,8 @@ You MUST strictly follow the attorney's tone and structure above:
 `
     : "";
 
-  const questionDirectives = blueprint.questions.map((q) => {
+  const sectionCount = Math.max(4, Math.min(blueprint.questions.length, Math.round(rules.wordCount / 200)));
+  const questionDirectives = blueprint.questions.slice(0, sectionCount).map((q) => {
     let callout = "";
     if (q.questionNumber === 1) {
       callout = `
@@ -499,16 +597,20 @@ ${blueprint.closingCtaText}`;
 
   const faqDirectives = blueprint.faqs.map((f, i) => `${i + 1}. ${f.question} (${f.focus})`).join("\n");
 
-  return `${linkCatalog}${customContextDirective}
+  return `${formatArticleRules(rules)}
 
-CRITICAL REQUIREMENT: servicesContent MUST be 2,200-3,500+ words of exhaustive, high-authority California employment law analysis for "${cleanTopic}" in ${resolvedCity}.
+${linkCatalog}${customContextDirective}
+
+CRITICAL REQUIREMENT: servicesContent MUST be approximately ${rules.wordCount} words of exhaustive legal analysis for "${cleanTopic}" in ${resolvedCity}.
 Tone must be clear and direct for workers, with question-based headings (<h2 class="h2dav">), short active-voice sentences, no em dashes, concrete arithmetic examples ($25/hr -> $37.50 overtime, $3,600/yr off-the-clock, $11,000/yr break premiums, $6,000 waiting time penalties), and California Labor Code § 1171.5 undocumented worker protections. Do not mention Atoyan Law or David Atoyan.
 DO NOT generate a short generic summary. Use question-based headings formatted with <h2 class="h2dav"> matching the topics below:
 
 PAGE LENGTH:
-servicesContent MUST contain a MINIMUM of 2,200 to 3,500 pure words of substantive legal analysis (counted strictly on body text, excluding HTML tags, classes, and callout boxes).
-DO NOT summarize or compress. Any generation under 2,200 pure words is strictly unacceptable.
-To guarantee reaching 2,200+ words, you MUST generate all 14 question sections below. Each question section MUST contain 3 to 5 substantial, multi-sentence paragraphs (160 to 200 words each):
+HARD LIMIT: servicesContent must be about ${rules.wordCount} words and must not exceed ${Math.round(rules.wordCount * 1.1)} words.
+Write only the ${sectionCount} sections below. Do not add extra sections.
+You MUST use these exact phrases in the article body: ${rules.keywordLinks.map((link) => link.keyword).filter(Boolean).join(", ") || "(none)"}.
+Follow the article generation rules above for headings, sentence style, and what to leave out.
+Cover the question sections below in that style:
 
 ${questionDirectives}
 
@@ -530,11 +632,12 @@ async function generateAtoyanOpenAI(
   apiKey: string,
   systemPrompt?: string,
   chatContext?: string,
+  rules: ArticleRules = defaultArticleRules(),
 ): Promise<AtoyanLegalContent> {
   const safeSlug = keyword.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const linkCatalog = buildLinkingCatalogForLlm({ category: keyword, city, currentSlug: safeSlug });
-  const prompt = buildLegalPrompt(keyword, city, linkCatalog, chatContext);
-  const activePrompt = buildActiveSystemPrompt(systemPrompt, chatContext);
+  const prompt = buildLegalPrompt(keyword, city, linkCatalog, chatContext, rules);
+  const activePrompt = buildActiveSystemPrompt(systemPrompt, chatContext, rules);
 
   for (const model of OPENAI_MODELS) {
     try {
@@ -583,7 +686,7 @@ async function generateAtoyanOpenAI(
           parsed.servicesContent.trim().length > 500
         ) {
           console.log(`[Atoyan LLM] Generated ${countSubstantiveWords(parsed.servicesContent)} words (${parsed.servicesContent.length} chars) via OpenAI (${model})`);
-          return validateAndNormalizeAtoyanContent(parsed, keyword, city);
+          return validateAndNormalizeAtoyanContent(parsed, keyword, city, rules);
         } else {
           console.warn(`[Atoyan LLM] OpenAI (${model}) response missing servicesContent or length <= 500`);
         }
@@ -605,11 +708,12 @@ async function generateAtoyanGemini(
   apiKey: string,
   systemPrompt?: string,
   chatContext?: string,
+  rules: ArticleRules = defaultArticleRules(),
 ): Promise<AtoyanLegalContent> {
   const safeSlug = keyword.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const linkCatalog = buildLinkingCatalogForLlm({ category: keyword, city, currentSlug: safeSlug });
-  const prompt = buildLegalPrompt(keyword, city, linkCatalog, chatContext);
-  const activePrompt = buildActiveSystemPrompt(systemPrompt, chatContext);
+  const prompt = buildLegalPrompt(keyword, city, linkCatalog, chatContext, rules);
+  const activePrompt = buildActiveSystemPrompt(systemPrompt, chatContext, rules);
 
   for (const model of GEMINI_MODELS) {
     try {
@@ -647,7 +751,7 @@ async function generateAtoyanGemini(
           parsed.servicesContent.trim().length > 500
         ) {
           console.log(`[Atoyan LLM] Generated ${countSubstantiveWords(parsed.servicesContent)} words (${parsed.servicesContent.length} chars) via Gemini (${model})`);
-          return validateAndNormalizeAtoyanContent(parsed, keyword, city);
+          return validateAndNormalizeAtoyanContent(parsed, keyword, city, rules);
         } else {
           console.warn(`[Atoyan LLM] Gemini (${model}) response missing servicesContent or length <= 500`);
         }
@@ -673,14 +777,16 @@ export async function generateAtoyanContent(params: {
   provider?: "openai" | "gemini" | "simulator";
   systemPrompt?: string;
   chatContext?: string;
+  article?: ArticleRules;
 }): Promise<AtoyanLegalContent> {
   const { keyword, systemPrompt, chatContext } = params;
   const city = params.city || extractCity(keyword);
+  const rules = params.article || defaultArticleRules();
 
   // If simulator is explicitly chosen in settings, return simulated
   if (params.provider === "simulator") {
     console.log(`[Atoyan LLM] Simulator explicitly selected for "${keyword}"`);
-    return generateAtoyanSimulated(keyword, city);
+    return validateAndNormalizeAtoyanContent(generateAtoyanSimulated(keyword, city), keyword, city, rules);
   }
 
   // Prioritize client-provided API keys (from Settings modal) over server environment keys
@@ -694,7 +800,7 @@ export async function generateAtoyanContent(params: {
   // Attempt 1: Preferred Provider
   if (preferredProvider === "openai" && openaiKey) {
     try {
-      return await generateAtoyanOpenAI(keyword, city, openaiKey, systemPrompt, chatContext);
+      return await generateAtoyanOpenAI(keyword, city, openaiKey, systemPrompt, chatContext, rules);
     } catch (e) {
       console.warn("[Atoyan LLM] Primary OpenAI attempt failed, falling back to Gemini / simulated:", e);
     }
@@ -702,7 +808,7 @@ export async function generateAtoyanContent(params: {
 
   if (preferredProvider === "gemini" && geminiKey) {
     try {
-      return await generateAtoyanGemini(keyword, city, geminiKey, systemPrompt, chatContext);
+      return await generateAtoyanGemini(keyword, city, geminiKey, systemPrompt, chatContext, rules);
     } catch (e) {
       console.warn("[Atoyan LLM] Primary Gemini attempt failed, falling back to OpenAI / simulated:", e);
     }
@@ -711,7 +817,7 @@ export async function generateAtoyanContent(params: {
   // Attempt 2: Secondary Provider Fallback
   if (openaiKey && preferredProvider !== "openai") {
     try {
-      return await generateAtoyanOpenAI(keyword, city, openaiKey, systemPrompt, chatContext);
+      return await generateAtoyanOpenAI(keyword, city, openaiKey, systemPrompt, chatContext, rules);
     } catch (e) {
       console.warn("[Atoyan LLM] Fallback OpenAI attempt failed:", e);
     }
@@ -719,7 +825,7 @@ export async function generateAtoyanContent(params: {
 
   if (geminiKey && preferredProvider !== "gemini") {
     try {
-      return await generateAtoyanGemini(keyword, city, geminiKey, systemPrompt, chatContext);
+      return await generateAtoyanGemini(keyword, city, geminiKey, systemPrompt, chatContext, rules);
     } catch (e) {
       console.warn("[Atoyan LLM] Fallback Gemini attempt failed:", e);
     }
@@ -727,7 +833,7 @@ export async function generateAtoyanContent(params: {
 
   // Attempt 3: Last resort offline simulator
   console.warn(`[Atoyan LLM] No AI API succeeded for "${keyword}" in ${city}. Using offline simulator as emergency fallback.`);
-  return generateAtoyanSimulated(keyword, city);
+  return validateAndNormalizeAtoyanContent(generateAtoyanSimulated(keyword, city), keyword, city, rules);
 }
 
 // -----------------------------------------------------------------------------

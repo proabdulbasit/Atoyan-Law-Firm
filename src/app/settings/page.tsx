@@ -19,9 +19,23 @@ import {
   Trash2,
   Eye,
   EyeOff,
+  Plus,
 } from "lucide-react";
 import { useSettings } from "@/lib/useSettings";
 import { cn } from "@/lib/utils";
+import {
+  DEFAULT_ARTICLE_AUTHORITY_RULE,
+  DEFAULT_ARTICLE_BANNED_RULE,
+  DEFAULT_ARTICLE_COMPETITOR_RULE,
+  DEFAULT_ARTICLE_HEADING_RULE,
+  DEFAULT_ARTICLE_INTRO_RULE,
+  DEFAULT_ARTICLE_READER_RULE,
+  DEFAULT_ARTICLE_RESEARCH_RULE,
+  DEFAULT_ARTICLE_TITLE_RULE,
+  DEFAULT_ARTICLE_WORD_COUNT,
+  DEFAULT_ARTICLE_WRITING_RULE,
+  DEFAULT_MAX_INTERNAL_LINKS,
+} from "@/lib/article-prompt";
 
 function Field({
   label,
@@ -45,8 +59,9 @@ const inputCls =
   "w-full rounded-xl border border-line bg-panel px-3.5 py-2.5 text-sm text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/40";
 
 export default function SettingsPage() {
-  const { settings, update, ready } = useSettings();
+  const { settings, update, ready, save } = useSettings();
   const [savedFlash, setSavedFlash] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Admin password state
   const [adminPassword, setAdminPassword] = useState("");
@@ -113,6 +128,23 @@ export default function SettingsPage() {
       wp_app_password: "",
       heading_class: "h2dav",
       cta_shortcode: "[sp_easyaccordion id=\"3932\"]",
+      article_word_count: DEFAULT_ARTICLE_WORD_COUNT,
+      article_title_rule: DEFAULT_ARTICLE_TITLE_RULE,
+      article_intro_rule: DEFAULT_ARTICLE_INTRO_RULE,
+      article_heading_rule: DEFAULT_ARTICLE_HEADING_RULE,
+      article_writing_rule: DEFAULT_ARTICLE_WRITING_RULE,
+      article_banned_rule: DEFAULT_ARTICLE_BANNED_RULE,
+      article_research_rule: DEFAULT_ARTICLE_RESEARCH_RULE,
+      article_reader_rule: DEFAULT_ARTICLE_READER_RULE,
+      article_competitor_rule: DEFAULT_ARTICLE_COMPETITOR_RULE,
+      article_authority_rule: DEFAULT_ARTICLE_AUTHORITY_RULE,
+      max_internal_links: DEFAULT_MAX_INTERNAL_LINKS,
+      links_only: false,
+      keyword_links: [],
+      body_image_align: "left",
+      body_text_align: "left",
+      directions_below_image: true,
+      beside_image_words: 120,
       system_prompt:
         "You write practice-area pages for WoodMart Law at https://demo.wp-post.com/. The firm gives comprehensive legal support and a free consultation. Site practice areas are Wrongful Termination, Sexual Harassment, Retaliation, and Discrimination. It also helps individuals and companies with civil matters, criminal matters, economic matters, labor disputes, contracts, and licensing. Phones: (323) 968-0000 and (323) 203-4805. Contact page: https://demo.wp-post.com/contact-us/. Voice: clear and direct. Use the firm name WoodMart Law. Invite readers to get a free consultation and call (323) 968-0000 or use the contact page. Do not use another law firm's name or phone number.",
     });
@@ -144,6 +176,184 @@ export default function SettingsPage() {
           </button>
         </div>
       </div>
+
+      <section className="rounded-2xl border border-line bg-panel-2 p-6 space-y-5">
+        <h2 className="font-semibold flex items-center gap-2 text-text">
+          <Sliders className="size-4 text-accent" /> Article generation
+        </h2>
+        <p className="text-xs text-muted leading-relaxed">
+          These boxes control the article length, title, introduction, headlines, writing style, research, and links.
+          The firm-name box further down only stores the name, phone, and tone.
+        </p>
+
+        <Field label="Article length (words)" hint="This is the article only. Question headings and the FAQ accordion are not included. About 2,200 unless you ask for a different length.">
+          <input
+            className={inputCls}
+            type="number"
+            min={300}
+            max={6000}
+            value={settings.article_word_count}
+            onChange={(e) => {
+              const raw = e.target.value.trim();
+              update({ article_word_count: raw === "" ? 0 : Number(raw) });
+            }}
+          />
+        </Field>
+        <Field label="SEO title">
+          <textarea className={cn(inputCls, "min-h-16 text-sm")} value={settings.article_title_rule} onChange={(e) => update({ article_title_rule: e.target.value })} />
+        </Field>
+        <Field label="Introduction">
+          <textarea className={cn(inputCls, "min-h-16 text-sm")} value={settings.article_intro_rule} onChange={(e) => update({ article_intro_rule: e.target.value })} />
+        </Field>
+        <Field label="Headlines" hint="Question-based headings. Use [City] and [Topic] for the page being written.">
+          <textarea className={cn(inputCls, "min-h-20 text-sm")} value={settings.article_heading_rule} onChange={(e) => update({ article_heading_rule: e.target.value })} />
+        </Field>
+        <Field label="Writing style">
+          <textarea className={cn(inputCls, "min-h-16 text-sm")} value={settings.article_writing_rule} onChange={(e) => update({ article_writing_rule: e.target.value })} />
+        </Field>
+        <Field label="Leave these out">
+          <textarea className={cn(inputCls, "min-h-20 text-sm")} value={settings.article_banned_rule} onChange={(e) => update({ article_banned_rule: e.target.value })} />
+        </Field>
+        <Field label="Research">
+          <textarea className={cn(inputCls, "min-h-20 text-sm")} value={settings.article_research_rule} onChange={(e) => update({ article_research_rule: e.target.value })} />
+        </Field>
+        <Field label="What the reader needs answered">
+          <textarea className={cn(inputCls, "min-h-20 text-sm")} value={settings.article_reader_rule} onChange={(e) => update({ article_reader_rule: e.target.value })} />
+        </Field>
+        <Field label="Competitor firms">
+          <textarea className={cn(inputCls, "min-h-16 text-sm")} value={settings.article_competitor_rule} onChange={(e) => update({ article_competitor_rule: e.target.value })} />
+        </Field>
+        <Field label="Legal authority" hint="Set for California on this site. Change the text if a page should cite a different state.">
+          <textarea className={cn(inputCls, "min-h-20 text-sm")} value={settings.article_authority_rule} onChange={(e) => update({ article_authority_rule: e.target.value })} />
+        </Field>
+
+        <div className="pt-2 border-t border-line space-y-4">
+          <h3 className="font-semibold text-text">Internal links</h3>
+          <p className="text-xs text-muted leading-relaxed">
+            Add the anchor text and the demo.wp-post.com page it should link to. The current built-in anchors stay until you turn on “Use only these links.”
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Field label="Maximum links in one article">
+              <input
+                className={inputCls}
+                type="number"
+                min={0}
+                max={20}
+                value={settings.max_internal_links}
+                onChange={(e) => update({ max_internal_links: Number(e.target.value) || 0 })}
+              />
+            </Field>
+            <label className="flex items-end gap-2 pb-2 text-sm text-text">
+              <input
+                type="checkbox"
+                className="size-4"
+                checked={settings.links_only}
+                onChange={(e) => update({ links_only: e.target.checked })}
+              />
+              Use only these links
+            </label>
+          </div>
+          <div className="space-y-3">
+            {settings.keyword_links.map((link, index) => (
+              <div key={index} className="grid sm:grid-cols-[1fr_1fr_auto] gap-2 items-center">
+                <input
+                  className={inputCls}
+                  placeholder="Anchor text"
+                  value={link.keyword}
+                  onChange={(e) => {
+                    const keyword_links = settings.keyword_links.map((item, i) =>
+                      i === index ? { ...item, keyword: e.target.value } : item,
+                    );
+                    update({ keyword_links });
+                  }}
+                />
+                <input
+                  className={inputCls}
+                  placeholder="https://demo.wp-post.com/..."
+                  value={link.url}
+                  onChange={(e) => {
+                    const keyword_links = settings.keyword_links.map((item, i) =>
+                      i === index ? { ...item, url: e.target.value } : item,
+                    );
+                    update({ keyword_links });
+                  }}
+                />
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center size-10 rounded-xl border border-line text-muted hover:text-bad"
+                  onClick={() => update({ keyword_links: settings.keyword_links.filter((_, i) => i !== index) })}
+                  aria-label="Remove link"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-accent"
+              onClick={() => update({ keyword_links: [...settings.keyword_links, { keyword: "", url: "" }] })}
+            >
+              <Plus className="size-3.5" /> Add link
+            </button>
+          </div>
+        </div>
+
+        <div className="pt-2 border-t border-line space-y-4">
+          <h3 className="font-semibold text-text">Image and text</h3>
+          <p className="text-xs text-muted leading-relaxed">
+            These choices apply the next time a page is published. Image left keeps the photo on the left and the introduction beside it.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Field label="Body image">
+              <select
+                className={inputCls}
+                value={settings.body_image_align}
+                onChange={(e) => update({ body_image_align: e.target.value as "left" | "right" | "center" })}
+              >
+                <option value="left">Left, text beside the photo</option>
+                <option value="right">Right, text beside the photo</option>
+                <option value="center">Center, text under the photo</option>
+              </select>
+            </Field>
+            <Field label="Introduction text">
+              <select
+                className={inputCls}
+                value={settings.body_text_align}
+                onChange={(e) => update({ body_text_align: e.target.value as "left" | "right" | "center" })}
+              >
+                <option value="left">Left</option>
+                <option value="center">Center</option>
+                <option value="right">Right</option>
+              </select>
+            </Field>
+          </div>
+          <Field
+            label="Words beside the photo"
+            hint="Raise this when empty space shows under the introduction. About 120 fills a standard photo."
+          >
+            <input
+              className={inputCls}
+              type="number"
+              min={40}
+              max={400}
+              value={settings.beside_image_words}
+              onChange={(e) => {
+                const raw = e.target.value.trim();
+                update({ beside_image_words: raw === "" ? 0 : Number(raw) });
+              }}
+            />
+          </Field>
+          <label className="flex items-start gap-2 text-sm text-text">
+            <input
+              type="checkbox"
+              className="size-4 mt-0.5"
+              checked={settings.directions_below_image}
+              onChange={(e) => update({ directions_below_image: e.target.checked })}
+            />
+            <span>Start Employee Productivity below the photo</span>
+          </label>
+        </div>
+      </section>
 
       {/* WordPress Connection */}
       <section className="rounded-2xl border border-line bg-panel-2 p-6 space-y-5">
@@ -319,7 +529,7 @@ export default function SettingsPage() {
           </summary>
           <div className="mt-4 space-y-2 pt-3 border-t border-line/60">
             <p className="text-muted text-xs">
-              This is the prompt sent to the AI for pages on demo.wp-post.com.
+              Firm name, phone numbers, and tone only. Article length, headlines, style, and links are in Article generation above.
             </p>
             <textarea
               className={cn(inputCls, "min-h-32 text-xs leading-relaxed font-mono")}
@@ -383,12 +593,25 @@ export default function SettingsPage() {
       {/* Save Button */}
       <div className="flex items-center gap-4 pt-2">
         <button
-          onClick={flashSaved}
+          onClick={() => {
+            const message = save();
+            if (message) {
+              setSaveError(message);
+              setSavedFlash(false);
+              return;
+            }
+            setSaveError(null);
+            flashSaved();
+          }}
           className="inline-flex items-center gap-2 rounded-xl bg-accent text-white px-6 py-3 text-sm font-medium hover:opacity-90 transition shadow-sm"
         >
           <Save className="size-4" /> {savedFlash ? "Saved!" : "Save Settings"}
         </button>
-        <span className="text-xs text-muted">Changes are saved in your browser session and active immediately.</span>
+        {saveError ? (
+          <span className="text-sm text-bad">{saveError}</span>
+        ) : (
+          <span className="text-xs text-muted">Changes are saved in your browser session and active immediately.</span>
+        )}
       </div>
     </div>
   );
