@@ -27,6 +27,7 @@ import {
   AlertTriangle,
   X,
   Image as ImageIcon,
+  Newspaper,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useSettings } from "@/lib/useSettings";
@@ -439,6 +440,12 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-4">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-text transition"
+          >
+            <Newspaper className="size-4" /> Blog Poster
+          </Link>
           <Link
             href="/settings"
             className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-text transition"
