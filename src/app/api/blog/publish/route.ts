@@ -51,6 +51,12 @@ export async function POST(req: Request) {
   try {
     let content = body.content as BlogPostContent | undefined;
     let image = body.image as BlogGeneratedImage | undefined;
+    const featuredMediaId =
+      typeof body.featuredMediaId === "number"
+        ? body.featuredMediaId
+        : typeof body.featured_media_id === "number"
+          ? body.featured_media_id
+          : undefined;
 
     if (!content || !content.contentHtml) {
       const topic = String(body.topic || body.title || "").trim();
@@ -68,9 +74,16 @@ export async function POST(req: Request) {
       image = generated.image;
     }
 
+    // Drop the preview data URL so the publish path keeps less image data in memory.
+    if (image) {
+      const { dataUrl: _drop, ...rest } = image;
+      image = rest;
+    }
+
     const result = await publishBlogPost({
       content,
       image,
+      featuredMediaId,
       settings,
       scheduleAt,
     });

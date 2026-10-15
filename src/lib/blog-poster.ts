@@ -1,3 +1,4 @@
+import sharp from "sharp";
 import type { Settings } from "./types";
 import { articleRulesFromSettings } from "./article-prompt";
 import { generateAtoyanImages } from "./imagen";
@@ -250,9 +251,97 @@ async function resolveCategoryIds(params: {
   return [...new Set(ids)];
 }
 
+/** Shrink the featured image so WordPress does not run out of memory on first publish. */
+async function compressBlogFeaturedImage(image: BlogGeneratedImage): Promise<BlogGeneratedImage> {
+  try {
+    const input = Buffer.from(image.base64, "base64");
+    const out = await sharp(input)
+      .rotate()
+      .resize({ width: 1200, height: 675, fit: "cover", withoutEnlargement: true })
+      .jpeg({ quality: 78, mozjpeg: true })
+      .toBuffer({ resolveWithObject: true });
+    return {
+      ...image,
+      base64: out.data.toString("base64"),
+      mimeType: "image/jpeg",
+      filename: (image.filename || "blog-featured.jpg").replace(/\.\w+$/, ".jpg"),
+      width: out.info.width,
+      height: out.info.height,
+      dataUrl: undefined,
+    };
+  } catch (err) {
+    console.warn("Blog featured image compress skipped:", err);
+    const { dataUrl: _drop, ...rest } = image;
+    return rest;
+  }
+}
+
+async function findPostBySlug(params: {
+  cleanBase: string;
+  authHeader: string;
+  slug: string;
+}): Promise<{ id: number; link?: string } | null> {
+  try {
+    const res = await fetch(
+      `${params.cleanBase}/wp-json/wp/v2/posts?slug=${encodeURIComponent(params.slug)}&status=publish,draft,future,pending&_fields=id,link,slug`,
+      {
+        headers: { Authorization: `Basic ${params.authHeader}` },
+        signal: AbortSignal.timeout(20_000),
+      },
+    );
+    if (!res.ok) return null;
+    const list = (await res.json()) as Array<{ id: number; link?: string; slug?: string }>;
+    const match = list.find((item) => item.slug === params.slug) || list[0];
+    return match?.id ? { id: match.id, link: match.link } : null;
+  } catch {
+    return null;
+  }
+}
+
+async function createWordPressPost(params: {
+  cleanBase: string;
+  authHeader: string;
+  payload: Record<string, unknown>;
+}): Promise<{ id: number; link?: string }> {
+  const slug = typeof params.payload.slug === "string" ? params.payload.slug : "";
+  // Ask WP for a tiny response — full post JSON + theme/Yoast rendering can tip PHP over the memory limit.
+  const attempt = async () =>
+    fetch(`${params.cleanBase}/wp-json/wp/v2/posts?_fields=id,link,status`, {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${params.authHeader}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(params.payload),
+      signal: AbortSignal.timeout(60_000),
+    });
+
+  let lastErr = "";
+  for (let i = 0; i < 3; i++) {
+    if (i > 0) await new Promise((resolve) => setTimeout(resolve, 2000 * i));
+    const createRes = await attempt();
+    if (createRes.ok) {
+      return (await createRes.json()) as { id: number; link?: string };
+    }
+    lastErr = await createRes.text();
+    // First click often dies with "Allowed memory size exhausted" while WP still saved the post.
+    if (slug && createRes.status >= 500) {
+      const existing = await findPostBySlug({
+        cleanBase: params.cleanBase,
+        authHeader: params.authHeader,
+        slug,
+      });
+      if (existing) return existing;
+    }
+    if (createRes.status < 500) break;
+  }
+  throw new Error(`Blog post create failed: ${lastErr.slice(0, 300)}`);
+}
+
 export async function publishBlogPost(params: {
   content: BlogPostContent;
   image?: BlogGeneratedImage;
+  featuredMediaId?: number;
   settings?: Settings;
   scheduleAt?: string;
 }): Promise<{
@@ -287,20 +376,8 @@ export async function publishBlogPost(params: {
   }
 
   const authHeader = Buffer.from(`${wpUser}:${wpPassword}`).toString("base64");
-  let featuredMediaId: number | undefined;
-  if (image?.base64) {
-    const uploaded = await uploadMediaToWordPress({
-      base64Data: image.base64,
-      filename: image.filename || `${content.slug}-featured.jpg`,
-      mimeType: image.mimeType || "image/jpeg",
-      altText: image.altText || content.title,
-      title: content.title,
-      wpSiteUrl: cleanBase,
-      authHeader,
-    });
-    featuredMediaId = uploaded.id;
-  }
 
+  // Categories first, then create the post without the image so PHP stays under the memory limit.
   const categoryIds = await resolveCategoryIds({
     names: content.categories,
     wpSiteUrl: cleanBase,
@@ -315,7 +392,6 @@ export async function publishBlogPost(params: {
     excerpt: content.excerpt,
     categories: categoryIds,
   };
-  if (featuredMediaId) payload.featured_media = featuredMediaId;
   if (scheduleAt) {
     const d = new Date(scheduleAt);
     if (!Number.isNaN(d.getTime())) {
@@ -324,23 +400,59 @@ export async function publishBlogPost(params: {
     }
   }
 
-  const createRes = await fetch(`${cleanBase}/wp-json/wp/v2/posts`, {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${authHeader}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(60_000),
-  });
-  if (!createRes.ok) {
-    const err = await createRes.text();
-    throw new Error(`Blog post create failed (${createRes.status}): ${err.slice(0, 300)}`);
-  }
-  const created = (await createRes.json()) as { id: number; link?: string };
+  const created = await createWordPressPost({ cleanBase, authHeader, payload });
   const postId = created.id;
   const postUrl = created.link || `${cleanBase}/?p=${postId}`;
   const editUrl = `${cleanBase}/wp-admin/post.php?post=${postId}&action=edit`;
+
+  // Upload the compressed image only after the post exists, and attach it in a separate request.
+  // Doing upload + featured_media on create is what triggered PHP "Allowed memory size exhausted" on first click.
+  let featuredMediaId = params.featuredMediaId;
+  if (!featuredMediaId && image?.base64) {
+    const compact = await compressBlogFeaturedImage(image);
+    try {
+      const uploaded = await uploadMediaToWordPress({
+        base64Data: compact.base64,
+        filename: compact.filename || `${content.slug}-featured.jpg`,
+        mimeType: compact.mimeType || "image/jpeg",
+        altText: compact.altText || content.title,
+        title: content.title,
+        wpSiteUrl: cleanBase,
+        authHeader,
+      });
+      featuredMediaId = uploaded.id;
+    } catch (mediaErr) {
+      console.warn("Blog featured image upload failed, retrying once:", mediaErr);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const compactRetry = await compressBlogFeaturedImage(image);
+      const uploaded = await uploadMediaToWordPress({
+        base64Data: compactRetry.base64,
+        filename: compactRetry.filename || `${content.slug}-featured.jpg`,
+        mimeType: compactRetry.mimeType || "image/jpeg",
+        altText: compactRetry.altText || content.title,
+        title: content.title,
+        wpSiteUrl: cleanBase,
+        authHeader,
+      });
+      featuredMediaId = uploaded.id;
+    }
+  }
+
+  if (featuredMediaId) {
+    try {
+      await fetch(`${cleanBase}/wp-json/wp/v2/posts/${postId}?_fields=id,featured_media`, {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${authHeader}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ featured_media: featuredMediaId }),
+        signal: AbortSignal.timeout(30_000),
+      });
+    } catch (featureErr) {
+      console.warn("Could not attach featured image after create:", featureErr);
+    }
+  }
 
   const yoastUpdated = await updateYoastSeo({
     postId,

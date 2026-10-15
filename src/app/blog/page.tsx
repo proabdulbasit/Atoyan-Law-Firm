@@ -84,17 +84,41 @@ export default function BlogPosterPage() {
     try {
       const headers: Record<string, string> = { "Content-Type": "application/json" };
       if (adminPassword) headers["x-admin-password"] = adminPassword;
-      const res = await fetch("/api/blog/publish", {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          content,
-          image,
-          settings,
-          admin_password: adminPassword || undefined,
-        }),
+      const publishImage = image
+        ? {
+            filename: image.filename,
+            altText: image.altText,
+            base64: image.base64,
+            mimeType: image.mimeType,
+            width: image.width,
+            height: image.height,
+          }
+        : undefined;
+      const body = JSON.stringify({
+        content,
+        image: publishImage,
+        settings,
+        admin_password: adminPassword || undefined,
       });
-      const data = await res.json();
+
+      const postOnce = async () => {
+        const res = await fetch("/api/blog/publish", { method: "POST", headers, body });
+        const data = await res.json();
+        return { res, data };
+      };
+
+      let { res, data } = await postOnce();
+      // WordPress sometimes OOMs on the first create; one automatic retry matches the manual "click again" fix.
+      if (!res.ok) {
+        const msg = String(data.message || data.error || "");
+        const transient =
+          res.status >= 500 ||
+          /allowed me|memory size|critical error|create failed/i.test(msg);
+        if (transient) {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          ({ res, data } = await postOnce());
+        }
+      }
       if (!res.ok) throw new Error(data.message || data.error || "Publish failed");
       setPublishUrl(data.postUrl || null);
       setEditUrl(data.editUrl || null);
