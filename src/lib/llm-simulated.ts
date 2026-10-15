@@ -87,8 +87,7 @@ export function generateAtoyanSimulated(keyword: string, city: string): AtoyanLe
       break;
   }
 
-  // 1. Enforce 100% topic-specific, city-tailored CTAs with toll-free phone links
-  const earlyCta = generateContextualCta({ topic: cleanTopic, city: resolvedCity, position: "early" });
+  // Mid and closing notes only. The opening stays as the article introduction.
   const midCta = generateContextualCta({ topic: cleanTopic, city: resolvedCity, position: "mid" });
   const closingCta = generateContextualCta({ topic: cleanTopic, city: resolvedCity, position: "closing" });
 
@@ -97,18 +96,18 @@ export function generateAtoyanSimulated(keyword: string, city: string): AtoyanLe
   const matches = updatedServices.match(calloutRegex) || [];
 
   if (matches.length >= 3 && matches[0] && matches[1] && matches[2]) {
-    updatedServices = updatedServices.replace(matches[0], earlyCta);
+    updatedServices = updatedServices.replace(matches[0], "");
     updatedServices = updatedServices.replace(matches[1], midCta);
     updatedServices = updatedServices.replace(matches[2], closingCta);
   } else if (matches.length === 2 && matches[0] && matches[1]) {
-    updatedServices = updatedServices.replace(matches[0], earlyCta);
+    updatedServices = updatedServices.replace(matches[0], "");
     updatedServices = updatedServices.replace(matches[1], midCta);
     updatedServices = updatedServices + "\n\n" + closingCta;
   } else if (matches.length === 1 && matches[0]) {
     updatedServices = updatedServices.replace(matches[0], midCta);
-    updatedServices = earlyCta + "\n\n" + updatedServices + "\n\n" + closingCta;
+    updatedServices = updatedServices + "\n\n" + closingCta;
   } else {
-    updatedServices = earlyCta + "\n\n" + updatedServices + "\n\n" + midCta + "\n\n" + closingCta;
+    updatedServices = updatedServices + "\n\n" + midCta + "\n\n" + closingCta;
   }
 
   // 2. Inject Contextual Internal Links into Services Content (3-5+ links, no self-links)

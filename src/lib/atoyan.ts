@@ -516,7 +516,6 @@ export function buildDemoPageContent(
       : "";
 
   return stripCopiedClasses([
-    HERO_TITLE_PHOTO_STYLE,
     `<p><h2>${heading}</h2>\n${image}${subheading}\n${introHtml}`.trim(),
     `${directionsClear}<!-- add -->\n[html_block id="${DEMO_DIRECTIONS_BLOCK_ID}"]\n<!-- // -->`,
     rest,

@@ -80,8 +80,18 @@ export function questionHeadingText(heading: string): string {
   return toQuestion(plain);
 }
 
+function isOpeningCta(text: string): boolean {
+  const plain = text.toLowerCase();
+  return (
+    /need help with/.test(plain) ||
+    (/free consultation/.test(plain) && /ready to answer/.test(plain)) ||
+    (/get a free consultation/.test(plain) && /call/.test(plain))
+  );
+}
+
 /**
- * Keeps the callout, then two or three sentences, before the first section heading.
+ * Keeps two or three opening sentences before the first section heading.
+ * A call-to-action paragraph is not used as the introduction.
  */
 export function shortenIntro(html: string): string {
   const source = html || "";
@@ -89,24 +99,25 @@ export function shortenIntro(html: string): string {
   if (!match || match.index === undefined) return source;
   const head = source.slice(0, match.index);
   const rest = source.slice(match.index);
-  const callouts: string[] = [];
-  const prose = head.replace(/<p\b[^>]*txt-hlt[\s\S]*?<\/p>/gi, (paragraph) => {
-    callouts.push(paragraph);
-    return " ";
-  });
+  const prose = head.replace(/<p\b[^>]*txt-hlt[\s\S]*?<\/p>/gi, " ");
   const text = prose.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-  const sentences = text.split(/(?<=[.!?])\s+/).filter((sentence) => sentence.trim().length > 0);
+  const sentences = text
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter((sentence) => sentence.length > 0 && !isOpeningCta(sentence));
   const kept: string[] = [];
   let words = 0;
   for (const sentence of sentences) {
-    const count = sentence.trim().split(/\s+/).length;
+    const count = sentence.split(/\s+/).length;
     if (count > 28) continue;
     if (kept.length >= 3 || words + count > 60) break;
-    kept.push(sentence.trim());
+    kept.push(sentence);
     words += count;
   }
-  const intro = kept.length ? `<p>${kept.join(" ")}</p>` : "";
-  return [...callouts, intro, rest].filter((part) => part && part.trim()).join("\n");
+  const intro = kept.length
+    ? `<p>${kept.join(" ")}</p>`
+    : `<p>This page explains the worker's rights, the proof that matters, and the deadlines that apply under California law.</p>`;
+  return [intro, rest].filter((part) => part && part.trim()).join("\n");
 }
 
 /** Makes article links blue so a heading link does not disappear into the heading color. */

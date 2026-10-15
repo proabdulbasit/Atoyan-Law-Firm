@@ -74,7 +74,7 @@ function siteCallout(message: string): string {
 }
 
 /**
- * Callout for this site: free consultation, the demo phone, and the contact page.
+ * Mid and closing notes only. The opening paragraph is the article introduction, not a call to action.
  */
 export function generateContextualCta(opts: ContextualCtaOptions): string {
   const { topic, city, position } = opts;
@@ -83,7 +83,7 @@ export function generateContextualCta(opts: ContextualCtaOptions): string {
   const cleanTopic = decomposed.cleanTopic;
 
   if (position === "early") {
-    return siteCallout(`Need help with ${cleanTopic.toLowerCase()} in ${resolvedCity}? WoodMart Law is ready to answer right now.`);
+    return "";
   }
   if (position === "mid") {
     return siteCallout(`WoodMart Law gives comprehensive legal support for ${cleanTopic.toLowerCase()} matters in ${resolvedCity}.`);

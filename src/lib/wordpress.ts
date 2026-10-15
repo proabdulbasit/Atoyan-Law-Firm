@@ -15,7 +15,6 @@ import {
   buildDemoPageContent,
   generateFaqSchemaJsonLd,
   resolveDefaultAccordionShortcode,
-  HERO_TITLE_PHOTO_STYLE,
 } from "./atoyan";
 import { createEasyAccordion } from "./accordion-creator";
 import { decomposeKeyword } from "./keyword-utils";
@@ -490,7 +489,7 @@ export async function publishAtoyanPage(params: {
   );
 
   const faqSchemaJsonLd = generateFaqSchemaJsonLd(content.faqs);
-  const headMarkup = `${faqSchemaJsonLd}\n${HERO_TITLE_PHOTO_STYLE}`;
+  const headMarkup = faqSchemaJsonLd;
   const headScriptMeta = {
     synth_header_script: headMarkup,
   };
@@ -602,8 +601,9 @@ export async function publishAtoyanPage(params: {
   const editUrl = `${cleanBase}/wp-admin/post.php?post=${createdPageId}&action=edit`;
 
   const titleImageId = newlyUploadedBannerId || bannerAttachmentId;
-  if (useVisibleBody && titleImageId) {
-    let titleSaved = false;
+
+  async function saveTitleImage(reason: string): Promise<boolean> {
+    if (!useVisibleBody || !titleImageId) return false;
     try {
       const bridgeImage = await fetch(`${cleanBase}/wp-json/autopilot/v1/title-image`, {
         method: "POST",
@@ -619,12 +619,13 @@ export async function publishAtoyanPage(params: {
         signal: AbortSignal.timeout(20_000),
       });
       const bridgeJson = (await bridgeImage.json().catch(() => null)) as { success?: boolean } | null;
-      titleSaved = bridgeImage.ok && bridgeJson?.success === true;
+      if (bridgeImage.ok && bridgeJson?.success === true) return true;
+      console.warn(`[Atoyan WordPress] Title image bridge failed (${reason}):`, bridgeJson);
     } catch (bridgeImageErr) {
-      console.warn("Title image bridge save failed:", bridgeImageErr);
+      console.warn(`Title image bridge save failed (${reason}):`, bridgeImageErr);
     }
-    if (!titleSaved) try {
-      titleSaved = await setWoodmartTitleImage({
+    try {
+      const saved = await setWoodmartTitleImage({
         wpSiteUrl: cleanBase,
         postId: createdPageId,
         imageId: titleImageId,
@@ -636,13 +637,17 @@ export async function publishAtoyanPage(params: {
           focusKeyphrase: content.yoastFocusKw,
         },
       });
-      if (!titleSaved) {
-        console.warn("[Atoyan WordPress] Page was published, but the header photo could not be saved.");
+      if (!saved) {
+        console.warn(`[Atoyan WordPress] Header photo could not be saved (${reason}).`);
       }
+      return saved;
     } catch (titleErr) {
-      console.warn("WoodMart title image update failed:", titleErr);
+      console.warn(`WoodMart title image update failed (${reason}):`, titleErr);
+      return false;
     }
   }
+
+  await saveTitleImage("after create");
 
   // Step 4b: Explicitly patch ACF on the newly created page to guarantee 100% field persistence
   try {
@@ -653,6 +658,7 @@ export async function publishAtoyanPage(params: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        featured_media: useVisibleBody && titleImageId ? titleImageId : undefined,
         ...(useVisibleBody
           ? {}
           : { content: "" }),
@@ -665,6 +671,9 @@ export async function publishAtoyanPage(params: {
   } catch (acfPatchErr) {
     console.warn("ACF follow-up persistence patch error:", acfPatchErr);
   }
+
+  // WoodMart title image can be cleared by later meta writes, so set it again.
+  await saveTitleImage("after acf patch");
 
   // Step 4c: Set the head script directly via Autopilot Bridge and purge WP Rocket cache
   try {
