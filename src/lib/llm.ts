@@ -14,7 +14,7 @@ import {
 import type { Settings, AtoyanLegalContent, AtoyanFaq } from "./types";
 import { resolveDefaultAccordionShortcode, ATOYAN_PHONE, ATOYAN_TOLL_FREE } from "./atoyan";
 import { defaultArticleRules, formatArticleRules, type ArticleRules } from "./article-prompt";
-import { calloutsToNormalText, colorContentLinks, coverRequiredPoints, keepOnlySavedLinks, questionHeadingText, separateStackedHeadings, shapeArticleHtml, shortenIntro } from "./article-enforce";
+import { colorContentLinks, coverRequiredPoints, keepOnlySavedLinks, questionHeadingText, separateStackedHeadings, shapeArticleHtml, shortenIntro } from "./article-enforce";
 import { countSubstantiveWords, calculateWordAudit, limitHtmlToWordCount } from "./word-counter";
 export { countSubstantiveWords, calculateWordAudit };
 

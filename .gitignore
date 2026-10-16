@@ -1,10 +1,12 @@
 node_modules
 .next
-.env.local
 .env*.local
 .vercel
 *.log
 .DS_Store
-.env*
 tsconfig.tsbuildinfo
 *.psd
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat
+config.bat

@@ -132,15 +132,46 @@ export function colorContentLinks(html: string): string {
     return `<a${attrs} style="color:#1a3d97;text-decoration:underline">`;
   });
 }
-export function calloutsToNormalText(html: string): string {
-  return (html || "").replace(/<p\b[^>]*\btxt-hlt\b[^>]*>([\s\S]*?)<\/p>/gi, (_full, inner: string) => {
-    const text = String(inner).replace(/<\/?strong>/gi, "").trim();
-    return `<p>${text}</p>`;
+/**
+ * CTA boxes must keep `txt-hlt bg-bx`. Only remove <em> italics.
+ * Also restores the box class when a CTA was flattened to a plain <p>.
+ */
+export function normalizeCallouts(html: string): string {
+  let out = html || "";
+
+  // Existing highlight boxes: drop <em>/<i>, keep classes (and strong if present).
+  out = out.replace(/<p(\b[^>]*\btxt-hlt\b[^>]*)>([\s\S]*?)<\/p>/gi, (_full, attrs: string, inner: string) => {
+    const cleaned = String(inner)
+      .replace(/<\/?em>/gi, "")
+      .replace(/<\/?i>/gi, "")
+      .trim();
+    let nextAttrs = attrs;
+    if (!/\bbg-bx\b/.test(attrs)) {
+      nextAttrs = attrs.replace(/\bclass=(["'])([^"']*)\1/i, (_m, q: string, cls: string) => {
+        const parts = cls.split(/\s+/).filter(Boolean);
+        if (!parts.includes("bg-bx")) parts.push("bg-bx");
+        return `class=${q}${parts.join(" ")}${q}`;
+      });
+    }
+    return `<p${nextAttrs}>${cleaned}</p>`;
   });
+
+  // Plain CTA paragraphs that lost their box classes.
+  out = out.replace(
+    /<p>(\s*(?:WoodMart Law gives comprehensive|Talk with WoodMart)[\s\S]*?)<\/p>/gi,
+    '<p class="txt-hlt bg-bx">$1</p>',
+  );
+
+  return out;
+}
+
+/** @deprecated Use normalizeCallouts — previously stripped box classes by mistake. */
+export function calloutsToNormalText(html: string): string {
+  return normalizeCallouts(html);
 }
 
 export function shapeArticleHtml(html: string, rules: ArticleRules): string {
-  let out = calloutsToNormalText(stripDashes(html));
+  let out = normalizeCallouts(stripDashes(html));
   if (/excessive bullet/i.test(rules.bannedRule)) out = listsToParagraphs(out);
   if (/question/i.test(rules.headingRule)) out = questionHeadings(out);
   if (/two or three sentences|short transition/i.test(rules.introRule)) out = shortenIntro(out);
