@@ -63,14 +63,19 @@ export function rewriteLegacyProjectLinks(html: string): string {
     .replace(/\bWP Post Project\b/g, "WoodMart Law")
     .replace(/\(747\) 888-0077/g, DEMO_PHONE)
     .replace(
-      /(<p class="txt-hlt bg-bx ulk-bg pd_v-30 pd_h-30" style="text-align:center;">)<em>(<strong>[\s\S]*?<\/strong>)<\/em>(<\/p>)/g,
+      /(<p class="[^"]*\btxt-hlt\b[^"]*"[^>]*>)<em>([\s\S]*?)<\/em>(<\/p>)/gi,
       "$1$2$3",
+    )
+    .replace(
+      /(<p class="[^"]*\btxt-hlt\b[^"]*"[^>]*>)<em><strong>([\s\S]*?)<\/strong><\/em>(<\/p>)/gi,
+      "$1<strong>$2</strong>$3",
     );
   return stripCopiedClasses(rewritten);
 }
 
 function siteCallout(message: string): string {
-  return `<p>${message} <a href="${DEMO_CONTACT_URL}">Get a free consultation</a> or call <a href="${DEMO_PHONE_LINK}">${DEMO_PHONE}</a>.</p>`;
+  // Keep the highlight box classes. Do not wrap in <em> — client wants boxed CTAs without italics.
+  return `<p class="txt-hlt bg-bx">${message} <a href="${DEMO_CONTACT_URL}" style="color:#1a3d97;text-decoration:underline">Get a free consultation</a> or call <a href="${DEMO_PHONE_LINK}">${DEMO_PHONE}</a>.</p>`;
 }
 
 /**
